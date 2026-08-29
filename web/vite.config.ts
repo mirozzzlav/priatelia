@@ -12,6 +12,21 @@ function escapeHtml(value: string) {
 }
 
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "chakra-vendor": [
+            "@chakra-ui/react",
+            "@emotion/react",
+            "@emotion/styled",
+            "framer-motion",
+          ],
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+        },
+      },
+    },
+  },
   plugins: [
     {
       name: "app-config-html",
@@ -23,6 +38,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      assets: fileURLToPath(new URL("./assets", import.meta.url)),
       src: fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
