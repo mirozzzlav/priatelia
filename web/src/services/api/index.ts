@@ -24,6 +24,8 @@ export type {
   RegistrationErrorData,
   RegistrationFieldErrors,
   RegistrationResponse,
+  RegistrationSuccessData,
   SendChatMessageData,
+  UploadedProfilePhoto,
   UserSession,
 } from "src/services/api/types";

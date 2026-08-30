@@ -1,3 +1,11 @@
-import type { RegistrationFormData } from "src/features/registration";
+import type { RegistrationPhoto } from "src/features/registration";
 
-export type EditableProfileData = RegistrationFormData;
+export type EditableProfileData = {
+  bio: string;
+  birthDate: string;
+  location: string;
+  nickname: string;
+  password: string;
+  passwordConfirmation: string;
+  photos: RegistrationPhoto[];
+};

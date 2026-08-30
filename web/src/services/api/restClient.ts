@@ -1,4 +1,6 @@
 import type { ApiClient } from "src/services/api/types";
+import type { RegistrationPhoto } from "src/features/registration";
+import { getStoredSession } from "src/services/api/sessionStorage";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
@@ -16,12 +18,17 @@ async function request<TResponse>(
   path: string,
   options?: RequestInit,
 ): Promise<TResponse> {
+  const token = getStoredSession()?.token;
+  const headers = new Headers(options?.headers);
+  headers.set("Content-Type", "application/json");
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
   const response = await fetch(`${apiBaseUrl}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
     ...options,
+    headers,
   });
 
   if (response.status === 204) {
@@ -39,6 +46,66 @@ async function request<TResponse>(
   }
 
   return data as TResponse;
+}
+
+async function uploadRequest<TResponse>(
+  path: string,
+  body: FormData,
+): Promise<TResponse> {
+  const token = getStoredSession()?.token;
+  const headers = new Headers();
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const response = await fetch(`${apiBaseUrl}${path}`, {
+    body,
+    headers,
+    method: "POST",
+  });
+  const data = (await response.json()) as unknown;
+
+  if (!response.ok) {
+    throw new Error(`API upload failed: ${response.status}`);
+  }
+
+  return data as TResponse;
+}
+
+function stripLocalPhotoFile(photo: RegistrationPhoto): RegistrationPhoto {
+  return {
+    id: photo.id,
+    isPrimary: photo.isPrimary,
+    name: photo.name,
+    url: photo.url,
+  };
+}
+
+async function uploadLocalPhotos<TData extends { photos: RegistrationPhoto[] }>(
+  data: TData,
+): Promise<TData> {
+  const photos = await Promise.all(
+    data.photos.map(async (photo) => {
+      if (!photo.file) {
+        return stripLocalPhotoFile(photo);
+      }
+
+      const uploadedPhoto = await restClient.uploadProfilePhoto(photo.file);
+
+      return {
+        id: photo.id,
+        isPrimary: photo.isPrimary,
+        name: uploadedPhoto.name || photo.name,
+        url: uploadedPhoto.url,
+      };
+    }),
+  );
+
+  return {
+    ...data,
+    photos,
+  };
 }
 
 export const restClient: ApiClient = {
@@ -68,9 +135,11 @@ export const restClient: ApiClient = {
     });
   },
 
-  register(data) {
+  async register(data) {
+    const dataWithUploadedPhotos = await uploadLocalPhotos(data);
+
     return request("/auth/register", {
-      body: JSON.stringify(data),
+      body: JSON.stringify(dataWithUploadedPhotos),
       method: "POST",
     });
   },
@@ -96,11 +165,20 @@ export const restClient: ApiClient = {
     });
   },
 
-  updateProfile(data) {
+  async updateProfile(data) {
+    const dataWithUploadedPhotos = await uploadLocalPhotos(data);
+
     return request("/profile", {
-      body: JSON.stringify(data),
+      body: JSON.stringify(dataWithUploadedPhotos),
       method: "PUT",
     });
+  },
+
+  uploadProfilePhoto(file) {
+    const formData = new FormData();
+    formData.set("file", file);
+
+    return uploadRequest("/media/profile-photos", formData);
   },
 
   async submitPersonPreviewAction(personPreviewId, action) {

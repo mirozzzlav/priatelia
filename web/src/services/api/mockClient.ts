@@ -133,6 +133,12 @@ function getRegistrationErrors(data: Parameters<ApiClient["register"]>[0]) {
     errors.nickname = "Vyplň nickname.";
   }
 
+  if (data.email.trim().length === 0) {
+    errors.email = "Vyplň email.";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+    errors.email = "Email nemá správny formát.";
+  }
+
   if (data.password.length === 0) {
     errors.password = "Vyplň heslo.";
   } else if (data.password.length < 8) {
@@ -335,10 +341,18 @@ export const mockClient: ApiClient = {
 
     return {
       data: {
-        nickname: data.nickname.trim(),
-        token: "mock-session-token",
+        registered: true,
       },
       status: "success",
+    };
+  },
+
+  async uploadProfilePhoto(file) {
+    await delay();
+
+    return {
+      name: file.name,
+      url: URL.createObjectURL(file),
     };
   },
 

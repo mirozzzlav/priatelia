@@ -26,8 +26,8 @@ export function LoginRoute({
 
     auth.login(response.data);
     onLoginProfileSync(data);
-    navigate("/discover");
     await onPersonPreviewLoad();
+    navigate("/discover");
     return true;
   };
 

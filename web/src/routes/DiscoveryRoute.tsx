@@ -1,9 +1,10 @@
 import { useEffect } from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
 import { CenteredStatusLayout } from "src/components/layouts";
 import { LoadingPill } from "src/components/LoadingPill";
 import { ScrollCue } from "src/components/ScrollCue";
+import { InfoScreen } from "src/features/info";
 import {
   type ActivePersonPreviewAction,
   PersonPreviewDetail,
@@ -29,11 +30,6 @@ const styles = {
     px: { base: "12px", sm: "16px" },
     pb: "22px",
   },
-  error: {
-    color: "app.text",
-    fontSize: "sm",
-    fontWeight: "extrabold",
-  },
 } as const;
 
 export function DiscoveryRoute({
@@ -47,7 +43,7 @@ export function DiscoveryRoute({
   personPreview,
 }: DiscoveryRouteProps) {
   useEffect(() => {
-    if (personPreview || isLoadingPersonPreview) {
+    if (personPreview || isLoadingPersonPreview || error) {
       return;
     }
 
@@ -56,7 +52,7 @@ export function DiscoveryRoute({
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
-  }, [isLoadingPersonPreview, onPersonPreviewLoad, personPreview]);
+  }, [error, isLoadingPersonPreview, onPersonPreviewLoad, personPreview]);
 
   return (
     <Box {...styles.deck}>
@@ -66,9 +62,11 @@ export function DiscoveryRoute({
         </CenteredStatusLayout>
       )}
       {error && (
-        <CenteredStatusLayout minH="calc(100vh - 108px)" px="16px" py={0}>
-          <Text {...styles.error}>{error}</Text>
-        </CenteredStatusLayout>
+        <InfoScreen
+          message="V tejto chvíli sa nám nepodarilo nájsť žiadneho nového priateľa, skús upraviť podmienky hľadania."
+          title="Žiadny nový priateľ"
+          variant="info"
+        />
       )}
       {personPreview && (
         <>

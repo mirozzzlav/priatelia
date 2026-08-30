@@ -74,8 +74,17 @@ export type RegistrationErrorData = {
   errors: RegistrationFieldErrors;
 };
 
+export type RegistrationSuccessData = {
+  registered: true;
+};
+
+export type UploadedProfilePhoto = {
+  name: string;
+  url: string;
+};
+
 export type RegistrationResponse = ApiResponse<
-  UserSession,
+  RegistrationSuccessData,
   RegistrationErrorData
 >;
 
@@ -124,6 +133,7 @@ export type ApiClient = {
   getChatMatches: () => Promise<ChatMatch[]>;
   getChatThread: (matchId: string) => Promise<ChatThread>;
   getPersonPreview: () => Promise<PersonPreview>;
+  uploadProfilePhoto: (file: File) => Promise<UploadedProfilePhoto>;
   login: (data: LoginFormData) => Promise<LoginResponse>;
   register: (data: RegistrationFormData) => Promise<RegistrationResponse>;
   sendChatMessage: (

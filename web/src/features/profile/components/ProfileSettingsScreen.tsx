@@ -33,6 +33,7 @@ const styles = {
 function createPhoto(file: File, shouldBePrimary: boolean): RegistrationPhoto {
   return {
     id: `${file.name}-${file.lastModified}-${crypto.randomUUID()}`,
+    file,
     isPrimary: shouldBePrimary,
     name: file.name,
     url: URL.createObjectURL(file),

@@ -37,6 +37,7 @@ const styles = {
 const initialFormData: RegistrationFormData = {
   bio: "",
   birthDate: "",
+  email: "",
   location: "",
   nickname: "",
   password: "",
@@ -47,6 +48,7 @@ const initialFormData: RegistrationFormData = {
 function createPhoto(file: File, shouldBePrimary: boolean): RegistrationPhoto {
   return {
     id: `${file.name}-${file.lastModified}-${crypto.randomUUID()}`,
+    file,
     isPrimary: shouldBePrimary,
     name: file.name,
     url: URL.createObjectURL(file),
@@ -196,6 +198,20 @@ export function RegistrationScreen({
           />
           <FormErrorMessage color="app.error">
             {fieldErrors.nickname}
+          </FormErrorMessage>
+        </FormControl>
+
+        <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.email)}>
+          <RequiredFieldLabel>Email</RequiredFieldLabel>
+          <FormInput
+            type="email"
+            value={formData.email}
+            onChange={updateField("email")}
+            placeholder="napr. nina@example.com"
+            autoComplete="email"
+          />
+          <FormErrorMessage color="app.error">
+            {fieldErrors.email}
           </FormErrorMessage>
         </FormControl>
 

@@ -1,4 +1,5 @@
 export type RegistrationPhoto = {
+  file?: File;
   id: string;
   isPrimary: boolean;
   name: string;
@@ -8,6 +9,7 @@ export type RegistrationPhoto = {
 export type RegistrationFormData = {
   bio: string;
   birthDate: string;
+  email: string;
   location: string;
   nickname: string;
   password: string;
