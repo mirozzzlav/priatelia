@@ -4,6 +4,7 @@ import { Box, FormControl, Text } from "@chakra-ui/react";
 import {
   FormInput,
   FormLinkButton,
+  FormPasswordInput,
   FormSubmitButton,
   RequiredFieldLabel,
 } from "src/components/formElements";
@@ -92,8 +93,7 @@ export function LoginScreen({ onLogin, onRegisterClick }: LoginScreenProps) {
 
         <FormControl>
           <RequiredFieldLabel>Heslo</RequiredFieldLabel>
-          <FormInput
-            type="password"
+          <FormPasswordInput
             value={formData.password}
             onChange={updateField("password")}
             autoComplete="current-password"

@@ -3,7 +3,7 @@ import { Box, FormControl, FormErrorMessage } from "@chakra-ui/react";
 
 import {
   FormActions,
-  FormInput,
+  FormPasswordInput,
   FormSecondaryButton,
   FormSubmitButton,
   RequiredFieldLabel,
@@ -85,8 +85,7 @@ export function PasswordSettingsScreen({
           isInvalid={wasSubmitted && Boolean(fieldErrors.currentPassword)}
         >
           <RequiredFieldLabel>Aktuálne heslo</RequiredFieldLabel>
-          <FormInput
-            type="password"
+          <FormPasswordInput
             value={currentPassword}
             onChange={(event) => {
               setFieldErrors({});
@@ -104,8 +103,7 @@ export function PasswordSettingsScreen({
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.password)}>
           <RequiredFieldLabel>Nové heslo</RequiredFieldLabel>
-          <FormInput
-            type="password"
+          <FormPasswordInput
             value={password}
             onChange={(event) => {
               setFieldErrors({});
@@ -126,8 +124,7 @@ export function PasswordSettingsScreen({
           isInvalid={wasSubmitted && Boolean(fieldErrors.passwordConfirmation)}
         >
           <RequiredFieldLabel>Zopakuj nové heslo</RequiredFieldLabel>
-          <FormInput
-            type="password"
+          <FormPasswordInput
             value={passwordConfirmation}
             onChange={(event) => {
               setFieldErrors({});

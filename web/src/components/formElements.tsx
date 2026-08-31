@@ -2,7 +2,10 @@ import {
   Box,
   Button,
   FormLabel,
+  IconButton,
   Input,
+  InputGroup,
+  InputRightElement,
   Text,
   Textarea,
   type BoxProps,
@@ -10,7 +13,7 @@ import {
   type InputProps,
   type TextareaProps,
 } from "@chakra-ui/react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 const fieldLabelStyles = {
   color: "app.text",
@@ -32,6 +35,67 @@ const fieldInputStyles = {
   _invalid: {
     borderColor: "app.error",
     boxShadow: "none",
+  },
+} as const;
+
+const passwordInputStyles = {
+  input: {
+    pr: "48px",
+  },
+  toggleWrap: {
+    h: "48px",
+    w: "46px",
+  },
+  toggle: {
+    display: "grid",
+    placeItems: "center",
+    boxSize: "34px",
+    minW: "34px",
+    borderRadius: "999px",
+    color: "app.text",
+    opacity: 0.72,
+    _hover: {
+      bg: "app.bgAux",
+      opacity: 1,
+    },
+    _active: {
+      bg: "app.bgAux",
+    },
+    _focusVisible: {
+      boxShadow: "0 0 0 2px rgba(59, 90, 157, 0.28)",
+    },
+  },
+  eye: {
+    position: "relative",
+    w: "19px",
+    h: "12px",
+    border: "2px solid",
+    borderColor: "currentColor",
+    borderRadius: "70% 70% 60% 60%",
+    transform: "rotate(-2deg)",
+    _before: {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      boxSize: "6px",
+      borderRadius: "999px",
+      bg: "currentColor",
+      content: '""',
+      transform: "translate(-50%, -50%)",
+    },
+  },
+  eyeHidden: {
+    _after: {
+      position: "absolute",
+      top: "50%",
+      left: "-3px",
+      w: "25px",
+      h: "2px",
+      borderRadius: "999px",
+      bg: "currentColor",
+      content: '""',
+      transform: "translateY(-50%) rotate(-38deg)",
+    },
   },
 } as const;
 
@@ -102,6 +166,38 @@ export function RequiredFieldLabel({ children }: RequiredFieldLabelProps) {
 export function FormInput(props: InputProps) {
   return (
     <Input errorBorderColor="app.error" {...fieldInputStyles} {...props} />
+  );
+}
+
+export function FormPasswordInput(props: Omit<InputProps, "type">) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <InputGroup>
+      <Input
+        errorBorderColor="app.error"
+        type={isVisible ? "text" : "password"}
+        {...fieldInputStyles}
+        {...passwordInputStyles.input}
+        {...props}
+      />
+      <InputRightElement {...passwordInputStyles.toggleWrap}>
+        <IconButton
+          aria-label={isVisible ? "Skryť heslo" : "Zobraziť heslo"}
+          icon={
+            <Box
+              aria-hidden="true"
+              {...passwordInputStyles.eye}
+              {...(isVisible ? passwordInputStyles.eyeHidden : {})}
+            />
+          }
+          onClick={() => setIsVisible((current) => !current)}
+          type="button"
+          variant="unstyled"
+          {...passwordInputStyles.toggle}
+        />
+      </InputRightElement>
+    </InputGroup>
   );
 }
 

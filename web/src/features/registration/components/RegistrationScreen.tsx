@@ -6,6 +6,7 @@ import { PhotoGalleryField } from "src/components/PhotoGalleryField";
 import {
   FormInput,
   FormLinkButton,
+  FormPasswordInput,
   FormSubmitButton,
   FormTextarea,
   RequiredFieldLabel,
@@ -230,8 +231,7 @@ export function RegistrationScreen({
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.password)}>
           <RequiredFieldLabel>Heslo</RequiredFieldLabel>
-          <FormInput
-            type="password"
+          <FormPasswordInput
             value={formData.password}
             onChange={updateField("password")}
             placeholder="aspoň 8 znakov"
@@ -246,8 +246,7 @@ export function RegistrationScreen({
           isInvalid={wasSubmitted && Boolean(fieldErrors.passwordConfirmation)}
         >
           <RequiredFieldLabel>Zopakuj heslo</RequiredFieldLabel>
-          <FormInput
-            type="password"
+          <FormPasswordInput
             value={formData.passwordConfirmation}
             onChange={updateField("passwordConfirmation")}
             autoComplete="new-password"
