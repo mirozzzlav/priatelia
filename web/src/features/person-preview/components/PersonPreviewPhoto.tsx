@@ -13,8 +13,8 @@ import type {
 const styles = {
   stage: {
     position: "relative",
-    h: "min(58vh, 560px)",
-    minH: { base: "360px", sm: "390px" },
+    h: "min(52vh, 520px)",
+    minH: { base: "320px", sm: "350px" },
     mt: { base: "12px", sm: "16px" },
     sx: {
       touchAction: "pan-y",

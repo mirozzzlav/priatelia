@@ -3,18 +3,33 @@ import { Box, Heading } from "@chakra-ui/react";
 
 const styles = {
   root: {
-    mt: "28px",
-    px: "4px",
-    py: "20px",
+    mx: { base: "-12px", sm: "-16px" },
+    px: { base: "26px", sm: "30px" },
+    py: "17px",
     borderTop: "1px solid",
-    borderColor: "app.white",
+    borderColor: "rgba(101, 74, 38, 0.18)",
+    bgGradient:
+      "linear(to-b, rgba(255, 245, 232, 0.48), rgba(255, 255, 255, 0) 100%)",
   },
   heading: {
-    mb: "22px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    mb: "16px",
     color: "app.text",
     fontSize: "xl",
+    fontWeight: "semibold",
     lineHeight: 1.2,
     letterSpacing: 0,
+    _before: {
+      w: "20px",
+      h: "2px",
+      borderRadius: "999px",
+      bg: "app.info",
+      content: '""',
+      flexShrink: 0,
+      opacity: 0.76,
+    },
   },
 } as const;
 

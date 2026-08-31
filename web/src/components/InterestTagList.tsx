@@ -10,8 +10,7 @@ const styles = {
   tag: {
     alignItems: "center",
     gap: "7px",
-    pl: "12px",
-    pr: "7px",
+    px: "12px",
     py: "6px",
     border: "1px solid",
     borderColor: "app.textAlt",

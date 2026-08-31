@@ -1,5 +1,5 @@
 import type { KeyboardEvent } from "react";
-import { Box, Button, SimpleGrid } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 
 import thumbDownFilledIcon from "assets/thumb-down-filled.svg";
 import thumbDownIcon from "assets/thumb-down.svg";
@@ -14,17 +14,31 @@ import type {
 
 const styles = {
   grid: {
-    columns: 2,
-    gap: { base: "10px", sm: "12px" },
+    justify: "flex-start",
+    gap: "16px",
   },
   button: {
-    h: "54px",
+    boxSize: "48px",
+    minW: "48px",
+    p: 0,
     border: "1px solid",
-    borderColor: "app.white",
-    borderRadius: "16px",
-    bg: "app.white",
-    _hover: { bg: "app.white" },
-    _active: { bg: "app.white" },
+    borderColor: "rgba(255, 255, 255, 0.62)",
+    borderRadius: "999px",
+    bg: "rgba(255, 255, 255, 0.88)",
+    boxShadow: "0 10px 22px rgba(0, 0, 0, 0.16)",
+    backdropFilter: "blur(14px)",
+    transition:
+      "background 140ms ease, border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease",
+    _hover: {
+      bg: "app.white",
+      borderColor: "app.white",
+      boxShadow: "0 12px 26px rgba(0, 0, 0, 0.2)",
+      transform: "translateY(-1px)",
+    },
+    _active: {
+      bg: "app.white",
+      transform: "translateY(0)",
+    },
     sx: {
       "&:hover [data-outline-icon], &:active [data-outline-icon], &[data-active='true'] [data-outline-icon]":
         {
@@ -36,7 +50,7 @@ const styles = {
         },
       "&:hover [data-action-icon], &:active [data-action-icon], &[data-active='true'] [data-action-icon]":
         {
-          transform: "scale(1.1)",
+          transform: "scale(1.08)",
         },
     },
     _disabled: {
@@ -46,7 +60,7 @@ const styles = {
   },
   iconWrap: {
     position: "relative",
-    boxSize: "31px",
+    boxSize: "34px",
     transition: "transform 140ms ease",
   },
   icon: {
@@ -126,14 +140,14 @@ function PersonPreviewActionButton({
       <Box data-action-icon {...styles.iconWrap}>
         <SvgImage
           src={icon}
-          boxSize="31px"
+          boxSize="34px"
           data-outline-icon
           {...styles.icon}
           {...styles.outlineIcon}
         />
         <SvgImage
           src={filledIcon}
-          boxSize="31px"
+          boxSize="34px"
           data-filled-icon
           {...styles.icon}
           {...styles.filledIcon}
@@ -199,7 +213,7 @@ export function PersonPreviewActionButtons({
   "activeAction" | "isSubmitting"
 >) {
   return (
-    <SimpleGrid {...styles.grid}>
+    <Flex {...styles.grid}>
       <LikeButton
         activeAction={activeAction}
         isSubmitting={isSubmitting}
@@ -212,6 +226,6 @@ export function PersonPreviewActionButtons({
         onActionEnd={onActionEnd}
         onActionStart={onActionStart}
       />
-    </SimpleGrid>
+    </Flex>
   );
 }
