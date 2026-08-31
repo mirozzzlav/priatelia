@@ -46,24 +46,28 @@ type PersonPreviewDetailProps = {
 };
 
 export function PersonPreviewDetail({ person }: PersonPreviewDetailProps) {
+  const additionalPhotos = person.photos.filter((src) => src !== person.photo);
+
   return (
     <Box {...styles.root}>
       <DetailSection title="Bio">
         <Text {...styles.bio}>{person.bio}</Text>
       </DetailSection>
 
-      <DetailSection title="Ďalšie fotky">
-        <SimpleGrid {...styles.photoGrid}>
-          {person.photos.map((src, index) => (
-            <Image
-              key={src}
-              src={src}
-              alt={`${person.name}, fotka ${index + 2}`}
-              {...styles.photo(index)}
-            />
-          ))}
-        </SimpleGrid>
-      </DetailSection>
+      {additionalPhotos.length > 0 && (
+        <DetailSection title="Ďalšie fotky">
+          <SimpleGrid {...styles.photoGrid}>
+            {additionalPhotos.map((src, index) => (
+              <Image
+                key={src}
+                src={src}
+                alt={`${person.name}, fotka ${index + 2}`}
+                {...styles.photo(index)}
+              />
+            ))}
+          </SimpleGrid>
+        </DetailSection>
+      )}
 
       <DetailSection title="Záujmy">
         <Flex {...styles.tags}>
