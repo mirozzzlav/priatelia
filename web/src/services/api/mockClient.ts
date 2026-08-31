@@ -35,6 +35,27 @@ const chatMatchIds = new Set(mockInitialChatMatchIds);
 const chatMessagesByMatchId: Record<string, ChatMessage[]> = {
   ...mockChatMessagesByMatchId,
 };
+let currentProfile = {
+  bio: "Rád spoznávam ľudí cez dobré jedlo, výlety a pokojné rozhovory.",
+  birthDate: "1996-04-18",
+  interests: [
+    { id: "cestovanie", name: "Cestovanie" },
+    { id: "kava", name: "Káva" },
+    { id: "turistika", name: "Turistika" },
+  ],
+  location: "Bratislava",
+  nickname: "demo",
+  password: "",
+  passwordConfirmation: "",
+  photos: [
+    {
+      id: "mock-current-profile-photo",
+      isPrimary: true,
+      name: "profile-photo.jpg",
+      url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=85",
+    },
+  ],
+};
 
 function getRandomItem<TItem>(items: TItem[]) {
   return items[Math.floor(Math.random() * items.length)];
@@ -294,6 +315,16 @@ export const mockClient: ApiClient = {
     return getRandomPersonPreview();
   },
 
+  async getProfile() {
+    await delay();
+
+    return {
+      ...currentProfile,
+      interests: [...currentProfile.interests],
+      photos: currentProfile.photos.map((photo) => ({ ...photo })),
+    };
+  },
+
   async searchInterests(query) {
     const normalizedQuery = query.trim().toLocaleLowerCase("sk");
     await delay();
@@ -363,6 +394,13 @@ export const mockClient: ApiClient = {
       };
     }
 
+    currentProfile = {
+      ...data,
+      nickname: data.nickname.trim(),
+      password: "",
+      passwordConfirmation: "",
+    };
+
     return {
       data: {
         registered: true,
@@ -420,7 +458,18 @@ export const mockClient: ApiClient = {
   async updateProfile(data) {
     await delay();
 
-    return createMutationResponse(getProfileErrors(data));
+    const response = createMutationResponse(getProfileErrors(data));
+
+    if (response.status === "success") {
+      currentProfile = {
+        ...data,
+        nickname: data.nickname.trim(),
+        password: "",
+        passwordConfirmation: "",
+      };
+    }
+
+    return response;
   },
 
   async submitPersonPreviewAction(personPreviewId, action) {

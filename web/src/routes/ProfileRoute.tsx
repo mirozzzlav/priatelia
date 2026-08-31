@@ -1,5 +1,9 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { CenteredStatusLayout } from "src/components/layouts";
+import { LoadingPill } from "src/components/LoadingPill";
+import { InfoScreen } from "src/features/info";
 import {
   type EditableProfileData,
   ProfileSettingsScreen,
@@ -13,6 +17,38 @@ type ProfileRouteProps = {
 
 export function ProfileRoute({ initialProfile, onSave }: ProfileRouteProps) {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState<EditableProfileData | null>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    let isActive = true;
+
+    apiClient
+      .getProfile()
+      .then((loadedProfile) => {
+        if (!isActive) {
+          return;
+        }
+
+        setProfile(loadedProfile);
+        onSave(loadedProfile);
+      })
+      .catch(() => {
+        if (isActive) {
+          setLoadError(true);
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsLoadingProfile(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [onSave]);
 
   const handleSave = async (
     data: EditableProfileData,
@@ -24,12 +60,31 @@ export function ProfileRoute({ initialProfile, onSave }: ProfileRouteProps) {
     }
 
     onSave(data);
+    setProfile(data);
     return null;
   };
 
+  if (isLoadingProfile && !profile) {
+    return (
+      <CenteredStatusLayout minH="calc(100vh - 64px)">
+        <LoadingPill text="Načítavam profil." />
+      </CenteredStatusLayout>
+    );
+  }
+
+  if (loadError && !profile) {
+    return (
+      <InfoScreen
+        message="Profil sa nepodarilo načítať. Skús to znova neskôr."
+        title="Profil nie je dostupný"
+        variant="error"
+      />
+    );
+  }
+
   return (
     <ProfileSettingsScreen
-      initialProfile={initialProfile}
+      initialProfile={profile ?? initialProfile}
       onBack={() => navigate("/discover")}
       onPasswordChangeClick={() => navigate("/profile/password")}
       onSave={handleSave}

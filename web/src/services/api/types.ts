@@ -134,6 +134,7 @@ export type ApiClient = {
   getChatMatches: () => Promise<ChatMatch[]>;
   getChatThread: (matchId: string) => Promise<ChatThread>;
   getPersonPreview: () => Promise<PersonPreview>;
+  getProfile: () => Promise<EditableProfileData>;
   searchInterests: (query: string) => Promise<InterestTag[]>;
   uploadProfilePhoto: (file: File) => Promise<UploadedProfilePhoto>;
   login: (data: LoginFormData) => Promise<LoginResponse>;

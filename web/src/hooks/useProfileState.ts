@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import type { LoginFormData } from "src/features/login";
 import type { EditableProfileData } from "src/features/profile";
@@ -19,40 +19,40 @@ export function useProfileState() {
   const [profileData, setProfileData] =
     useState<EditableProfileData>(initialProfileData);
 
-  const syncLoginProfile = (data: LoginFormData) => {
+  const syncLoginProfile = useCallback((data: LoginFormData) => {
     setProfileData((current) => ({
       ...current,
       nickname: data.nickname.trim(),
       password: "",
       passwordConfirmation: "",
     }));
-  };
+  }, []);
 
-  const syncRegisteredProfile = (data: RegistrationFormData) => {
+  const syncRegisteredProfile = useCallback((data: RegistrationFormData) => {
     setProfileData({
       ...data,
       nickname: data.nickname.trim(),
       password: "",
       passwordConfirmation: "",
     });
-  };
+  }, []);
 
-  const saveProfile = (data: EditableProfileData) => {
+  const saveProfile = useCallback((data: EditableProfileData) => {
     setProfileData({
       ...data,
       nickname: data.nickname.trim(),
       password: "",
       passwordConfirmation: "",
     });
-  };
+  }, []);
 
-  const savePassword = () => {
+  const savePassword = useCallback(() => {
     setProfileData((current) => ({
       ...current,
       password: "",
       passwordConfirmation: "",
     }));
-  };
+  }, []);
 
   return {
     profileData,

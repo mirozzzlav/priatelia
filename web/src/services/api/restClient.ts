@@ -1,6 +1,12 @@
 import type { ApiClient } from "src/services/api/types";
+import type { EditableProfileData } from "src/features/profile";
 import type { RegistrationPhoto } from "src/features/registration";
 import { getStoredSession } from "src/services/api/sessionStorage";
+
+type ProfileApiData = Omit<
+  EditableProfileData,
+  "password" | "passwordConfirmation"
+>;
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
@@ -118,6 +124,16 @@ export const restClient: ApiClient = {
 
   getPersonPreview() {
     return request("/discovery/profile");
+  },
+
+  async getProfile() {
+    const profile = await request<ProfileApiData>("/profile");
+
+    return {
+      ...profile,
+      password: "",
+      passwordConfirmation: "",
+    };
   },
 
   searchInterests(query) {
