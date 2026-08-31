@@ -10,8 +10,7 @@ export const theme = extendTheme({
       success: "#3f8f65",
       white: "#ffffff",
       text: "#000000",
-      textAlt: "#654A26",
-      bgAux: "#fff5e8",
+      bgAux: "#ffc982",
     },
   },
   fonts: {

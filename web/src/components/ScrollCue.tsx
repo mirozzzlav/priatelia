@@ -9,7 +9,7 @@ const styles = {
     mx: "auto",
     mt: "10px",
     mb: "18px",
-    color: "app.textAlt",
+    color: "app.text",
     opacity: 0.68,
     pointerEvents: "none",
   },

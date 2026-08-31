@@ -7,9 +7,9 @@ const styles = {
     px: { base: "26px", sm: "30px" },
     py: "17px",
     borderTop: "1px solid",
-    borderColor: "rgba(101, 74, 38, 0.18)",
+    borderColor: "rgba(38, 57, 111, 0.14)",
     bgGradient:
-      "linear(to-b, rgba(255, 245, 232, 0.48), rgba(255, 255, 255, 0) 100%)",
+      "linear(to-b, rgba(241, 243, 246, 0.55), rgba(255, 255, 255, 0) 58%)",
   },
   heading: {
     display: "flex",
@@ -21,15 +21,10 @@ const styles = {
     fontWeight: "semibold",
     lineHeight: 1.2,
     letterSpacing: 0,
-    _before: {
-      w: "20px",
-      h: "2px",
-      borderRadius: "999px",
-      bg: "app.info",
-      content: '""',
-      flexShrink: 0,
-      opacity: 0.76,
-    },
+    borderBottom: "2px solid",
+    borderColor: "app.info",
+    width: "max-content",
+    padding: "0 8px 4px 0",
   },
 } as const;
 

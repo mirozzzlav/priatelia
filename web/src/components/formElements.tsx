@@ -52,8 +52,8 @@ const primaryButtonStyles = {
   _disabled: {
     bg: "app.bgAux",
     border: "1px solid",
-    borderColor: "app.textAlt",
-    color: "app.textAlt",
+    borderColor: "app.text",
+    color: "app.text",
     cursor: "not-allowed",
     opacity: 1,
     _hover: { bg: "app.bgAux" },

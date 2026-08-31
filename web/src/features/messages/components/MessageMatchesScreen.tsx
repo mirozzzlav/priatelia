@@ -67,7 +67,7 @@ const styles = {
     justify: "center",
     borderRadius: "999px",
     bg: "app.bgAux",
-    color: "app.textAlt",
+    color: "app.text",
     fontSize: "xs",
     fontWeight: "black",
   },

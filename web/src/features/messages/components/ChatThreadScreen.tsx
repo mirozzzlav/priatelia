@@ -74,7 +74,7 @@ const styles = {
       py: "10px",
       borderRadius: "14px",
       bg: sender === "current-user" ? "app.base" : "app.bgAux",
-      color: sender === "current-user" ? "app.white" : "app.textAlt",
+      color: sender === "current-user" ? "app.white" : "app.text",
       fontSize: "sm",
       lineHeight: 1.4,
     }) as const,

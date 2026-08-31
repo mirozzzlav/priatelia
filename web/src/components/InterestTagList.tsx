@@ -10,15 +10,20 @@ const styles = {
   tag: {
     alignItems: "center",
     gap: "7px",
+    minWidth: "120px",
+    justifyContent: "space-between",
     px: "12px",
-    py: "6px",
-    border: "1px solid",
-    borderColor: "app.textAlt",
+    py: "8px",
     borderRadius: "999px",
     bg: "app.bgAux",
-    color: "app.textAlt",
-    fontSize: "sm",
-    fontWeight: "bold",
+    color: "app.text",
+    fontSize: "md",
+    fontWeight: "semibold",
+    border: "1px solid",
+    letterSpacing: "1px",
+  },
+  tagName: {
+    margin: "0 auto",
   },
   removeButton: {
     display: "grid",
@@ -27,15 +32,15 @@ const styles = {
     minW: "22px",
     borderRadius: "999px",
     bg: "app.white",
-    color: "app.textAlt",
+    color: "app.text",
     transform: "translateY(1px)",
     transition: "background 140ms ease, color 140ms ease",
     _active: {
-      bg: "app.textAlt",
+      bg: "app.text",
       color: "app.white",
     },
     _hover: {
-      bg: "app.textAlt",
+      bg: "app.text",
       color: "app.white",
     },
   },
@@ -77,7 +82,7 @@ export function InterestTagList({ onRemove, tags }: InterestTagListProps) {
     <Flex {...styles.list}>
       {tags.map((tag) => (
         <Flex key={tag.id} {...styles.tag}>
-          <Text as="span">{tag.name}</Text>
+          <Text as="span" {...styles.tagName}>{tag.name}</Text>
           {onRemove && (
             <Button
               aria-label={`Odstrániť záujem ${tag.name}`}

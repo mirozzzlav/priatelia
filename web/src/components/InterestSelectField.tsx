@@ -38,11 +38,11 @@ const styles = {
     color: "app.text",
     fontSize: "sm",
     fontWeight: "bold",
-    _hover: { bg: "app.bgAux", color: "app.textAlt" },
+    _hover: { bg: "app.bgAux", color: "app.text" },
     _focusVisible: {
       bg: "app.bgAux",
       boxShadow: "0 0 0 2px rgba(59, 90, 157, 0.22)",
-      color: "app.textAlt",
+      color: "app.text",
     },
   },
   selectedTags: {
