@@ -16,7 +16,9 @@ const styles = {
     h: "min(58vh, 560px)",
     minH: { base: "360px", sm: "390px" },
     mt: { base: "12px", sm: "16px" },
-    touchAction: "pan-y",
+    sx: {
+      touchAction: "pan-y",
+    },
   },
   card: {
     position: "relative",

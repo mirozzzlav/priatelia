@@ -90,7 +90,7 @@ const styles = {
     fontSize: "24px",
     fontWeight: "normal",
     lineHeight: 1,
-    letterSpacing: 4,
+    letterSpacing: "3px",
     textShadow: "none",
     transform: "scaleX(0.88)",
     transformOrigin: "left center",
