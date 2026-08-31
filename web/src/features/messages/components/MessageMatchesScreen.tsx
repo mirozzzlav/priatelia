@@ -84,6 +84,9 @@ const styles = {
   },
   backButton: {
     mt: "18px",
+    h: "42px",
+    px: "12px",
+    borderRadius: "12px",
   },
 } as const;
 

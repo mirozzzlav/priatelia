@@ -20,7 +20,12 @@ type ChatThreadScreenProps = {
 
 const styles = {
   root: {
-    minH: "calc(100vh - 64px)",
+    boxSizing: "border-box",
+    display: "flex",
+    flexDirection: "column",
+    h: "calc(100dvh - 64px)",
+    minH: 0,
+    overflow: "hidden",
     px: { base: "12px", sm: "16px" },
     pb: "18px",
   },
@@ -30,10 +35,14 @@ const styles = {
     gap: "12px",
     pt: "16px",
     pb: "14px",
+    flexShrink: 0,
     borderBottom: "1px solid",
     borderColor: "app.bgAux",
   },
   backButton: {
+    alignSelf: "flex-start",
+    flexShrink: 0,
+    mt: "12px",
     h: "42px",
     px: "12px",
     borderRadius: "12px",
@@ -63,7 +72,9 @@ const styles = {
     display: "grid",
     alignContent: "end",
     gap: "10px",
-    minH: "calc(100vh - 236px)",
+    flex: "1 1 0",
+    minH: 0,
+    overflowY: "auto",
     py: "16px",
   },
   bubble: (sender: ChatMessage["sender"]) =>
@@ -91,9 +102,11 @@ const styles = {
   },
   composer: {
     display: "grid",
+    flexShrink: 0,
     gridTemplateColumns: "1fr auto",
     gap: "8px",
     pt: "10px",
+    bg: "app.white",
     borderTop: "1px solid",
     borderColor: "app.bgAux",
   },
@@ -129,9 +142,6 @@ export function ChatThreadScreen({
   return (
     <Box {...styles.root}>
       <Flex {...styles.header}>
-        <SecondaryButton onClick={onBack} {...styles.backButton}>
-          Späť
-        </SecondaryButton>
         {thread && (
           <>
             <Image
@@ -150,6 +160,12 @@ export function ChatThreadScreen({
           </>
         )}
       </Flex>
+
+      {!isLoading && !error && thread && (
+        <SecondaryButton onClick={onBack} {...styles.backButton}>
+          Späť
+        </SecondaryButton>
+      )}
 
       {isLoading && (
         <Flex {...styles.loadingStatus}>
