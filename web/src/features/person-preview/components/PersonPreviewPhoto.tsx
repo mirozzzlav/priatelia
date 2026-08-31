@@ -4,10 +4,12 @@ import { Box, Flex, Image } from "@chakra-ui/react";
 import thumbDownIcon from "assets/thumb-down.svg";
 import thumbUpIcon from "assets/thumb-up.svg";
 import { LoadingPill } from "src/components/LoadingPill";
+import { PersonPreviewActionButtons } from "src/features/person-preview/components/PersonPreviewActionButtons";
 import type {
   ActivePersonPreviewAction,
   PersonPreview,
   PersonPreviewAction,
+  PersonPreviewActionHandlers,
 } from "src/features/person-preview/types";
 
 const styles = {
@@ -53,6 +55,13 @@ const styles = {
     h: "100%",
     objectFit: "cover",
     pointerEvents: "none",
+  },
+  actions: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 2,
   },
   transitionOverlay: {
     position: "absolute",
@@ -112,12 +121,16 @@ function DecisionBadge({ activeAction, children, side }: DecisionBadgeProps) {
 type PersonPreviewPhotoProps = {
   activeAction: ActivePersonPreviewAction;
   isLoadingNextPerson: boolean;
+  isSubmitting: boolean;
   person: PersonPreview;
-};
+} & PersonPreviewActionHandlers;
 
 export function PersonPreviewPhoto({
   activeAction,
   isLoadingNextPerson,
+  isSubmitting,
+  onActionEnd,
+  onActionStart,
   person,
 }: PersonPreviewPhotoProps) {
   const actionIcon = activeAction === "like" ? thumbUpIcon : thumbDownIcon;
@@ -136,6 +149,14 @@ export function PersonPreviewPhoto({
         <DecisionBadge activeAction={activeAction} side="like">
           ÁNO
         </DecisionBadge>
+        <Box {...styles.actions}>
+          <PersonPreviewActionButtons
+            activeAction={activeAction}
+            isSubmitting={isSubmitting}
+            onActionEnd={onActionEnd}
+            onActionStart={onActionStart}
+          />
+        </Box>
       </Box>
       {isLoadingNextPerson && (
         <Flex {...styles.transitionOverlay}>

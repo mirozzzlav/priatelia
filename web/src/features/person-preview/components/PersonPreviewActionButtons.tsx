@@ -1,5 +1,5 @@
 import type { KeyboardEvent } from "react";
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, type ButtonProps } from "@chakra-ui/react";
 
 import thumbDownFilledIcon from "assets/thumb-down-filled.svg";
 import thumbDownIcon from "assets/thumb-down.svg";
@@ -14,28 +14,27 @@ import type {
 
 const styles = {
   grid: {
-    flexShrink: 0,
-    justify: "flex-end",
-    gap: "16px",
+    w: "100%",
+    gap: 0,
   },
   button: {
-    boxSize: "55px",
-    minW: "55px",
+    flex: "1 1 50%",
+    h: "68px",
+    minW: 0,
     p: 0,
-    border: "1px solid",
-    borderColor: "rgba(255, 255, 255, 0.62)",
-    borderRadius: "999px",
-    bg: "rgba(255, 255, 255, 0.88)",
-    boxShadow: "0 10px 22px rgba(0, 0, 0, 0.16)",
-    backdropFilter: "blur(14px)",
-    transition:
-      "background 140ms ease, border-color 140ms ease",
+    border: 0,
+    borderTop: "1px solid",
+    borderColor: "rgba(255, 255, 255, 0.46)",
+    borderRadius: 0,
+    bg: "rgba(255, 255, 255, 0.72)",
+    backdropFilter: "blur(16px)",
+    transition: "background 140ms ease, border-color 140ms ease",
     _hover: {
-      bg: "app.white",
-      borderColor: "app.white",
+      bg: "rgba(255, 255, 255, 0.86)",
+      borderColor: "rgba(255, 255, 255, 0.72)",
     },
     _active: {
-      bg: "app.white",
+      bg: "rgba(255, 255, 255, 0.92)",
     },
     sx: {
       "&:hover [data-outline-icon], &:active [data-outline-icon], &[data-active='true'] [data-outline-icon]":
@@ -67,12 +66,30 @@ const styles = {
   filledIcon: {
     opacity: 0,
   },
+  likeButton: {
+    borderBottomLeftRadius: "28px",
+    borderRight: "1px solid",
+    borderRightColor: "rgba(38, 57, 111, 0.36)",
+    _hover: {
+      bg: "rgba(255, 255, 255, 0.86)",
+      borderColor: "rgba(255, 255, 255, 0.72)",
+      borderRightColor: "rgba(38, 57, 111, 0.36)",
+    },
+    _active: {
+      bg: "rgba(255, 255, 255, 0.92)",
+      borderRightColor: "rgba(38, 57, 111, 0.36)",
+    },
+  },
+  nopeButton: {
+    borderBottomRightRadius: "28px",
+  },
 } as const;
 
 type PersonPreviewActionButtonProps = PersonPreviewActionHandlers & {
   action: PersonPreviewAction;
   activeAction: ActivePersonPreviewAction;
   ariaLabel: string;
+  buttonStyles: ButtonProps;
   filledIcon: string;
   icon: string;
   isSubmitting: boolean;
@@ -82,6 +99,7 @@ function PersonPreviewActionButton({
   action,
   activeAction,
   ariaLabel,
+  buttonStyles,
   filledIcon,
   icon,
   isSubmitting,
@@ -129,6 +147,7 @@ function PersonPreviewActionButton({
       opacity={isCurrentActionSubmitting ? 1 : undefined}
       data-active={isCurrentActionSubmitting ? "true" : undefined}
       {...styles.button}
+      {...buttonStyles}
     >
       <Box data-action-icon {...styles.iconWrap}>
         <SvgImage
@@ -169,6 +188,7 @@ function LikeButton({
       isSubmitting={isSubmitting}
       onActionEnd={onActionEnd}
       onActionStart={onActionStart}
+      buttonStyles={styles.likeButton}
     />
   );
 }
@@ -192,6 +212,7 @@ function NopeButton({
       isSubmitting={isSubmitting}
       onActionEnd={onActionEnd}
       onActionStart={onActionStart}
+      buttonStyles={styles.nopeButton}
     />
   );
 }

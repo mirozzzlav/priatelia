@@ -1,11 +1,6 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
-import { PersonPreviewActionButtons } from "src/features/person-preview/components/PersonPreviewActionButtons";
-import type {
-  ActivePersonPreviewAction,
-  PersonPreview,
-  PersonPreviewActionHandlers,
-} from "src/features/person-preview/types";
+import type { PersonPreview } from "src/features/person-preview/types";
 
 const styles = {
   root: {
@@ -28,14 +23,6 @@ const styles = {
       },
     },
   },
-  contentRow: {
-    align: "center",
-    justify: "space-between",
-    gap: "14px",
-  },
-  summary: {
-    minW: 0,
-  },
   headingRow: {
     align: "baseline",
     gap: "10px",
@@ -44,13 +31,18 @@ const styles = {
   },
   name: {
     m: 0,
-    fontSize: "3xl",
+    minW: 0,
+    overflow: "hidden",
+    fontSize: { base: "2xl", sm: "3xl" },
     lineHeight: 1,
     letterSpacing: 0,
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
     _after: { content: '","' },
-    fontWeight: "normal"
+    fontWeight: "normal",
   },
   age: {
+    flexShrink: 0,
     fontSize: "3xl",
     fontWeight: "semibold",
     color: "app.info",
@@ -58,6 +50,7 @@ const styles = {
   metaList: {
     flexWrap: "wrap",
     gap: "8px",
+    minW: 0,
   },
   metaItem: {
     px: "14px",
@@ -70,45 +63,26 @@ const styles = {
   },
 } as const;
 
-type PersonPreviewToolbarProps = PersonPreviewActionHandlers & {
-  activeAction: ActivePersonPreviewAction;
-  isSubmitting: boolean;
+type PersonPreviewToolbarProps = {
   person: PersonPreview;
 };
 
-export function PersonPreviewToolbar({
-  activeAction,
-  isSubmitting,
-  person,
-  onActionEnd,
-  onActionStart,
-}: PersonPreviewToolbarProps) {
+export function PersonPreviewToolbar({ person }: PersonPreviewToolbarProps) {
   return (
     <Box {...styles.root}>
-      <Flex {...styles.contentRow}>
-        <Box {...styles.summary}>
-          <Flex {...styles.headingRow}>
-            <Heading as="h1" {...styles.name}>
-              {person.name}
-            </Heading>
-            <Text {...styles.age}>{person.age}</Text>
-          </Flex>
+      <Flex {...styles.headingRow}>
+        <Heading as="h1" {...styles.name}>
+          {person.name}
+        </Heading>
+        <Text {...styles.age}>{person.age}</Text>
+      </Flex>
 
-          <Flex {...styles.metaList}>
-            {person.meta.map((item) => (
-              <Text key={item} {...styles.metaItem}>
-                {item}
-              </Text>
-            ))}
-          </Flex>
-        </Box>
-
-        <PersonPreviewActionButtons
-          activeAction={activeAction}
-          isSubmitting={isSubmitting}
-          onActionEnd={onActionEnd}
-          onActionStart={onActionStart}
-        />
+      <Flex {...styles.metaList}>
+        {person.meta.map((item) => (
+          <Text key={item} {...styles.metaItem}>
+            {item}
+          </Text>
+        ))}
       </Flex>
     </Box>
   );

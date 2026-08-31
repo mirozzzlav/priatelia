@@ -72,14 +72,13 @@ export function DiscoveryRoute({
         <>
           <PersonPreviewToolbar
             person={personPreview}
-            activeAction={activeAction}
-            isSubmitting={isSubmittingPersonPreviewAction}
-            onActionEnd={onActionEnd}
-            onActionStart={onActionStart}
           />
           <PersonPreviewPhoto
             activeAction={activeAction}
             isLoadingNextPerson={isSubmittingPersonPreviewAction}
+            isSubmitting={isSubmittingPersonPreviewAction}
+            onActionEnd={onActionEnd}
+            onActionStart={onActionStart}
             person={personPreview}
           />
           <ScrollCue />
