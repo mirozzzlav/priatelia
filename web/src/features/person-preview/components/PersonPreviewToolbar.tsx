@@ -42,10 +42,11 @@ const styles = {
     lineHeight: 1,
     letterSpacing: 0,
     _after: { content: '","' },
+    fontWeight: "normal"
   },
   age: {
     fontSize: "3xl",
-    fontWeight: "bold",
+    fontWeight: "semibold",
     color: "app.info",
   },
   metaList: {
@@ -54,16 +55,13 @@ const styles = {
     mb: "18px",
   },
   metaItem: {
-    px: "10px",
+    px: "14px",
     py: "7px",
-    border: "1px solid",
-    borderColor: "app.white",
     borderRadius: "999px",
-    bg: "app.base",
+    bg: "app.baseDark",
     color: "app.white",
-    fontSize: "xs",
-    fontWeight: "bold",
-    backdropFilter: "blur(10px)",
+    fontSize: "sm",
+    fontWeight: "semibold",
   },
 } as const;
 
