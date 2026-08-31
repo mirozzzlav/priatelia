@@ -1,4 +1,4 @@
-import type { ApiClient } from "src/services/api/types";
+import type { ApiClient, LoginResponse } from "src/services/api/types";
 import type { EditableProfileData } from "src/features/profile";
 import type { RegistrationPhoto } from "src/features/registration";
 import { getStoredSession } from "src/services/api/sessionStorage";
@@ -115,11 +115,17 @@ async function uploadLocalPhotos<TData extends { photos: RegistrationPhoto[] }>(
 }
 
 export const restClient: ApiClient = {
-  activateAccount(token) {
-    return request("/auth/activate", {
+  async activateAccount(token) {
+    const response = await request<LoginResponse>("/auth/activate", {
       body: JSON.stringify({ token }),
       method: "POST",
     });
+
+    if (response.status === "error") {
+      throw new Error("Account activation failed");
+    }
+
+    return response.data;
   },
 
   getPersonPreview() {

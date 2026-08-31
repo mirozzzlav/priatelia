@@ -2,6 +2,17 @@ import type { UserSession } from "src/services/api/types";
 
 const sessionStorageKey = "priatelia.session";
 
+function isUserSession(value: unknown): value is UserSession {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "nickname" in value &&
+    typeof value.nickname === "string" &&
+    "token" in value &&
+    typeof value.token === "string"
+  );
+}
+
 export function getStoredSession(): UserSession | null {
   const rawSession = window.localStorage.getItem(sessionStorageKey);
 
@@ -10,7 +21,14 @@ export function getStoredSession(): UserSession | null {
   }
 
   try {
-    return JSON.parse(rawSession) as UserSession;
+    const session = JSON.parse(rawSession) as unknown;
+
+    if (!isUserSession(session)) {
+      window.localStorage.removeItem(sessionStorageKey);
+      return null;
+    }
+
+    return session;
   } catch {
     window.localStorage.removeItem(sessionStorageKey);
     return null;

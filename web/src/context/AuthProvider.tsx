@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 
 import { AuthContext } from "src/context/auth";
 import type { UserSession } from "src/services/api";
@@ -15,15 +15,15 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<UserSession | null>(getStoredSession);
 
-  const login = (nextSession: UserSession) => {
+  const login = useCallback((nextSession: UserSession) => {
     storeSession(nextSession);
     setSession(nextSession);
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     clearStoredSession();
     setSession(null);
-  };
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -32,7 +32,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       logout,
       session,
     }),
-    [session],
+    [login, logout, session],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
