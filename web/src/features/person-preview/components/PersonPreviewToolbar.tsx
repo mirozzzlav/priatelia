@@ -28,13 +28,19 @@ const styles = {
       },
     },
   },
+  contentRow: {
+    align: "center",
+    justify: "space-between",
+    gap: "14px",
+  },
   summary: {
-    mb: "12px",
+    minW: 0,
   },
   headingRow: {
     align: "baseline",
     gap: "10px",
     mb: "8px",
+    minW: 0,
   },
   name: {
     m: 0,
@@ -52,7 +58,6 @@ const styles = {
   metaList: {
     flexWrap: "wrap",
     gap: "8px",
-    mb: "18px",
   },
   metaItem: {
     px: "14px",
@@ -80,29 +85,31 @@ export function PersonPreviewToolbar({
 }: PersonPreviewToolbarProps) {
   return (
     <Box {...styles.root}>
-      <Box {...styles.summary}>
-        <Flex {...styles.headingRow}>
-          <Heading as="h1" {...styles.name}>
-            {person.name}
-          </Heading>
-          <Text {...styles.age}>{person.age}</Text>
-        </Flex>
+      <Flex {...styles.contentRow}>
+        <Box {...styles.summary}>
+          <Flex {...styles.headingRow}>
+            <Heading as="h1" {...styles.name}>
+              {person.name}
+            </Heading>
+            <Text {...styles.age}>{person.age}</Text>
+          </Flex>
 
-        <Flex {...styles.metaList}>
-          {person.meta.map((item) => (
-            <Text key={item} {...styles.metaItem}>
-              {item}
-            </Text>
-          ))}
-        </Flex>
-      </Box>
+          <Flex {...styles.metaList}>
+            {person.meta.map((item) => (
+              <Text key={item} {...styles.metaItem}>
+                {item}
+              </Text>
+            ))}
+          </Flex>
+        </Box>
 
-      <PersonPreviewActionButtons
-        activeAction={activeAction}
-        isSubmitting={isSubmitting}
-        onActionEnd={onActionEnd}
-        onActionStart={onActionStart}
-      />
+        <PersonPreviewActionButtons
+          activeAction={activeAction}
+          isSubmitting={isSubmitting}
+          onActionEnd={onActionEnd}
+          onActionStart={onActionStart}
+        />
+      </Flex>
     </Box>
   );
 }

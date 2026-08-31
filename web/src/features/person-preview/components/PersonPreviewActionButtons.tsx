@@ -14,12 +14,13 @@ import type {
 
 const styles = {
   grid: {
-    justify: "flex-start",
+    flexShrink: 0,
+    justify: "flex-end",
     gap: "16px",
   },
   button: {
-    boxSize: "48px",
-    minW: "48px",
+    boxSize: "55px",
+    minW: "55px",
     p: 0,
     border: "1px solid",
     borderColor: "rgba(255, 255, 255, 0.62)",
@@ -28,16 +29,13 @@ const styles = {
     boxShadow: "0 10px 22px rgba(0, 0, 0, 0.16)",
     backdropFilter: "blur(14px)",
     transition:
-      "background 140ms ease, border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease",
+      "background 140ms ease, border-color 140ms ease",
     _hover: {
       bg: "app.white",
       borderColor: "app.white",
-      boxShadow: "0 12px 26px rgba(0, 0, 0, 0.2)",
-      transform: "translateY(-1px)",
     },
     _active: {
       bg: "app.white",
-      transform: "translateY(0)",
     },
     sx: {
       "&:hover [data-outline-icon], &:active [data-outline-icon], &[data-active='true'] [data-outline-icon]":
@@ -48,10 +46,6 @@ const styles = {
         {
           opacity: 1,
         },
-      "&:hover [data-action-icon], &:active [data-action-icon], &[data-active='true'] [data-action-icon]":
-        {
-          transform: "scale(1.08)",
-        },
     },
     _disabled: {
       opacity: 0.54,
@@ -60,8 +54,7 @@ const styles = {
   },
   iconWrap: {
     position: "relative",
-    boxSize: "34px",
-    transition: "transform 140ms ease",
+    boxSize: "39px",
   },
   icon: {
     position: "absolute",
@@ -140,14 +133,14 @@ function PersonPreviewActionButton({
       <Box data-action-icon {...styles.iconWrap}>
         <SvgImage
           src={icon}
-          boxSize="34px"
+          boxSize="39px"
           data-outline-icon
           {...styles.icon}
           {...styles.outlineIcon}
         />
         <SvgImage
           src={filledIcon}
-          boxSize="34px"
+          boxSize="39px"
           data-filled-icon
           {...styles.icon}
           {...styles.filledIcon}
