@@ -45,6 +45,34 @@ const styles = {
         {
           opacity: 1,
         },
+      "&:hover [data-action-icon='like']": {
+        animation: "thumbUpHover 360ms ease both",
+      },
+      "&:hover [data-action-icon='nope']": {
+        animation: "thumbDownHover 360ms ease both",
+      },
+      "@keyframes thumbUpHover": {
+        "0%": {
+          transform: "translateY(0) rotate(0deg)",
+        },
+        "45%": {
+          transform: "translateY(-3px) rotate(-6deg)",
+        },
+        "100%": {
+          transform: "translateY(0) rotate(0deg)",
+        },
+      },
+      "@keyframes thumbDownHover": {
+        "0%": {
+          transform: "translateY(0) rotate(0deg)",
+        },
+        "45%": {
+          transform: "translateY(3px) rotate(-6deg)",
+        },
+        "100%": {
+          transform: "translateY(0) rotate(0deg)",
+        },
+      },
     },
     _disabled: {
       opacity: 0.54,
@@ -149,7 +177,7 @@ function PersonPreviewActionButton({
       {...styles.button}
       {...buttonStyles}
     >
-      <Box data-action-icon {...styles.iconWrap}>
+      <Box data-action-icon={action} {...styles.iconWrap}>
         <SvgImage
           src={icon}
           boxSize="39px"
