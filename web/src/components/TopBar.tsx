@@ -7,6 +7,7 @@ import {
   MenuList,
   Text,
 } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
 
 import hugIcon from "assets/hug.svg";
 import logoutIcon from "assets/logout.svg";
@@ -74,6 +75,11 @@ const styles = {
     align: "center",
     gap: "6px",
     h: "44px",
+    cursor: "pointer",
+    textDecoration: "none",
+    _hover: {
+      textDecoration: "none",
+    },
   },
   brandMark: {
     w: "48px",
@@ -166,7 +172,12 @@ export function TopBar({
         <Flex aria-hidden="true" {...styles.emptySlot} />
       )}
 
-      <Flex aria-label={appConfig.name} {...styles.brand}>
+      <Flex
+        as={RouterLink}
+        to="/discover"
+        aria-label={appConfig.name}
+        {...styles.brand}
+      >
         <Flex {...styles.brandMark}>
           <SvgImage src={hugIcon} w="41px" h="35px" />
         </Flex>
