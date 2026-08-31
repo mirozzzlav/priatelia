@@ -45,6 +45,24 @@ services:
     volumes:
       - ./api:/app
 
+  notification-worker:
+    build: ./api
+    command: python -m app.modules.notifications.worker
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql://priatelia:priatelia@database:5432/priatelia
+      WEB_APP_URL: http://localhost:4444
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1026
+      SMTP_FROM: noreply@priatelia.local
+    depends_on:
+      database:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    volumes:
+      - ./api:/app
+
   database:
     image: postgres:16
     ports:

@@ -11,11 +11,10 @@ from app.modules.auth.schemas import (
     RegistrationSuccess,
     UserSession,
 )
+from app.modules.notifications.service import NotificationService
 from app.shared.auth.passwords import hash_password, verify_password
 from app.shared.auth.tokens import create_access_token
-from app.shared.config.settings import get_settings
 from app.shared.events.repository import EventRepository
-from app.shared.mail.client import MailClient
 from app.shared.tags import normalize_tag_id
 
 
@@ -65,11 +64,11 @@ class AuthService:
         self,
         repository: AuthRepository,
         events: EventRepository,
-        mail: MailClient | None = None,
+        notifications: NotificationService,
     ):
         self.repository = repository
         self.events = events
-        self.mail = mail or MailClient()
+        self.notifications = notifications
 
     async def register(
         self, data: RegisterRequest
@@ -128,15 +127,11 @@ class AuthService:
             "UserRegistered",
             {"userId": str(user.id), "nickname": user.nickname},
         )
-        await self.mail.send(
-            to=data.email.strip(),
-            subject="Aktivuj si účet Priatelia",
-            body=(
-                "Ahoj,\n\n"
-                "klikni na tento odkaz a aktivuj si účet:\n"
-                f"{get_settings().web_app_url}/activate?token={activation_token}\n\n"
-                "Link platí 24 hodín."
-            ),
+        await self.notifications.enqueue_activation_email(
+            user_id=user.id,
+            email=data.email.strip(),
+            nickname=user.nickname,
+            activation_token=activation_token,
         )
 
         return RegistrationSuccess()

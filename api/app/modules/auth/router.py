@@ -1,10 +1,13 @@
 from typing import Any
+
 from fastapi import APIRouter, Depends
 from psycopg import AsyncConnection
 
 from app.modules.auth.repository import AuthRepository
 from app.modules.auth.schemas import ActivationRequest, LoginRequest, RegisterRequest
 from app.modules.auth.service import AuthService
+from app.modules.notifications.repository import NotificationRepository
+from app.modules.notifications.service import NotificationService
 from app.shared.auth.dependencies import CurrentUser, get_current_user
 from app.shared.database.connection import get_connection
 from app.shared.events.repository import EventRepository
@@ -23,7 +26,11 @@ async def register(
     data: RegisterRequest,
     connection: AsyncConnection = Depends(get_connection),
 ) -> dict[str, Any]:
-    service = AuthService(AuthRepository(connection), EventRepository(connection))
+    service = AuthService(
+        AuthRepository(connection),
+        EventRepository(connection),
+        NotificationService(NotificationRepository(connection)),
+    )
     result = await service.register(data)
     await connection.commit()
     return _api_response(result)
@@ -34,7 +41,11 @@ async def login(
     data: LoginRequest,
     connection: AsyncConnection = Depends(get_connection),
 ) -> dict[str, Any]:
-    service = AuthService(AuthRepository(connection), EventRepository(connection))
+    service = AuthService(
+        AuthRepository(connection),
+        EventRepository(connection),
+        NotificationService(NotificationRepository(connection)),
+    )
     return _api_response(await service.login(data))
 
 
@@ -43,7 +54,11 @@ async def activate_account(
     data: ActivationRequest,
     connection: AsyncConnection = Depends(get_connection),
 ) -> dict[str, Any]:
-    service = AuthService(AuthRepository(connection), EventRepository(connection))
+    service = AuthService(
+        AuthRepository(connection),
+        EventRepository(connection),
+        NotificationService(NotificationRepository(connection)),
+    )
     result = await service.activate_account(data)
     await connection.commit()
     return _api_response(result)
@@ -55,7 +70,11 @@ async def update_password(
     current_user: CurrentUser = Depends(get_current_user),
     connection: AsyncConnection = Depends(get_connection),
 ) -> dict[str, Any]:
-    service = AuthService(AuthRepository(connection), EventRepository(connection))
+    service = AuthService(
+        AuthRepository(connection),
+        EventRepository(connection),
+        NotificationService(NotificationRepository(connection)),
+    )
     errors = await service.update_password(
         current_user.id,
         data.get("currentPassword", ""),

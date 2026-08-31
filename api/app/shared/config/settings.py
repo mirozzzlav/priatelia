@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     smtp_host: str = "mailpit"
     smtp_port: int = 1026
     smtp_from: str = "noreply@priatelia.local"
+    notification_worker_batch_size: int = 10
+    notification_worker_poll_seconds: float = 2.0
+    notification_worker_max_attempts: int = 5
+    notification_worker_processing_timeout_seconds: int = 300
 
     media_endpoint: str = "media:9000"
     media_access_key: str = "priatelia"
