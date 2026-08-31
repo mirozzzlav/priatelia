@@ -2,10 +2,10 @@ services:
   web:
     build: ./web
     ports:
-      - "4444:4444"
+      - "${WEB_PORT:-4444}:4444"
     environment:
-      VITE_DATA_SOURCE: rest
-      VITE_API_BASE_URL: http://localhost:3000
+      VITE_DATA_SOURCE: ${VITE_DATA_SOURCE:-rest}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000}
     depends_on:
       - api
     volumes:
@@ -15,24 +15,28 @@ services:
   api:
     build: ./api
     ports:
-      - "3000:3000"
+      - "${API_PORT:-3000}:3000"
     environment:
-      APP_ENV: development
-      DATABASE_URL: postgresql://priatelia:priatelia@database:5432/priatelia
-      JWT_SECRET: change-me-in-production
-      JWT_ALGORITHM: HS256
-      JWT_EXPIRES_MINUTES: 43200
-      WEB_APP_URL: http://localhost:4444
-      CORS_ORIGINS: '["http://localhost:4444","http://127.0.0.1:4444","http://localhost:5173","http://127.0.0.1:5173"]'
-      SMTP_HOST: mailpit
-      SMTP_PORT: 1026
-      SMTP_FROM: noreply@priatelia.local
-      MEDIA_ENDPOINT: media:9000
-      MEDIA_ACCESS_KEY: priatelia
-      MEDIA_SECRET_KEY: priatelia
-      MEDIA_BUCKET: profile-photos
-      MEDIA_PUBLIC_URL: http://localhost:9000/profile-photos
-      MEDIA_SECURE: "false"
+      APP_ENV: ${APP_ENV:-development}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://priatelia:priatelia@database:5432/priatelia}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      JWT_EXPIRES_MINUTES: ${JWT_EXPIRES_MINUTES:-43200}
+      WEB_APP_URL: ${WEB_APP_URL:-http://localhost:4444}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:4444","http://127.0.0.1:4444","http://localhost:5173","http://127.0.0.1:5173"]}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1026}
+      SMTP_FROM: ${SMTP_FROM:-noreply@priatelia.local}
+      MEDIA_ENDPOINT: ${MEDIA_ENDPOINT:-media:9000}
+      MEDIA_ACCESS_KEY: ${MEDIA_ACCESS_KEY:-priatelia}
+      MEDIA_SECRET_KEY: ${MEDIA_SECRET_KEY:-priatelia}
+      MEDIA_BUCKET: ${MEDIA_BUCKET:-profile-photos}
+      MEDIA_PUBLIC_URL: ${MEDIA_PUBLIC_URL:-http://localhost:9000/profile-photos}
+      MEDIA_SECURE: ${MEDIA_SECURE:-false}
+      NOTIFICATION_WORKER_BATCH_SIZE: ${NOTIFICATION_WORKER_BATCH_SIZE:-10}
+      NOTIFICATION_WORKER_POLL_SECONDS: ${NOTIFICATION_WORKER_POLL_SECONDS:-2.0}
+      NOTIFICATION_WORKER_MAX_ATTEMPTS: ${NOTIFICATION_WORKER_MAX_ATTEMPTS:-5}
+      NOTIFICATION_WORKER_PROCESSING_TIMEOUT_SECONDS: ${NOTIFICATION_WORKER_PROCESSING_TIMEOUT_SECONDS:-300}
     depends_on:
       database:
         condition: service_healthy
@@ -49,12 +53,16 @@ services:
     build: ./api
     command: python -m app.modules.notifications.worker
     environment:
-      APP_ENV: development
-      DATABASE_URL: postgresql://priatelia:priatelia@database:5432/priatelia
-      WEB_APP_URL: http://localhost:4444
-      SMTP_HOST: mailpit
-      SMTP_PORT: 1026
-      SMTP_FROM: noreply@priatelia.local
+      APP_ENV: ${APP_ENV:-development}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://priatelia:priatelia@database:5432/priatelia}
+      WEB_APP_URL: ${WEB_APP_URL:-http://localhost:4444}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1026}
+      SMTP_FROM: ${SMTP_FROM:-noreply@priatelia.local}
+      NOTIFICATION_WORKER_BATCH_SIZE: ${NOTIFICATION_WORKER_BATCH_SIZE:-10}
+      NOTIFICATION_WORKER_POLL_SECONDS: ${NOTIFICATION_WORKER_POLL_SECONDS:-2.0}
+      NOTIFICATION_WORKER_MAX_ATTEMPTS: ${NOTIFICATION_WORKER_MAX_ATTEMPTS:-5}
+      NOTIFICATION_WORKER_PROCESSING_TIMEOUT_SECONDS: ${NOTIFICATION_WORKER_PROCESSING_TIMEOUT_SECONDS:-300}
     depends_on:
       database:
         condition: service_healthy
@@ -66,11 +74,11 @@ services:
   database:
     image: postgres:16
     ports:
-      - "5432:5432"
+      - "${DATABASE_PORT:-5432}:5432"
     environment:
-      POSTGRES_DB: priatelia
-      POSTGRES_USER: priatelia
-      POSTGRES_PASSWORD: priatelia
+      POSTGRES_DB: ${POSTGRES_DB:-priatelia}
+      POSTGRES_USER: ${POSTGRES_USER:-priatelia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-priatelia}
     volumes:
       - priatelia_database:/var/lib/postgresql/data
     healthcheck:
@@ -83,11 +91,11 @@ services:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "${MEDIA_API_PORT:-9000}:9000"
+      - "${MEDIA_CONSOLE_PORT:-9001}:9001"
     environment:
-      MINIO_ROOT_USER: priatelia
-      MINIO_ROOT_PASSWORD: priatelia
+      MINIO_ROOT_USER: ${MEDIA_ACCESS_KEY:-priatelia}
+      MINIO_ROOT_PASSWORD: ${MEDIA_SECRET_KEY:-priatelia}
     volumes:
       - priatelia_media:/data
     healthcheck:
@@ -105,16 +113,16 @@ services:
       - /bin/sh
       - -c
       - |
-        mc alias set local http://media:9000 priatelia priatelia
-        mc mb --ignore-existing local/profile-photos
-        mc anonymous set download local/profile-photos
+        mc alias set local http://media:9000 ${MEDIA_ACCESS_KEY:-priatelia} ${MEDIA_SECRET_KEY:-priatelia}
+        mc mb --ignore-existing local/${MEDIA_BUCKET:-profile-photos}
+        mc anonymous set download local/${MEDIA_BUCKET:-profile-photos}
 
   mailpit:
     image: axllent/mailpit:latest
-    command: ["--smtp", "0.0.0.0:1026"]
+    command: ["--smtp", "0.0.0.0:${SMTP_PORT:-1026}"]
     ports:
-      - "1026:1026"
-      - "8025:8025"
+      - "${MAILPIT_SMTP_PORT:-1026}:${SMTP_PORT:-1026}"
+      - "${MAILPIT_UI_PORT:-8025}:8025"
 
 volumes:
   priatelia_database:

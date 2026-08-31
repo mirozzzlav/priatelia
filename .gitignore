@@ -3,3 +3,6 @@
 .idea/
 .vite/
 .DS_Store
+.env
+.env.*
+!.env.example
