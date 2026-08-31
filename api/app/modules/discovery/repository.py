@@ -45,7 +45,7 @@ class DiscoveryRepository:
                 u.nickname AS name,
                 COALESCE(primary_photo.url, '') AS photo,
                 COALESCE(photo_list.photos, ARRAY[]::text[]) AS photos,
-                ARRAY[]::text[] AS tags
+                COALESCE(interest_list.interests, ARRAY[]::json[]) AS tags
             FROM profiles p
             JOIN users u ON u.id = p.user_id
             CROSS JOIN settings s
@@ -61,6 +61,15 @@ class DiscoveryRepository:
                 FROM profile_photos pp
                 WHERE pp.user_id = p.user_id
             ) photo_list ON true
+            LEFT JOIN LATERAL (
+                SELECT array_agg(
+                    json_build_object('id', it.id, 'name', it.name)
+                    ORDER BY pi.position, it.name
+                ) AS interests
+                FROM profile_interests pi
+                JOIN interest_tags it ON it.id = pi.interest_id
+                WHERE pi.user_id = p.user_id
+            ) interest_list ON true
             WHERE p.user_id <> %s
               AND date_part('year', age(p.birth_date)) BETWEEN s.age_from AND s.age_to
               AND NOT EXISTS (

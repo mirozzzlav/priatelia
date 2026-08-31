@@ -15,7 +15,13 @@ export const mockPersonPreviews: PersonPreview[] = [
       "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=85",
     ],
-    tags: ["Turistika", "Koncerty", "Knihy", "Varím doma", "Pes"],
+    tags: [
+      { id: "turistika", name: "Turistika" },
+      { id: "koncerty", name: "Koncerty" },
+      { id: "knihy", name: "Knihy" },
+      { id: "varenie", name: "Varenie" },
+      { id: "cestovanie", name: "Cestovanie" },
+    ],
   },
   {
     id: "mock-profile-tomas",
@@ -30,7 +36,13 @@ export const mockPersonPreviews: PersonPreview[] = [
       "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=85",
     ],
-    tags: ["Lezenie", "Kino", "Káva", "Cestovanie", "Varím"],
+    tags: [
+      { id: "lezenie", name: "Lezenie" },
+      { id: "kino", name: "Kino" },
+      { id: "kava", name: "Káva" },
+      { id: "cestovanie", name: "Cestovanie" },
+      { id: "varenie", name: "Varenie" },
+    ],
   },
   {
     id: "mock-profile-ela",
@@ -45,7 +57,13 @@ export const mockPersonPreviews: PersonPreview[] = [
       "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=900&q=85",
     ],
-    tags: ["Beh", "Dizajn", "Výstavy", "Bistrá", "Podcasty"],
+    tags: [
+      { id: "beh", name: "Beh" },
+      { id: "dizajn", name: "Dizajn" },
+      { id: "vystavy", name: "Výstavy" },
+      { id: "bistra", name: "Bistrá" },
+      { id: "podcasty", name: "Podcasty" },
+    ],
   },
   {
     id: "mock-profile-marek",
@@ -60,7 +78,13 @@ export const mockPersonPreviews: PersonPreview[] = [
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=900&q=85",
     ],
-    tags: ["Gitara", "Doskovky", "Koncerty", "Jedlo", "Výlet"],
+    tags: [
+      { id: "gitara", name: "Gitara" },
+      { id: "doskovky", name: "Doskovky" },
+      { id: "koncerty", name: "Koncerty" },
+      { id: "jedlo", name: "Jedlo" },
+      { id: "vylety", name: "Výlety" },
+    ],
   },
   {
     id: "mock-profile-sara",
@@ -75,7 +99,13 @@ export const mockPersonPreviews: PersonPreview[] = [
       "https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=900&q=85",
     ],
-    tags: ["Knihy", "Plávanie", "Wellness", "Výlety", "Čaj"],
+    tags: [
+      { id: "knihy", name: "Knihy" },
+      { id: "plavanie", name: "Plávanie" },
+      { id: "wellness", name: "Wellness" },
+      { id: "vylety", name: "Výlety" },
+      { id: "caj", name: "Čaj" },
+    ],
   },
 ];
 

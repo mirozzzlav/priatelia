@@ -14,6 +14,7 @@ import {
   mockInitialChatMatchIds,
   mockPersonPreviews,
 } from "src/services/api/mockData";
+import { interestOptions } from "src/constants/interests";
 
 type PersonPreviewDecision = {
   action: Parameters<ApiClient["submitPersonPreviewAction"]>[1];
@@ -165,6 +166,10 @@ function getRegistrationErrors(data: Parameters<ApiClient["register"]>[0]) {
     errors.bio = "Bio musí obsahovať aspoň 3 slová.";
   }
 
+  if (data.interests.length === 0) {
+    errors.interests = "Pridaj aspoň jeden záujem.";
+  }
+
   if (data.photos.length === 0) {
     errors.photos = "Pridaj aspoň jednu fotku.";
   }
@@ -192,6 +197,10 @@ function getProfileErrors(data: Parameters<ApiClient["updateProfile"]>[0]) {
     errors.bio = "Vyplň krátke bio.";
   } else if (bioWordCount < 3) {
     errors.bio = "Bio musí obsahovať aspoň 3 slová.";
+  }
+
+  if (data.interests.length === 0) {
+    errors.interests = "Pridaj aspoň jeden záujem.";
   }
 
   if (data.photos.length === 0) {
@@ -283,6 +292,21 @@ export const mockClient: ApiClient = {
     await delay();
 
     return getRandomPersonPreview();
+  },
+
+  async searchInterests(query) {
+    const normalizedQuery = query.trim().toLocaleLowerCase("sk");
+    await delay();
+
+    return interestOptions
+      .filter((interest) => {
+        return (
+          normalizedQuery.length === 0 ||
+          interest.id.includes(normalizedQuery) ||
+          interest.name.toLocaleLowerCase("sk").includes(normalizedQuery)
+        );
+      })
+      .slice(0, 12);
   },
 
   async getChatMatches() {

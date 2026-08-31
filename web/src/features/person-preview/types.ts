@@ -1,3 +1,5 @@
+import type { InterestTag } from "src/features/interests/types";
+
 export type PersonPreview = {
   age: string;
   bio: string;
@@ -6,7 +8,7 @@ export type PersonPreview = {
   name: string;
   photo: string;
   photos: string[];
-  tags: string[];
+  tags: InterestTag[];
 };
 
 export type PersonPreviewAction = "like" | "nope";

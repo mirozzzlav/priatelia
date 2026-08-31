@@ -7,6 +7,7 @@ import type { RegistrationFormData } from "src/features/registration";
 const initialProfileData: EditableProfileData = {
   bio: "",
   birthDate: "",
+  interests: [],
   location: "",
   nickname: "",
   password: "",

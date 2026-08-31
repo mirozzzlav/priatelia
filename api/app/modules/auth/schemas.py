@@ -12,10 +12,16 @@ class RegistrationPhoto(BaseModel):
     url: str
 
 
+class InterestTag(BaseModel):
+    id: str
+    name: str
+
+
 class RegisterRequest(BaseModel):
     bio: str
     birthDate: str
     email: str
+    interests: list[InterestTag]
     location: str
     nickname: str
     password: str

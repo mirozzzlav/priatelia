@@ -1,4 +1,5 @@
 import type { LoginFormData } from "src/features/login";
+import type { InterestTag } from "src/features/interests/types";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import type { EditableProfileData } from "src/features/profile";
 import type {
@@ -133,6 +134,7 @@ export type ApiClient = {
   getChatMatches: () => Promise<ChatMatch[]>;
   getChatThread: (matchId: string) => Promise<ChatThread>;
   getPersonPreview: () => Promise<PersonPreview>;
+  searchInterests: (query: string) => Promise<InterestTag[]>;
   uploadProfilePhoto: (file: File) => Promise<UploadedProfilePhoto>;
   login: (data: LoginFormData) => Promise<LoginResponse>;
   register: (data: RegistrationFormData) => Promise<RegistrationResponse>;

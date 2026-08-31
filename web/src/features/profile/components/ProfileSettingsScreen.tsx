@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { Box, FormControl, FormErrorMessage } from "@chakra-ui/react";
 
+import { InterestSelectField } from "src/components/InterestSelectField";
 import { PhotoGalleryField } from "src/components/PhotoGalleryField";
 import {
   FormActions,
@@ -12,6 +13,7 @@ import {
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
+import type { InterestTag } from "src/features/interests/types";
 import type { EditableProfileData } from "src/features/profile/types";
 import type { RegistrationPhoto } from "src/features/registration";
 import type { ProfileFieldErrors } from "src/services/api";
@@ -54,7 +56,7 @@ export function ProfileSettingsScreen({
   const [wasSubmitted, setWasSubmitted] = useState(false);
 
   const updateField =
-    (field: keyof Omit<EditableProfileData, "photos">) =>
+    (field: keyof Omit<EditableProfileData, "interests" | "photos">) =>
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setFieldErrors({});
       setSubmitError(null);
@@ -89,6 +91,17 @@ export function ProfileSettingsScreen({
     });
 
     event.target.value = "";
+  };
+
+  const handleInterestsChange = (interests: InterestTag[]) => {
+    setFieldErrors({});
+    setSubmitError(null);
+    setWasSubmitted(false);
+    setIsSuccess(false);
+    setFormData((current) => ({
+      ...current,
+      interests,
+    }));
   };
 
   const setPrimaryPhoto = (photoId: string) => {
@@ -225,6 +238,13 @@ export function ProfileSettingsScreen({
             {fieldErrors.bio}
           </FormErrorMessage>
         </FormControl>
+
+        <InterestSelectField
+          error={fieldErrors.interests}
+          interests={formData.interests}
+          isInvalid={wasSubmitted && Boolean(fieldErrors.interests)}
+          onChange={handleInterestsChange}
+        />
 
         <PhotoGalleryField
           error={fieldErrors.photos}

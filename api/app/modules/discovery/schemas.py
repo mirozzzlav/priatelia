@@ -7,6 +7,11 @@ class DiscoverySettingsRequest(BaseModel):
     location: str
 
 
+class InterestTag(BaseModel):
+    id: str
+    name: str
+
+
 class PersonPreview(BaseModel):
     id: str
     age: str
@@ -15,4 +20,4 @@ class PersonPreview(BaseModel):
     name: str
     photo: str
     photos: list[str]
-    tags: list[str]
+    tags: list[InterestTag]

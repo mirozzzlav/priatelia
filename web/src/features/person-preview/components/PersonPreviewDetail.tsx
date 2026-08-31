@@ -1,5 +1,6 @@
-import { Box, Flex, Image, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Image, SimpleGrid, Text } from "@chakra-ui/react";
 
+import { InterestTagList } from "src/components/InterestTagList";
 import { DetailSection } from "src/features/person-preview/components/DetailSection";
 import type { PersonPreview } from "src/features/person-preview/types";
 
@@ -26,19 +27,6 @@ const styles = {
       objectFit: "cover",
       borderRadius: "18px",
     }) as const,
-  tags: {
-    flexWrap: "wrap",
-    gap: "8px",
-  },
-  tag: {
-    px: "12px",
-    py: "9px",
-    borderRadius: "999px",
-    bg: "app.bgAux",
-    color: "app.textAlt",
-    fontSize: "sm",
-    fontWeight: "bold",
-  },
 } as const;
 
 type PersonPreviewDetailProps = {
@@ -70,13 +58,7 @@ export function PersonPreviewDetail({ person }: PersonPreviewDetailProps) {
       )}
 
       <DetailSection title="Záujmy">
-        <Flex {...styles.tags}>
-          {person.tags.map((tag) => (
-            <Text key={tag} {...styles.tag}>
-              {tag}
-            </Text>
-          ))}
-        </Flex>
+        <InterestTagList tags={person.tags} />
       </DetailSection>
     </Box>
   );

@@ -12,9 +12,15 @@ class ProfilePhoto(BaseModel):
     url: str
 
 
+class InterestTag(BaseModel):
+    id: str
+    name: str
+
+
 class ProfileUpdateRequest(BaseModel):
     bio: str
     birthDate: str
+    interests: list[InterestTag]
     location: str
     nickname: str
     password: str | None = None

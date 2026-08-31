@@ -4,13 +4,21 @@ from fastapi import APIRouter, Depends
 from psycopg import AsyncConnection
 
 from app.modules.profiles.repository import ProfileRepository
-from app.modules.profiles.schemas import ProfileUpdateRequest
+from app.modules.profiles.schemas import InterestTag, ProfileUpdateRequest
 from app.modules.profiles.service import ProfileService
 from app.shared.auth.dependencies import CurrentUser, get_current_user
 from app.shared.database.connection import get_connection
 from app.shared.events.repository import EventRepository
 
 router = APIRouter(tags=["profiles"])
+
+
+@router.get("/interests")
+async def list_interest_options(
+    query: str = "",
+    connection: AsyncConnection = Depends(get_connection),
+) -> list[InterestTag]:
+    return await ProfileRepository(connection).list_interest_options(query)
 
 
 @router.get("/profile")
@@ -20,12 +28,14 @@ async def get_profile(
 ) -> dict[str, Any]:
     repository = ProfileRepository(connection)
     profile = await repository.get_profile(current_user.id)
+    interests = await repository.list_interests(current_user.id)
     photos = await repository.list_photos(current_user.id)
 
     if profile is None:
         return {
             "nickname": current_user.nickname,
             "birthDate": "",
+            "interests": [],
             "location": "",
             "bio": "",
             "photos": [],
@@ -34,6 +44,7 @@ async def get_profile(
     return {
         "nickname": profile.nickname,
         "birthDate": profile.birth_date.isoformat(),
+        "interests": [interest.model_dump() for interest in interests],
         "location": profile.location,
         "bio": profile.bio,
         "photos": [photo.model_dump() for photo in photos],

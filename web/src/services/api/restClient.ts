@@ -120,6 +120,11 @@ export const restClient: ApiClient = {
     return request("/discovery/profile");
   },
 
+  searchInterests(query) {
+    const params = new URLSearchParams({ query });
+    return request(`/interests?${params.toString()}`);
+  },
+
   getChatMatches() {
     return request("/chats/matches");
   },

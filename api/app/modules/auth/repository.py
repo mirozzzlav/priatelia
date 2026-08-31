@@ -118,6 +118,7 @@ class AuthRepository:
         birth_date: str,
         location: str,
         bio: str,
+        interest_ids: list[str],
         photos: list[RegistrationPhoto],
     ) -> None:
         await self.connection.execute(
@@ -128,10 +129,20 @@ class AuthRepository:
             (user_id, birth_date, location, bio),
         )
 
+        for position, interest_id in enumerate(interest_ids):
+            await self.connection.execute(
+                """
+                INSERT INTO profile_interests (user_id, interest_id, position)
+                VALUES (%s, %s, %s)
+                """,
+                (user_id, interest_id, position),
+            )
+
         for position, photo in enumerate(photos):
             await self.connection.execute(
                 """
-                INSERT INTO profile_photos (id, user_id, name, url, is_primary, position)
+                INSERT INTO profile_photos
+                    (id, user_id, name, url, is_primary, position)
                 VALUES (%s, %s, %s, %s, %s, %s)
                 """,
                 (photo.id, user_id, photo.name, photo.url, photo.isPrimary, position),
@@ -149,6 +160,21 @@ class AuthRepository:
             """,
             (user_id, location),
         )
+
+    async def list_known_interest_ids(self, interest_ids: list[str]) -> set[str]:
+        if not interest_ids:
+            return set()
+
+        cursor = await self.connection.execute(
+            """
+            SELECT id
+            FROM interest_tags
+            WHERE id = ANY(%s)
+            """,
+            (interest_ids,),
+        )
+        rows = await cursor.fetchall()
+        return {row["id"] for row in rows}
 
     async def update_password(self, user_id: UUID, password_hash: str) -> None:
         await self.connection.execute(

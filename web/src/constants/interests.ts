@@ -1,0 +1,27 @@
+import type { InterestTag } from "src/features/interests/types";
+
+export const interestOptions: InterestTag[] = [
+  { id: "beh", name: "Beh" },
+  { id: "bicykel", name: "Bicykel" },
+  { id: "bistra", name: "Bistrá" },
+  { id: "cestovanie", name: "Cestovanie" },
+  { id: "caj", name: "Čaj" },
+  { id: "dizajn", name: "Dizajn" },
+  { id: "doskovky", name: "Doskovky" },
+  { id: "fitko", name: "Fitko" },
+  { id: "fotografia", name: "Fotografia" },
+  { id: "gitara", name: "Gitara" },
+  { id: "jedlo", name: "Jedlo" },
+  { id: "kava", name: "Káva" },
+  { id: "kino", name: "Kino" },
+  { id: "knihy", name: "Knihy" },
+  { id: "koncerty", name: "Koncerty" },
+  { id: "lezenie", name: "Lezenie" },
+  { id: "plavanie", name: "Plávanie" },
+  { id: "podcasty", name: "Podcasty" },
+  { id: "turistika", name: "Turistika" },
+  { id: "varenie", name: "Varenie" },
+  { id: "wellness", name: "Wellness" },
+  { id: "vystavy", name: "Výstavy" },
+  { id: "vylety", name: "Výlety" },
+] as const;

@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { Box, FormControl, FormErrorMessage } from "@chakra-ui/react";
 
+import { InterestSelectField } from "src/components/InterestSelectField";
 import { PhotoGalleryField } from "src/components/PhotoGalleryField";
 import {
   FormInput,
@@ -11,6 +12,7 @@ import {
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
+import type { InterestTag } from "src/features/interests/types";
 import type {
   RegistrationFormData,
   RegistrationPhoto,
@@ -38,6 +40,7 @@ const initialFormData: RegistrationFormData = {
   bio: "",
   birthDate: "",
   email: "",
+  interests: [],
   location: "",
   nickname: "",
   password: "",
@@ -70,7 +73,7 @@ export function RegistrationScreen({
   const fieldErrors = serverFieldErrors;
 
   const updateField =
-    (field: keyof Omit<RegistrationFormData, "photos">) =>
+    (field: keyof Omit<RegistrationFormData, "interests" | "photos">) =>
     (event: ChangeEvent<HTMLInputElement>) => {
       setServerFieldErrors({});
       setSubmitError(null);
@@ -88,6 +91,16 @@ export function RegistrationScreen({
     setFormData((current) => ({
       ...current,
       bio: event.target.value,
+    }));
+  };
+
+  const handleInterestsChange = (interests: InterestTag[]) => {
+    setServerFieldErrors({});
+    setSubmitError(null);
+    setWasSubmitted(false);
+    setFormData((current) => ({
+      ...current,
+      interests,
     }));
   };
 
@@ -280,6 +293,13 @@ export function RegistrationScreen({
             {fieldErrors.bio}
           </FormErrorMessage>
         </FormControl>
+
+        <InterestSelectField
+          error={fieldErrors.interests}
+          interests={formData.interests}
+          isInvalid={wasSubmitted && Boolean(fieldErrors.interests)}
+          onChange={handleInterestsChange}
+        />
 
         <PhotoGalleryField
           error={fieldErrors.photos}

@@ -16,6 +16,7 @@ from app.shared.auth.tokens import create_access_token
 from app.shared.config.settings import get_settings
 from app.shared.events.repository import EventRepository
 from app.shared.mail.client import MailClient
+from app.shared.tags import normalize_tag_id
 
 
 def _word_count(value: str) -> int:
@@ -51,6 +52,8 @@ def validate_registration(data: RegisterRequest) -> dict[str, str]:
         errors_by_field["bio"] = "Vyplň krátke bio."
     elif _word_count(data.bio) < 3:
         errors_by_field["bio"] = "Bio musí obsahovať aspoň 3 slová."
+    if not data.interests:
+        errors_by_field["interests"] = "Pridaj aspoň jeden záujem."
     if not data.photos:
         errors_by_field["photos"] = "Pridaj aspoň jednu fotku."
 
@@ -68,16 +71,33 @@ class AuthService:
         self.events = events
         self.mail = mail or MailClient()
 
-    async def register(self, data: RegisterRequest) -> RegistrationSuccess | dict[str, Any]:
+    async def register(
+        self, data: RegisterRequest
+    ) -> RegistrationSuccess | dict[str, Any]:
         validation_errors = validate_registration(data)
         if validation_errors:
             return {"errors": validation_errors}
 
-        existing_user = await self.repository.get_user_by_nickname(data.nickname.strip())
+        interest_ids = list(dict.fromkeys(interest.id for interest in data.interests))
+        if any(
+            normalize_tag_id(interest.name) != interest.id
+            for interest in data.interests
+        ):
+            return {"errors": {"interests": "Vyber záujmy zo zoznamu."}}
+
+        known_interest_ids = await self.repository.list_known_interest_ids(interest_ids)
+        if any(interest_id not in known_interest_ids for interest_id in interest_ids):
+            return {"errors": {"interests": "Vyber záujmy zo zoznamu."}}
+
+        existing_user = await self.repository.get_user_by_nickname(
+            data.nickname.strip()
+        )
         if existing_user is not None:
             return {"errors": {"nickname": "Tento nickname je už obsadený."}}
 
-        existing_email_user = await self.repository.get_user_by_email(data.email.strip())
+        existing_email_user = await self.repository.get_user_by_email(
+            data.email.strip()
+        )
         if existing_email_user is not None:
             return {"errors": {"email": "Tento email je už použitý."}}
 
@@ -91,6 +111,7 @@ class AuthService:
             birth_date=data.birthDate,
             location=data.location.strip(),
             bio=data.bio.strip(),
+            interest_ids=interest_ids,
             photos=data.photos,
         )
         await self.repository.create_default_discovery_settings(
