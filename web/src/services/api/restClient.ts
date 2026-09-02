@@ -1,7 +1,10 @@
 import type { ApiClient, LoginResponse } from "src/services/api/types";
 import type { EditableProfileData } from "src/features/profile";
 import type { RegistrationPhoto } from "src/features/registration";
-import { getStoredSession } from "src/services/api/sessionStorage";
+import {
+  getStoredSession,
+  notifySessionExpired,
+} from "src/services/api/sessionStorage";
 
 type ProfileApiData = Omit<
   EditableProfileData,
@@ -37,6 +40,11 @@ async function request<TResponse>(
     headers,
   });
 
+  if (response.status === 401) {
+    notifySessionExpired();
+    throw new Error("Unauthorized");
+  }
+
   if (response.status === 204) {
     if (!response.ok) {
       throw new Error(`API request failed: ${response.status}`);
@@ -70,6 +78,12 @@ async function uploadRequest<TResponse>(
     headers,
     method: "POST",
   });
+
+  if (response.status === 401) {
+    notifySessionExpired();
+    throw new Error("Unauthorized");
+  }
+
   const data = (await response.json()) as unknown;
 
   if (!response.ok) {

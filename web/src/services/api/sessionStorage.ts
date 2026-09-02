@@ -1,6 +1,7 @@
 import type { UserSession } from "src/services/api/types";
 
 const sessionStorageKey = "priatelia.session";
+export const sessionExpiredEvent = "priatelia.session-expired";
 
 function isUserSession(value: unknown): value is UserSession {
   return (
@@ -41,4 +42,9 @@ export function storeSession(session: UserSession) {
 
 export function clearStoredSession() {
   window.localStorage.removeItem(sessionStorageKey);
+}
+
+export function notifySessionExpired() {
+  clearStoredSession();
+  window.dispatchEvent(new Event(sessionExpiredEvent));
 }

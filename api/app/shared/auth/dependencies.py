@@ -6,6 +6,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt import InvalidTokenError
 
 from app.shared.auth.tokens import decode_access_token
+from app.shared.database.connection import get_database_pool
 
 
 @dataclass(frozen=True)
@@ -34,7 +35,33 @@ async def get_current_user(
             detail="Invalid bearer token",
         ) from exc
 
+    try:
+        user_id = UUID(payload["sub"])
+    except (KeyError, ValueError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid bearer token",
+        ) from exc
+
+    pool = get_database_pool()
+    async with pool.connection() as connection:
+        cursor = await connection.execute(
+            """
+            SELECT nickname, status
+            FROM users
+            WHERE id = %s
+            """,
+            (user_id,),
+        )
+        user = await cursor.fetchone()
+
+    if user is None or user["status"] != "active":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Inactive user",
+        )
+
     return CurrentUser(
-        id=UUID(payload["sub"]),
-        nickname=payload["nickname"],
+        id=user_id,
+        nickname=user["nickname"],
     )

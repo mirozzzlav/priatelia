@@ -1,10 +1,17 @@
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 
 import { AuthContext } from "src/context/auth";
 import type { UserSession } from "src/services/api";
 import {
   clearStoredSession,
   getStoredSession,
+  sessionExpiredEvent,
   storeSession,
 } from "src/services/api/sessionStorage";
 
@@ -24,6 +31,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     clearStoredSession();
     setSession(null);
   }, []);
+
+  useEffect(() => {
+    window.addEventListener(sessionExpiredEvent, logout);
+
+    return () => {
+      window.removeEventListener(sessionExpiredEvent, logout);
+    };
+  }, [logout]);
 
   const value = useMemo(
     () => ({

@@ -184,6 +184,14 @@ class AuthService:
             return {"errors": {"token": "Aktivačný token nie je platný."}}
 
         if activation_token.used_at is not None:
+            if activation_token.status == "active":
+                return UserSession(
+                    nickname=activation_token.nickname,
+                    token=create_access_token(
+                        activation_token.user_id,
+                        activation_token.nickname,
+                    ),
+                )
             return {"errors": {"token": "Aktivačný token už bol použitý."}}
 
         expires_at = activation_token.expires_at
