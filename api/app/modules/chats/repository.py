@@ -69,6 +69,19 @@ class ChatRepository:
         rows = await cursor.fetchall()
         return [ChatMessageRecord(**row) for row in rows]
 
+    async def mark_thread_read(self, match_id: UUID, user_id: UUID) -> None:
+        await self.connection.execute(
+            """
+            INSERT INTO message_reads (thread_id, user_id, last_read_at)
+            SELECT id, %s, now()
+            FROM chat_threads
+            WHERE match_id = %s
+            ON CONFLICT (thread_id, user_id) DO UPDATE
+            SET last_read_at = EXCLUDED.last_read_at
+            """,
+            (user_id, match_id),
+        )
+
     async def get_last_messages_by_match_ids(
         self,
         match_ids: list[UUID],

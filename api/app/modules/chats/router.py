@@ -29,7 +29,8 @@ async def list_chat_matches(
     current_user: CurrentUser = Depends(get_current_user),
     connection: AsyncConnection = Depends(get_connection),
 ):
-    return [match.model_dump() for match in await _service(connection).list_chat_matches(current_user.id)]
+    matches = await _service(connection).list_chat_matches(current_user.id)
+    return [match.model_dump() for match in matches]
 
 
 @router.get("/chats/matches/{match_id}")
@@ -40,7 +41,11 @@ async def get_chat_thread(
 ):
     thread = await _service(connection).get_thread(current_user.id, match_id)
     if thread is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chat not found",
+        )
+    await connection.commit()
     return thread.model_dump()
 
 
@@ -52,7 +57,10 @@ async def send_chat_message(
     connection: AsyncConnection = Depends(get_connection),
 ):
     if not data.text.strip():
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Message is empty")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Message is empty",
+        )
 
     message = await _service(connection).send_message(
         current_user.id,
@@ -61,5 +69,8 @@ async def send_chat_message(
     )
     await connection.commit()
     if message is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chat not found",
+        )
     return message.model_dump()
