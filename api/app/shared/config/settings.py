@@ -1,6 +1,9 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ROOT_DIR = Path(__file__).resolve().parents[4]
 
 
 class Settings(BaseSettings):
@@ -20,6 +23,10 @@ class Settings(BaseSettings):
     smtp_host: str = "mailpit"
     smtp_port: int = 1026
     smtp_from: str = "noreply@priatelia.local"
+    smtp_username: str | None = None
+    smtp_password: str | None = None
+    smtp_starttls: bool = False
+    smtp_use_tls: bool = False
     notification_worker_batch_size: int = 10
     notification_worker_poll_seconds: float = 2.0
     notification_worker_max_attempts: int = 5
@@ -33,7 +40,7 @@ class Settings(BaseSettings):
     media_secure: bool = False
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=ROOT_DIR / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )

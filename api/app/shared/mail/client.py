@@ -25,5 +25,9 @@ class MailClient:
         await aiosmtplib.send(
             message,
             hostname=settings.smtp_host,
+            password=settings.smtp_password or None,
             port=settings.smtp_port,
+            start_tls=settings.smtp_starttls,
+            username=settings.smtp_username or None,
+            use_tls=settings.smtp_use_tls,
         )
