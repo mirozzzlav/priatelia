@@ -13,6 +13,7 @@ import {
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { LocationSearchField } from "src/components/LocationSearchField";
 import type { InterestTag } from "src/features/interests/types";
 import type { EditableProfileData } from "src/features/profile/types";
 import type { RegistrationPhoto } from "src/features/registration";
@@ -101,6 +102,23 @@ export function ProfileSettingsScreen({
     setFormData((current) => ({
       ...current,
       interests,
+    }));
+  };
+
+  const handleLocationChange = (nextLocation: {
+    latitude: number | null;
+    location: string;
+    longitude: number | null;
+  }) => {
+    setFieldErrors({});
+    setSubmitError(null);
+    setWasSubmitted(false);
+    setIsSuccess(false);
+    setFormData((current) => ({
+      ...current,
+      location: nextLocation.location,
+      locationLatitude: nextLocation.latitude,
+      locationLongitude: nextLocation.longitude,
     }));
   };
 
@@ -215,16 +233,14 @@ export function ProfileSettingsScreen({
         </FormControl>
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.location)}>
-          <RequiredFieldLabel>Poloha pre hľadanie priateľov</RequiredFieldLabel>
-          <FormInput
+          <LocationSearchField
+            error={fieldErrors.location}
+            isInvalid={wasSubmitted && Boolean(fieldErrors.location)}
+            label="Tvoja lokalita"
+            onChange={handleLocationChange}
             value={formData.location}
-            onChange={updateField("location")}
-            placeholder="napr. Bratislava, Staré Mesto"
-            autoComplete="address-level2"
+            placeholder="napr. Bratislava"
           />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.location}
-          </FormErrorMessage>
         </FormControl>
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.bio)}>

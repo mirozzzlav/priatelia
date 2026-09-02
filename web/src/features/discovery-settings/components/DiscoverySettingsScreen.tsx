@@ -15,12 +15,16 @@ import {
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { LocationSearchField } from "src/components/LocationSearchField";
 import type { DiscoverySettingsFieldErrors } from "src/services/api";
 
 export type DiscoverySettingsData = {
   ageFrom: string;
   ageTo: string;
   location: string;
+  locationLatitude?: number | null;
+  locationLongitude?: number | null;
+  radiusKm: string;
 };
 
 type DiscoverySettingsScreenProps = {
@@ -70,6 +74,23 @@ export function DiscoverySettingsScreen({
       }));
     };
 
+  const handleLocationChange = (nextLocation: {
+    latitude: number | null;
+    location: string;
+    longitude: number | null;
+  }) => {
+    setFieldErrors({});
+    setSubmitError(null);
+    setWasSubmitted(false);
+    setIsSuccess(false);
+    setFormData((current) => ({
+      ...current,
+      location: nextLocation.location,
+      locationLatitude: nextLocation.latitude,
+      locationLongitude: nextLocation.longitude,
+    }));
+  };
+
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFieldErrors({});
@@ -108,16 +129,14 @@ export function DiscoverySettingsScreen({
     >
       <Box as="form" noValidate onSubmit={handleSubmit} {...styles.form}>
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.location)}>
-          <RequiredFieldLabel>Lokalita</RequiredFieldLabel>
-          <FormInput
+          <LocationSearchField
+            error={fieldErrors.location}
+            isInvalid={wasSubmitted && Boolean(fieldErrors.location)}
+            label="Hľadať v lokalite"
+            onChange={handleLocationChange}
             value={formData.location}
-            onChange={updateField("location")}
             placeholder="napr. Bratislava a okolie"
-            autoComplete="address-level2"
           />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.location}
-          </FormErrorMessage>
         </FormControl>
 
         <SimpleGrid {...styles.ageGrid}>
@@ -147,6 +166,20 @@ export function DiscoverySettingsScreen({
             </FormErrorMessage>
           </FormControl>
         </SimpleGrid>
+
+        <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.radiusKm)}>
+          <RequiredFieldLabel>Radius</RequiredFieldLabel>
+          <FormInput
+            type="number"
+            min={1}
+            max={500}
+            value={formData.radiusKm}
+            onChange={updateField("radiusKm")}
+          />
+          <FormErrorMessage color="app.error">
+            {fieldErrors.radiusKm}
+          </FormErrorMessage>
+        </FormControl>
 
         {submitError && (
           <FormStatusMessage variant="error">{submitError}</FormStatusMessage>

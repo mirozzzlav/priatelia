@@ -147,6 +147,11 @@ export const restClient: ApiClient = {
     return request(`/interests?${params.toString()}`);
   },
 
+  searchLocations(query) {
+    const params = new URLSearchParams({ query });
+    return request(`/locations?${params.toString()}`);
+  },
+
   getChatMatches() {
     return request("/chats/matches");
   },

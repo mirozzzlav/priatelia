@@ -13,6 +13,7 @@ export type {
   LoginErrorData,
   LoginFieldErrors,
   LoginResponse,
+  LocationOption,
   MutationSuccessData,
   PasswordErrorData,
   PasswordFieldErrors,

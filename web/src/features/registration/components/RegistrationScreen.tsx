@@ -14,6 +14,7 @@ import {
 import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
 import type { InterestTag } from "src/features/interests/types";
+import { LocationSearchField } from "src/components/LocationSearchField";
 import type {
   RegistrationFormData,
   RegistrationPhoto,
@@ -43,6 +44,8 @@ const initialFormData: RegistrationFormData = {
   email: "",
   interests: [],
   location: "",
+  locationLatitude: null,
+  locationLongitude: null,
   nickname: "",
   password: "",
   passwordConfirmation: "",
@@ -92,6 +95,22 @@ export function RegistrationScreen({
     setFormData((current) => ({
       ...current,
       bio: event.target.value,
+    }));
+  };
+
+  const handleLocationChange = (nextLocation: {
+    latitude: number | null;
+    location: string;
+    longitude: number | null;
+  }) => {
+    setServerFieldErrors({});
+    setSubmitError(null);
+    setWasSubmitted(false);
+    setFormData((current) => ({
+      ...current,
+      location: nextLocation.location,
+      locationLatitude: nextLocation.latitude,
+      locationLongitude: nextLocation.longitude,
     }));
   };
 
@@ -269,16 +288,14 @@ export function RegistrationScreen({
         </FormControl>
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.location)}>
-          <RequiredFieldLabel>Poloha pre hľadanie priateľov</RequiredFieldLabel>
-          <FormInput
+          <LocationSearchField
+            error={fieldErrors.location}
+            isInvalid={wasSubmitted && Boolean(fieldErrors.location)}
+            label="Tvoja lokalita"
+            onChange={handleLocationChange}
             value={formData.location}
-            onChange={updateField("location")}
-            placeholder="napr. Bratislava, Staré Mesto"
-            autoComplete="address-level2"
+            placeholder="napr. Bratislava"
           />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.location}
-          </FormErrorMessage>
         </FormControl>
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.bio)}>

@@ -6,6 +6,9 @@ const initialDiscoverySettings: DiscoverySettingsData = {
   ageFrom: "18",
   ageTo: "35",
   location: "Bratislava",
+  locationLatitude: null,
+  locationLongitude: null,
+  radiusKm: "50",
 };
 
 export function useDiscoverySettings() {

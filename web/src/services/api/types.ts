@@ -84,6 +84,13 @@ export type UploadedProfilePhoto = {
   url: string;
 };
 
+export type LocationOption = {
+  id: string;
+  label: string;
+  latitude: number;
+  longitude: number;
+};
+
 export type RegistrationResponse = ApiResponse<
   RegistrationSuccessData,
   RegistrationErrorData
@@ -136,6 +143,7 @@ export type ApiClient = {
   getPersonPreview: () => Promise<PersonPreview>;
   getProfile: () => Promise<EditableProfileData>;
   searchInterests: (query: string) => Promise<InterestTag[]>;
+  searchLocations: (query: string) => Promise<LocationOption[]>;
   uploadProfilePhoto: (file: File) => Promise<UploadedProfilePhoto>;
   login: (data: LoginFormData) => Promise<LoginResponse>;
   register: (data: RegistrationFormData) => Promise<RegistrationResponse>;

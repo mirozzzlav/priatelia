@@ -8,6 +8,7 @@ import type {
   ProfileFieldErrors,
   RegistrationFieldErrors,
 } from "src/services/api/types";
+import type { EditableProfileData } from "src/features/profile";
 import {
   mockChatMessagesByMatchId,
   mockIncomingLikePersonPreviewIds,
@@ -35,7 +36,39 @@ const chatMatchIds = new Set(mockInitialChatMatchIds);
 const chatMessagesByMatchId: Record<string, ChatMessage[]> = {
   ...mockChatMessagesByMatchId,
 };
-let currentProfile = {
+const mockLocationOptions = [
+  {
+    id: "bratislava",
+    label: "Bratislava, Slovensko",
+    latitude: 48.1486,
+    longitude: 17.1077,
+  },
+  {
+    id: "bratislava-petrzalka",
+    label: "Bratislava-Petržalka, Bratislava, Slovensko",
+    latitude: 48.111,
+    longitude: 17.1113,
+  },
+  {
+    id: "levice",
+    label: "Levice, Slovensko",
+    latitude: 48.2156,
+    longitude: 18.6071,
+  },
+  {
+    id: "nitra",
+    label: "Nitra, Slovensko",
+    latitude: 48.3061,
+    longitude: 18.0764,
+  },
+  {
+    id: "trnava",
+    label: "Trnava, Slovensko",
+    latitude: 48.3774,
+    longitude: 17.5872,
+  },
+];
+let currentProfile: EditableProfileData = {
   bio: "Rád spoznávam ľudí cez dobré jedlo, výlety a pokojné rozhovory.",
   birthDate: "1996-04-18",
   interests: [
@@ -44,6 +77,8 @@ let currentProfile = {
     { id: "turistika", name: "Turistika" },
   ],
   location: "Bratislava",
+  locationLatitude: 48.1486,
+  locationLongitude: 17.1077,
   nickname: "demo",
   password: "",
   passwordConfirmation: "",
@@ -178,7 +213,7 @@ function getRegistrationErrors(data: Parameters<ApiClient["register"]>[0]) {
   }
 
   if (data.location.trim().length === 0) {
-    errors.location = "Vyplň polohu pre hľadanie priateľov.";
+    errors.location = "Vyplň svoju lokalitu.";
   }
 
   if (bioWordCount === 0) {
@@ -211,7 +246,7 @@ function getProfileErrors(data: Parameters<ApiClient["updateProfile"]>[0]) {
   }
 
   if (data.location.trim().length === 0) {
-    errors.location = "Vyplň polohu pre hľadanie priateľov.";
+    errors.location = "Vyplň svoju lokalitu.";
   }
 
   if (bioWordCount === 0) {
@@ -259,6 +294,7 @@ function getDiscoverySettingsErrors(
   const errors: DiscoverySettingsFieldErrors = {};
   const ageFrom = Number(data.ageFrom);
   const ageTo = Number(data.ageTo);
+  const radiusKm = Number(data.radiusKm);
 
   if (data.location.trim().length === 0) {
     errors.location = "Vyplň lokalitu.";
@@ -278,6 +314,14 @@ function getDiscoverySettingsErrors(
     errors.ageTo = "Vek do musí byť celé číslo.";
   } else if (ageTo < ageFrom) {
     errors.ageTo = "Vek do nemôže byť menší ako vek od.";
+  }
+
+  if (data.radiusKm.length === 0) {
+    errors.radiusKm = "Vyplň radius.";
+  } else if (!Number.isInteger(radiusKm)) {
+    errors.radiusKm = "Radius musí byť celé číslo.";
+  } else if (radiusKm < 1 || radiusKm > 500) {
+    errors.radiusKm = "Radius musí byť od 1 do 500 km.";
   }
 
   return errors;
@@ -338,6 +382,19 @@ export const mockClient: ApiClient = {
         );
       })
       .slice(0, 12);
+  },
+
+  async searchLocations(query) {
+    const normalizedQuery = query.trim().toLocaleLowerCase("sk");
+    await delay();
+
+    if (normalizedQuery.length < 3) {
+      return [];
+    }
+
+    return mockLocationOptions.filter((location) => {
+      return location.label.toLocaleLowerCase("sk").includes(normalizedQuery);
+    });
   },
 
   async getChatMatches() {

@@ -9,6 +9,8 @@ const initialProfileData: EditableProfileData = {
   birthDate: "",
   interests: [],
   location: "",
+  locationLatitude: null,
+  locationLongitude: null,
   nickname: "",
   password: "",
   passwordConfirmation: "",
