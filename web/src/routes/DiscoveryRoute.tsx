@@ -54,25 +54,33 @@ export function DiscoveryRoute({
     return () => window.clearTimeout(timeoutId);
   }, [error, isLoadingPersonPreview, onPersonPreviewLoad, personPreview]);
 
-  return (
-    <Box {...styles.deck}>
-      {isLoadingPersonPreview && !personPreview && (
+  if (isLoadingPersonPreview && !personPreview) {
+    return (
+      <Box {...styles.deck}>
         <CenteredStatusLayout minH="calc(100vh - 108px)" px="16px" py={0}>
           <LoadingPill text="Hľadám ti ďalšieho priateľa." />
         </CenteredStatusLayout>
-      )}
-      {error && (
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box {...styles.deck}>
         <InfoScreen
           message="V tejto chvíli sa nám nepodarilo nájsť žiadneho nového priateľa, skús upraviť podmienky hľadania."
           title="Žiadny nový priateľ"
           variant="info"
         />
-      )}
+      </Box>
+    );
+  }
+
+  return (
+    <Box {...styles.deck}>
       {personPreview && (
         <>
-          <PersonPreviewToolbar
-            person={personPreview}
-          />
+          <PersonPreviewToolbar person={personPreview} />
           <PersonPreviewPhoto
             activeAction={activeAction}
             isLoadingNextPerson={isSubmittingPersonPreviewAction}

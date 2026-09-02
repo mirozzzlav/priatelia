@@ -25,6 +25,7 @@ export function usePersonPreview() {
       const preview = await apiClient.getPersonPreview();
       setPersonPreview(preview);
     } catch {
+      setPersonPreview(null);
       setError("Nepodarilo sa načítať človeka na výber.");
     } finally {
       setIsLoadingPersonPreview(false);
