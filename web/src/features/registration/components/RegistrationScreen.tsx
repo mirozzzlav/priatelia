@@ -2,11 +2,11 @@ import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { Box, FormControl, FormErrorMessage } from "@chakra-ui/react";
 
 import { InterestSelectField } from "src/components/InterestSelectField";
+import { PasswordConfirmationFields } from "src/components/PasswordConfirmationFields";
 import { PhotoGalleryField } from "src/components/PhotoGalleryField";
 import {
   FormInput,
   FormLinkButton,
-  FormPasswordInput,
   FormSubmitButton,
   FormTextarea,
   RequiredFieldLabel,
@@ -20,6 +20,8 @@ import type {
   RegistrationPhoto,
 } from "src/features/registration/types";
 import type { RegistrationFieldErrors } from "src/services/api";
+import { createId } from "src/utils/createId";
+import { getPasswordConfirmationError } from "src/utils/passwordValidation";
 
 type RegistrationScreenProps = {
   onLoginClick: () => void;
@@ -54,7 +56,7 @@ const initialFormData: RegistrationFormData = {
 
 function createPhoto(file: File, shouldBePrimary: boolean): RegistrationPhoto {
   return {
-    id: `${file.name}-${file.lastModified}-${crypto.randomUUID()}`,
+    id: `${file.name}-${file.lastModified}-${createId("photo")}`,
     file,
     isPrimary: shouldBePrimary,
     name: file.name,
@@ -75,6 +77,10 @@ export function RegistrationScreen({
   const [wasSubmitted, setWasSubmitted] = useState(false);
 
   const fieldErrors = serverFieldErrors;
+  const passwordConfirmationError = getPasswordConfirmationError(
+    formData.password,
+    formData.passwordConfirmation,
+  );
 
   const updateField =
     (field: keyof Omit<RegistrationFormData, "interests" | "photos">) =>
@@ -197,6 +203,14 @@ export function RegistrationScreen({
       return;
     }
 
+    if (passwordConfirmationError) {
+      setServerFieldErrors({
+        passwordConfirmation: passwordConfirmationError,
+      });
+      setSubmitError("Skontroluj si vstupné údaje.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -248,32 +262,19 @@ export function RegistrationScreen({
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.password)}>
-          <RequiredFieldLabel>Heslo</RequiredFieldLabel>
-          <FormPasswordInput
-            value={formData.password}
-            onChange={updateField("password")}
-            placeholder="aspoň 8 znakov"
-            autoComplete="new-password"
-          />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.password}
-          </FormErrorMessage>
-        </FormControl>
-
-        <FormControl
-          isInvalid={wasSubmitted && Boolean(fieldErrors.passwordConfirmation)}
-        >
-          <RequiredFieldLabel>Zopakuj heslo</RequiredFieldLabel>
-          <FormPasswordInput
-            value={formData.passwordConfirmation}
-            onChange={updateField("passwordConfirmation")}
-            autoComplete="new-password"
-          />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.passwordConfirmation}
-          </FormErrorMessage>
-        </FormControl>
+        <PasswordConfirmationFields
+          isPasswordInvalid={wasSubmitted && Boolean(fieldErrors.password)}
+          onPasswordChange={updateField("password")}
+          onPasswordConfirmationChange={updateField("passwordConfirmation")}
+          password={formData.password}
+          passwordConfirmation={formData.passwordConfirmation}
+          passwordConfirmationError={fieldErrors.passwordConfirmation}
+          passwordConfirmationLabel="Zopakuj heslo"
+          passwordError={fieldErrors.password}
+          passwordLabel="Heslo"
+          passwordPlaceholder="aspoň 8 znakov"
+          wasSubmitted={wasSubmitted}
+        />
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.birthDate)}>
           <RequiredFieldLabel>Dátum narodenia</RequiredFieldLabel>

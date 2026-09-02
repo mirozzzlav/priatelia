@@ -1,6 +1,7 @@
 import { useState, type SubmitEvent } from "react";
 import { Box, FormControl, FormErrorMessage } from "@chakra-ui/react";
 
+import { PasswordConfirmationFields } from "src/components/PasswordConfirmationFields";
 import {
   FormActions,
   FormPasswordInput,
@@ -11,6 +12,7 @@ import {
 import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
 import type { PasswordFieldErrors, PasswordFormData } from "src/services/api";
+import { getPasswordConfirmationError } from "src/utils/passwordValidation";
 
 type PasswordSettingsScreenProps = {
   onBack: () => void;
@@ -36,6 +38,17 @@ export function PasswordSettingsScreen({
   const [isSuccess, setIsSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [wasSubmitted, setWasSubmitted] = useState(false);
+  const passwordConfirmationError = getPasswordConfirmationError(
+    password,
+    passwordConfirmation,
+  );
+
+  const resetFeedback = () => {
+    setFieldErrors({});
+    setSubmitError(null);
+    setWasSubmitted(false);
+    setIsSuccess(false);
+  };
 
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -45,6 +58,14 @@ export function PasswordSettingsScreen({
     setIsSuccess(false);
 
     if (isSubmitting) {
+      return;
+    }
+
+    if (passwordConfirmationError) {
+      setFieldErrors({
+        passwordConfirmation: passwordConfirmationError,
+      });
+      setSubmitError("Skontroluj si vstupné údaje.");
       return;
     }
 
@@ -88,10 +109,7 @@ export function PasswordSettingsScreen({
           <FormPasswordInput
             value={currentPassword}
             onChange={(event) => {
-              setFieldErrors({});
-              setSubmitError(null);
-              setWasSubmitted(false);
-              setIsSuccess(false);
+              resetFeedback();
               setCurrentPassword(event.target.value);
             }}
             autoComplete="current-password"
@@ -101,44 +119,25 @@ export function PasswordSettingsScreen({
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.password)}>
-          <RequiredFieldLabel>Nové heslo</RequiredFieldLabel>
-          <FormPasswordInput
-            value={password}
-            onChange={(event) => {
-              setFieldErrors({});
-              setSubmitError(null);
-              setWasSubmitted(false);
-              setIsSuccess(false);
-              setPassword(event.target.value);
-            }}
-            placeholder="aspoň 8 znakov"
-            autoComplete="new-password"
-          />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.password}
-          </FormErrorMessage>
-        </FormControl>
-
-        <FormControl
-          isInvalid={wasSubmitted && Boolean(fieldErrors.passwordConfirmation)}
-        >
-          <RequiredFieldLabel>Zopakuj nové heslo</RequiredFieldLabel>
-          <FormPasswordInput
-            value={passwordConfirmation}
-            onChange={(event) => {
-              setFieldErrors({});
-              setSubmitError(null);
-              setWasSubmitted(false);
-              setIsSuccess(false);
-              setPasswordConfirmation(event.target.value);
-            }}
-            autoComplete="new-password"
-          />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.passwordConfirmation}
-          </FormErrorMessage>
-        </FormControl>
+        <PasswordConfirmationFields
+          isPasswordInvalid={wasSubmitted && Boolean(fieldErrors.password)}
+          onPasswordChange={(event) => {
+            resetFeedback();
+            setPassword(event.target.value);
+          }}
+          onPasswordConfirmationChange={(event) => {
+            resetFeedback();
+            setPasswordConfirmation(event.target.value);
+          }}
+          password={password}
+          passwordConfirmation={passwordConfirmation}
+          passwordConfirmationError={fieldErrors.passwordConfirmation}
+          passwordConfirmationLabel="Zopakuj nové heslo"
+          passwordError={fieldErrors.password}
+          passwordLabel="Nové heslo"
+          passwordPlaceholder="aspoň 8 znakov"
+          wasSubmitted={wasSubmitted}
+        />
 
         {submitError && (
           <FormStatusMessage variant="error">{submitError}</FormStatusMessage>

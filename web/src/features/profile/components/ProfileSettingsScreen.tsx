@@ -18,6 +18,7 @@ import type { InterestTag } from "src/features/interests/types";
 import type { EditableProfileData } from "src/features/profile/types";
 import type { RegistrationPhoto } from "src/features/registration";
 import type { ProfileFieldErrors } from "src/services/api";
+import { createId } from "src/utils/createId";
 
 type ProfileSettingsScreenProps = {
   initialProfile: EditableProfileData;
@@ -35,7 +36,7 @@ const styles = {
 
 function createPhoto(file: File, shouldBePrimary: boolean): RegistrationPhoto {
   return {
-    id: `${file.name}-${file.lastModified}-${crypto.randomUUID()}`,
+    id: `${file.name}-${file.lastModified}-${createId("photo")}`,
     file,
     isPrimary: shouldBePrimary,
     name: file.name,
