@@ -15,6 +15,7 @@ from app.modules.notifications.service import NotificationService
 from app.shared.auth.passwords import hash_password, verify_password
 from app.shared.auth.tokens import create_access_token
 from app.shared.events.repository import EventRepository
+from app.shared.geo import coordinates_are_valid, resolve_coordinates
 from app.shared.tags import normalize_tag_id
 
 
@@ -46,7 +47,9 @@ def validate_registration(data: RegisterRequest) -> dict[str, str]:
     if not data.birthDate:
         errors_by_field["birthDate"] = "Vyplň dátum narodenia."
     if not data.location.strip():
-        errors_by_field["location"] = "Vyplň polohu pre hľadanie priateľov."
+        errors_by_field["location"] = "Vyplň svoju lokalitu."
+    elif not coordinates_are_valid(data.locationLatitude, data.locationLongitude):
+        errors_by_field["location"] = "Poloha nemá platné súradnice."
     if _word_count(data.bio) == 0:
         errors_by_field["bio"] = "Vyplň krátke bio."
     elif _word_count(data.bio) < 3:
@@ -105,10 +108,17 @@ class AuthService:
             email=data.email.strip(),
             password_hash=hash_password(data.password),
         )
+        coordinates = resolve_coordinates(
+            data.location.strip(),
+            data.locationLatitude,
+            data.locationLongitude,
+        )
         await self.repository.create_profile(
             user_id=user.id,
             birth_date=data.birthDate,
             location=data.location.strip(),
+            latitude=coordinates.latitude if coordinates else None,
+            longitude=coordinates.longitude if coordinates else None,
             bio=data.bio.strip(),
             interest_ids=interest_ids,
             photos=data.photos,
@@ -116,6 +126,8 @@ class AuthService:
         await self.repository.create_default_discovery_settings(
             user_id=user.id,
             location=data.location.strip(),
+            latitude=coordinates.latitude if coordinates else None,
+            longitude=coordinates.longitude if coordinates else None,
         )
         activation_token = secrets.token_urlsafe(32)
         await self.repository.create_activation_token(

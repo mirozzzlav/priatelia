@@ -1,6 +1,7 @@
 from app.modules.profiles.repository import ProfileRepository
 from app.modules.profiles.schemas import ProfileUpdateRequest
 from app.shared.events.repository import EventRepository
+from app.shared.geo import coordinates_are_valid, resolve_coordinates
 from app.shared.tags import normalize_tag_id
 
 
@@ -16,7 +17,9 @@ def validate_profile(data: ProfileUpdateRequest) -> dict[str, str]:
     if not data.birthDate:
         errors_by_field["birthDate"] = "Vyplň dátum narodenia."
     if not data.location.strip():
-        errors_by_field["location"] = "Vyplň polohu pre hľadanie priateľov."
+        errors_by_field["location"] = "Vyplň svoju lokalitu."
+    elif not coordinates_are_valid(data.locationLatitude, data.locationLongitude):
+        errors_by_field["location"] = "Poloha nemá platné súradnice."
     if _word_count(data.bio) == 0:
         errors_by_field["bio"] = "Vyplň krátke bio."
     elif _word_count(data.bio) < 3:
@@ -58,11 +61,18 @@ class ProfileService:
         ):
             return {"nickname": "Tento nickname je už obsadený."}
 
+        coordinates = resolve_coordinates(
+            data.location.strip(),
+            data.locationLatitude,
+            data.locationLongitude,
+        )
         await self.repository.update_profile(
             user_id=user_id,
             nickname=data.nickname.strip(),
             birth_date=data.birthDate,
             location=data.location.strip(),
+            latitude=coordinates.latitude if coordinates else None,
+            longitude=coordinates.longitude if coordinates else None,
             bio=data.bio.strip(),
             interest_ids=interest_ids,
             photos=data.photos,

@@ -22,6 +22,8 @@ class ProfileUpdateRequest(BaseModel):
     birthDate: str
     interests: list[InterestTag]
     location: str
+    locationLatitude: float | None = None
+    locationLongitude: float | None = None
     nickname: str
     password: str | None = None
     passwordConfirmation: str | None = None
@@ -38,6 +40,8 @@ class ProfileRecord:
     nickname: str
     birth_date: date
     location: str
+    latitude: float | None
+    longitude: float | None
     bio: str
 
 

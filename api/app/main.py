@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.modules.auth.router import router as auth_router
 from app.modules.chats.router import router as chats_router
 from app.modules.discovery.router import router as discovery_router
+from app.modules.locations.router import router as locations_router
 from app.modules.matching.router import router as matching_router
 from app.modules.media.router import router as media_router
 from app.modules.profiles.router import router as profiles_router
@@ -38,6 +39,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(profiles_router)
+app.include_router(locations_router)
 app.include_router(discovery_router)
 app.include_router(matching_router)
 app.include_router(media_router)

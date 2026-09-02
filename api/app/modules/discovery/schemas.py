@@ -5,6 +5,9 @@ class DiscoverySettingsRequest(BaseModel):
     ageFrom: str
     ageTo: str
     location: str
+    locationLatitude: float | None = None
+    locationLongitude: float | None = None
+    radiusKm: str = "50"
 
 
 class InterestTag(BaseModel):

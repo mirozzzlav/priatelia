@@ -37,6 +37,8 @@ async def get_profile(
             "birthDate": "",
             "interests": [],
             "location": "",
+            "locationLatitude": None,
+            "locationLongitude": None,
             "bio": "",
             "photos": [],
         }
@@ -46,6 +48,8 @@ async def get_profile(
         "birthDate": profile.birth_date.isoformat(),
         "interests": [interest.model_dump() for interest in interests],
         "location": profile.location,
+        "locationLatitude": profile.latitude,
+        "locationLongitude": profile.longitude,
         "bio": profile.bio,
         "photos": [photo.model_dump() for photo in photos],
     }

@@ -117,16 +117,19 @@ class AuthRepository:
         user_id: UUID,
         birth_date: str,
         location: str,
+        latitude: float | None,
+        longitude: float | None,
         bio: str,
         interest_ids: list[str],
         photos: list[RegistrationPhoto],
     ) -> None:
         await self.connection.execute(
             """
-            INSERT INTO profiles (user_id, birth_date, location, bio)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO profiles
+                (user_id, birth_date, location, latitude, longitude, bio)
+            VALUES (%s, %s, %s, %s, %s, %s)
             """,
-            (user_id, birth_date, location, bio),
+            (user_id, birth_date, location, latitude, longitude, bio),
         )
 
         for position, interest_id in enumerate(interest_ids):
@@ -152,13 +155,16 @@ class AuthRepository:
         self,
         user_id: UUID,
         location: str,
+        latitude: float | None,
+        longitude: float | None,
     ) -> None:
         await self.connection.execute(
             """
-            INSERT INTO discovery_settings (user_id, age_from, age_to, location)
-            VALUES (%s, 18, 99, %s)
+            INSERT INTO discovery_settings
+                (user_id, age_from, age_to, location, latitude, longitude, radius_km)
+            VALUES (%s, 18, 99, %s, %s, %s, 50)
             """,
-            (user_id, location),
+            (user_id, location, latitude, longitude),
         )
 
     async def list_known_interest_ids(self, interest_ids: list[str]) -> set[str]:

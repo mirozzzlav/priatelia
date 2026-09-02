@@ -23,6 +23,8 @@ class RegisterRequest(BaseModel):
     email: str
     interests: list[InterestTag]
     location: str
+    locationLatitude: float | None = None
+    locationLongitude: float | None = None
     nickname: str
     password: str
     passwordConfirmation: str

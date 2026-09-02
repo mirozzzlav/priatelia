@@ -33,7 +33,10 @@ async def update_discovery_settings(
     current_user: CurrentUser = Depends(get_current_user),
     connection: AsyncConnection = Depends(get_connection),
 ) -> dict[str, Any]:
-    service = DiscoveryService(DiscoveryRepository(connection), EventRepository(connection))
+    service = DiscoveryService(
+        DiscoveryRepository(connection),
+        EventRepository(connection),
+    )
     errors = await service.update_settings(current_user.id, data)
     await connection.commit()
 

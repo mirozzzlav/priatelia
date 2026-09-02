@@ -15,25 +15,40 @@ class DiscoveryRepository:
         age_from: int,
         age_to: int,
         location: str,
+        latitude: float | None,
+        longitude: float | None,
+        radius_km: int,
     ) -> None:
         await self.connection.execute(
             """
-            INSERT INTO discovery_settings (user_id, age_from, age_to, location)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO discovery_settings
+                (
+                    user_id,
+                    age_from,
+                    age_to,
+                    location,
+                    latitude,
+                    longitude,
+                    radius_km
+                )
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (user_id) DO UPDATE
             SET age_from = EXCLUDED.age_from,
                 age_to = EXCLUDED.age_to,
                 location = EXCLUDED.location,
+                latitude = EXCLUDED.latitude,
+                longitude = EXCLUDED.longitude,
+                radius_km = EXCLUDED.radius_km,
                 updated_at = now()
             """,
-            (user_id, age_from, age_to, location),
+            (user_id, age_from, age_to, location, latitude, longitude, radius_km),
         )
 
     async def get_next_profile(self, user_id: UUID) -> PersonPreview | None:
         cursor = await self.connection.execute(
             """
             WITH settings AS (
-                SELECT age_from, age_to, location
+                SELECT age_from, age_to, location, latitude, longitude, radius_km
                 FROM discovery_settings
                 WHERE user_id = %s
             )
@@ -72,6 +87,38 @@ class DiscoveryRepository:
             ) interest_list ON true
             WHERE p.user_id <> %s
               AND date_part('year', age(p.birth_date)) BETWEEN s.age_from AND s.age_to
+              AND (
+                  (
+                      s.latitude IS NOT NULL
+                      AND s.longitude IS NOT NULL
+                      AND p.latitude IS NOT NULL
+                      AND p.longitude IS NOT NULL
+                      AND 6371 * 2 * asin(
+                          sqrt(
+                              power(
+                                  sin(radians((p.latitude - s.latitude) / 2)),
+                                  2
+                              )
+                              + cos(radians(s.latitude))
+                              * cos(radians(p.latitude))
+                              * power(
+                                  sin(
+                                      radians((p.longitude - s.longitude) / 2)
+                                  ),
+                                  2
+                              )
+                          )
+                      ) <= s.radius_km
+                  )
+                  OR (
+                      (s.latitude IS NULL OR p.latitude IS NULL)
+                      AND (
+                          lower(p.location) = lower(s.location)
+                          OR position(lower(s.location) in lower(p.location)) > 0
+                          OR position(lower(p.location) in lower(s.location)) > 0
+                      )
+                  )
+              )
               AND NOT EXISTS (
                   SELECT 1
                   FROM profile_decisions d
