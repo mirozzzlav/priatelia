@@ -140,6 +140,7 @@ export type ApiClient = {
   activateAccount: (token: string | null) => Promise<UserSession>;
   getChatMatches: () => Promise<ChatMatch[]>;
   getChatThread: (matchId: string) => Promise<ChatThread>;
+  getDiscoverySettings: () => Promise<DiscoverySettingsData>;
   getPersonPreview: () => Promise<PersonPreview>;
   getProfile: () => Promise<EditableProfileData>;
   searchInterests: (query: string) => Promise<InterestTag[]>;

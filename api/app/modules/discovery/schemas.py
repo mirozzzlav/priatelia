@@ -10,6 +10,15 @@ class DiscoverySettingsRequest(BaseModel):
     radiusKm: str = "50"
 
 
+class DiscoverySettingsResponse(BaseModel):
+    ageFrom: str
+    ageTo: str
+    location: str
+    locationLatitude: float | None = None
+    locationLongitude: float | None = None
+    radiusKm: str
+
+
 class InterestTag(BaseModel):
     id: str
     name: str

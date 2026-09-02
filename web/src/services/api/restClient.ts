@@ -146,6 +146,10 @@ export const restClient: ApiClient = {
     return request("/discovery/profile");
   },
 
+  getDiscoverySettings() {
+    return request("/discovery/settings");
+  },
+
   async getProfile() {
     const profile = await request<ProfileApiData>("/profile");
 

@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
+import { useAuth } from "src/context/auth";
 import { useDiscoverySettings } from "src/hooks/useDiscoverySettings";
 import { usePersonPreview } from "src/hooks/usePersonPreview";
 import { useProfileState } from "src/hooks/useProfileState";
@@ -18,6 +19,7 @@ import { PublicOnlyRoute } from "src/routes/PublicOnlyRoute";
 import { RegistrationRoute } from "src/routes/RegistrationRoute";
 
 export function AppRoutes() {
+  const auth = useAuth();
   const {
     profileData,
     savePassword,
@@ -36,11 +38,24 @@ export function AppRoutes() {
     resetDiscovery,
     startPersonPreviewAction,
   } = usePersonPreview();
-  const { discoverySettings, saveDiscoverySettings } = useDiscoverySettings();
+  const {
+    discoverySettings,
+    resetDiscoverySettings,
+    saveDiscoverySettings,
+  } = useDiscoverySettings(auth.isAuthenticated);
 
   return (
     <Routes>
-      <Route element={<AppLayout onLogout={resetDiscovery} />}>
+      <Route
+        element={
+          <AppLayout
+            onLogout={() => {
+              resetDiscovery();
+              resetDiscoverySettings();
+            }}
+          />
+        }
+      >
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route
           path="/login"
@@ -122,6 +137,10 @@ export function AppRoutes() {
             <ProtectedRoute>
               <CriteriaRoute
                 initialSettings={discoverySettings}
+                onDiscoveryReload={async () => {
+                  resetDiscovery();
+                  await loadPersonPreview();
+                }}
                 onSave={saveDiscoverySettings}
               />
             </ProtectedRoute>

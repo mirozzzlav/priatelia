@@ -2,12 +2,30 @@ from uuid import UUID
 
 from psycopg import AsyncConnection
 
-from app.modules.discovery.schemas import PersonPreview
+from app.modules.discovery.schemas import DiscoverySettingsResponse, PersonPreview
 
 
 class DiscoveryRepository:
     def __init__(self, connection: AsyncConnection):
         self.connection = connection
+
+    async def get_settings(self, user_id: UUID) -> DiscoverySettingsResponse | None:
+        cursor = await self.connection.execute(
+            """
+            SELECT
+                age_from::text AS "ageFrom",
+                age_to::text AS "ageTo",
+                location,
+                latitude AS "locationLatitude",
+                longitude AS "locationLongitude",
+                radius_km::text AS "radiusKm"
+            FROM discovery_settings
+            WHERE user_id = %s
+            """,
+            (user_id,),
+        )
+        row = await cursor.fetchone()
+        return DiscoverySettingsResponse(**row) if row else None
 
     async def upsert_settings(
         self,

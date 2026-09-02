@@ -8,6 +8,7 @@ import type {
   ProfileFieldErrors,
   RegistrationFieldErrors,
 } from "src/services/api/types";
+import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import type { EditableProfileData } from "src/features/profile";
 import {
   mockChatMessagesByMatchId,
@@ -16,6 +17,7 @@ import {
   mockPersonPreviews,
 } from "src/services/api/mockData";
 import { interestOptions } from "src/constants/interests";
+import { createId } from "src/utils/createId";
 
 type PersonPreviewDecision = {
   action: Parameters<ApiClient["submitPersonPreviewAction"]>[1];
@@ -90,6 +92,14 @@ let currentProfile: EditableProfileData = {
       url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=85",
     },
   ],
+};
+let currentDiscoverySettings: DiscoverySettingsData = {
+  ageFrom: "18",
+  ageTo: "35",
+  location: "Bratislava, Slovensko",
+  locationLatitude: 48.1486,
+  locationLongitude: 17.1077,
+  radiusKm: "50",
 };
 
 function getRandomItem<TItem>(items: TItem[]) {
@@ -369,6 +379,12 @@ export const mockClient: ApiClient = {
     };
   },
 
+  async getDiscoverySettings() {
+    await delay();
+
+    return currentDiscoverySettings;
+  },
+
   async searchInterests(query) {
     const normalizedQuery = query.trim().toLocaleLowerCase("sk");
     await delay();
@@ -485,7 +501,7 @@ export const mockClient: ApiClient = {
     }
 
     const message: ChatMessage = {
-      id: `mock-message-${matchId}-${crypto.randomUUID()}`,
+      id: `mock-message-${matchId}-${createId("message")}`,
       matchId,
       sender: "current-user",
       sentAt: new Date().toISOString(),
@@ -503,7 +519,13 @@ export const mockClient: ApiClient = {
   async updateDiscoverySettings(data) {
     await delay();
 
-    return createMutationResponse(getDiscoverySettingsErrors(data));
+    const response = createMutationResponse(getDiscoverySettingsErrors(data));
+
+    if (response.status === "success") {
+      currentDiscoverySettings = data;
+    }
+
+    return response;
   },
 
   async updatePassword(data) {

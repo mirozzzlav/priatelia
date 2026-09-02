@@ -27,6 +27,20 @@ async def get_person_preview(
     return preview.model_dump()
 
 
+@router.get("/discovery/settings")
+async def get_discovery_settings(
+    current_user: CurrentUser = Depends(get_current_user),
+    connection: AsyncConnection = Depends(get_connection),
+) -> dict[str, Any]:
+    settings = await DiscoveryRepository(connection).get_settings(current_user.id)
+    if settings is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Discovery settings not found",
+        )
+    return settings.model_dump()
+
+
 @router.put("/discovery/settings")
 async def update_discovery_settings(
     data: DiscoverySettingsRequest,

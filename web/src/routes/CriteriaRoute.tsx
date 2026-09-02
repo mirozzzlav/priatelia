@@ -8,10 +8,15 @@ import { apiClient, type DiscoverySettingsFieldErrors } from "src/services/api";
 
 type CriteriaRouteProps = {
   initialSettings: DiscoverySettingsData;
+  onDiscoveryReload: () => Promise<void>;
   onSave: (data: DiscoverySettingsData) => void;
 };
 
-export function CriteriaRoute({ initialSettings, onSave }: CriteriaRouteProps) {
+export function CriteriaRoute({
+  initialSettings,
+  onDiscoveryReload,
+  onSave,
+}: CriteriaRouteProps) {
   const navigate = useNavigate();
 
   const handleSave = async (
@@ -24,6 +29,7 @@ export function CriteriaRoute({ initialSettings, onSave }: CriteriaRouteProps) {
     }
 
     onSave(data);
+    await onDiscoveryReload();
     return null;
   };
 
