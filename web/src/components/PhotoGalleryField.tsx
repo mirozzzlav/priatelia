@@ -1,4 +1,4 @@
-import { useRef, type ChangeEvent } from "react";
+import { useRef, useState, type ChangeEvent } from "react";
 import {
   Box,
   Button,
@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 
 import { RequiredFieldLabel } from "src/components/formElements";
+import { PhotoViewer } from "src/components/PhotoViewer";
 
 type PhotoGalleryItem = {
   id: string;
@@ -61,6 +62,7 @@ const styles = {
   photo: {
     w: "100%",
     aspectRatio: "1",
+    cursor: "zoom-in",
     objectFit: "cover",
   },
   photoActions: {
@@ -100,6 +102,13 @@ export function PhotoGalleryField({
   photos,
 }: PhotoGalleryFieldProps) {
   const photoInputRef = useRef<HTMLInputElement | null>(null);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
+    null,
+  );
+
+  const closeViewer = () => {
+    setSelectedPhotoIndex(null);
+  };
 
   return (
     <FormControl isInvalid={isInvalid}>
@@ -124,13 +133,18 @@ export function PhotoGalleryField({
 
       {photos.length > 0 && (
         <SimpleGrid {...styles.photoGrid}>
-          {photos.map((photo) => (
+          {photos.map((photo, index) => (
             <Box
               key={photo.id}
               {...styles.photoCard}
               {...(photo.isPrimary ? styles.primaryPhotoCard : {})}
             >
-              <Image src={photo.url} alt={photo.name} {...styles.photo} />
+              <Image
+                src={photo.url}
+                alt={photo.name}
+                onClick={() => setSelectedPhotoIndex(index)}
+                {...styles.photo}
+              />
               {photo.isPrimary && <Text {...styles.primaryBadge}>Hlavná</Text>}
               <Flex {...styles.photoActions}>
                 <Button
@@ -154,6 +168,17 @@ export function PhotoGalleryField({
           ))}
         </SimpleGrid>
       )}
+
+      <PhotoViewer
+        initialIndex={selectedPhotoIndex}
+        isOpen={selectedPhotoIndex !== null}
+        onClose={closeViewer}
+        onIndexChange={setSelectedPhotoIndex}
+        photos={photos.map((photo) => ({
+          alt: photo.name,
+          src: photo.url,
+        }))}
+      />
     </FormControl>
   );
 }

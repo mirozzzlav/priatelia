@@ -53,8 +53,8 @@ const styles = {
     inset: 0,
     w: "100%",
     h: "100%",
+    cursor: "zoom-in",
     objectFit: "cover",
-    pointerEvents: "none",
   },
   actions: {
     position: "absolute",
@@ -122,6 +122,7 @@ type PersonPreviewPhotoProps = {
   activeAction: ActivePersonPreviewAction;
   isLoadingNextPerson: boolean;
   isSubmitting: boolean;
+  onPhotoClick: () => void;
   person: PersonPreview;
 } & PersonPreviewActionHandlers;
 
@@ -131,6 +132,7 @@ export function PersonPreviewPhoto({
   isSubmitting,
   onActionEnd,
   onActionStart,
+  onPhotoClick,
   person,
 }: PersonPreviewPhotoProps) {
   const actionIcon = activeAction === "like" ? thumbUpIcon : thumbDownIcon;
@@ -141,6 +143,7 @@ export function PersonPreviewPhoto({
         <Image
           src={person.photo}
           alt={`${person.name}, hlavná profilová fotka`}
+          onClick={onPhotoClick}
           {...styles.photo}
         />
         <DecisionBadge activeAction={activeAction} side="nope">

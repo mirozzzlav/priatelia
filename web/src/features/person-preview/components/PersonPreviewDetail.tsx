@@ -24,17 +24,24 @@ const styles = {
       gridColumn: index === 0 ? "span 2" : undefined,
       w: "100%",
       aspectRatio: index === 0 ? "16 / 10" : "1",
+      cursor: "zoom-in",
       objectFit: "cover",
       borderRadius: "18px",
     }) as const,
 } as const;
 
 type PersonPreviewDetailProps = {
+  onPhotoClick: (photoSrc: string) => void;
   person: PersonPreview;
 };
 
-export function PersonPreviewDetail({ person }: PersonPreviewDetailProps) {
-  const additionalPhotos = person.photos.filter((src) => src !== person.photo);
+export function PersonPreviewDetail({
+  onPhotoClick,
+  person,
+}: PersonPreviewDetailProps) {
+  const additionalPhotos = person.photos
+    .map((src, index) => ({ index, src }))
+    .filter((photo) => photo.src !== person.photo);
 
   return (
     <Box {...styles.root}>
@@ -45,12 +52,13 @@ export function PersonPreviewDetail({ person }: PersonPreviewDetailProps) {
       {additionalPhotos.length > 0 && (
         <DetailSection title="Ďalšie fotky">
           <SimpleGrid {...styles.photoGrid}>
-            {additionalPhotos.map((src, index) => (
+            {additionalPhotos.map((photo, gridIndex) => (
               <Image
-                key={src}
-                src={src}
-                alt={`${person.name}, fotka ${index + 2}`}
-                {...styles.photo(index)}
+                key={photo.src}
+                src={photo.src}
+                alt={`${person.name}, fotka ${photo.index + 1}`}
+                onClick={() => onPhotoClick(photo.src)}
+                {...styles.photo(gridIndex)}
               />
             ))}
           </SimpleGrid>
