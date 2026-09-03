@@ -14,6 +14,7 @@ async def open_database_pool() -> None:
 
     _pool = AsyncConnectionPool(
         conninfo=get_settings().database_url,
+        check=AsyncConnectionPool.check_connection,
         kwargs={"row_factory": dict_row},
         open=False,
     )
