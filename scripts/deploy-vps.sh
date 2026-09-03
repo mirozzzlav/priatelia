@@ -25,4 +25,13 @@ case "${1:-all}" in
     ;;
 esac
 
-curl -fsS http://127.0.0.1:4445/api/health >/dev/null
+for attempt in {1..30}; do
+  if curl -fsS http://127.0.0.1:4445/api/health >/dev/null; then
+    exit 0
+  fi
+
+  sleep 1
+done
+
+echo "Health check failed after deploy." >&2
+exit 1
