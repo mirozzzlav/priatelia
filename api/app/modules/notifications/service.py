@@ -1,5 +1,4 @@
 # ruff: noqa: E501
-from html import escape
 from uuid import UUID
 
 from app.modules.notifications.repository import (
@@ -8,6 +7,20 @@ from app.modules.notifications.repository import (
 )
 from app.shared.config.settings import get_settings
 from app.shared.mail.client import MailClient
+from app.shared.mail.templates import render_mail_template
+
+APP_NAME = "Priatelia"
+APP_LOGO_DATA_URI = (
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
+    "viewBox='0 0 28 24' fill='none' stroke='%23ffffff' stroke-width='2' "
+    "stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath "
+    "d='M14 8.9a3.35 3.35 0 1 0 0-6.7 3.35 3.35 0 0 0 0 6.7z'/%3E"
+    "%3Cpath d='M8.4 9.3a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4z'/%3E"
+    "%3Cpath d='M19.6 9.3a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4z'/%3E"
+    "%3Cpath d='M5.1 19.8c2-3.8 5-5.8 8.9-5.8s6.9 2 8.9 5.8'/%3E"
+    "%3Cpath d='M6.8 15.9c2 2.4 4.4 3.7 7.2 3.7s5.2-1.3 7.2-3.7'/%3E"
+    "%3C/svg%3E"
+)
 
 
 class NotificationService:
@@ -64,8 +77,8 @@ class NotificationService:
             to=email,
             subject="Aktivuj si účet Priatelia",
             body=(
-                f"Ahoj {greeting_name},\n\n"
-                "klikni na tento odkaz a aktivuj si účet:\n"
+                f"Ahoj {greeting_name.lower()}, aktivuj si účet.\n\n"
+                "Klikni na tento odkaz:\n"
                 f"{activation_url}\n\n"
                 "Link platí 24 hodín."
             ),
@@ -74,47 +87,12 @@ class NotificationService:
 
 
 def _render_activation_email_html(greeting_name: str, activation_url: str) -> str:
-    safe_name = escape(greeting_name)
-    safe_url = escape(activation_url, quote=True)
-
-    return f"""<!doctype html>
-<html lang="sk">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Aktivuj si účet Priatelia</title>
-  </head>
-  <body style="margin:0; padding:0; background:#f4f0ea; font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color:#171717;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f0ea; margin:0; padding:28px 12px;">
-      <tr>
-        <td align="center">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px; background:#ffffff; border:1px solid #e7d9c8; border-radius:18px; overflow:hidden;">
-            <tr>
-              <td style="background:#26396f; padding:26px 28px;">
-                <div style="color:#ffa633; font-size:13px; font-weight:800; letter-spacing:0; text-transform:uppercase;">Priatelia</div>
-                <h1 style="margin:8px 0 0; color:#ffffff; font-size:28px; line-height:1.15; font-weight:700;">Aktivuj si účet</h1>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:30px 28px 10px;">
-                <p style="margin:0 0 16px; font-size:17px; line-height:1.55;">Ahoj {safe_name},</p>
-                <p style="margin:0; font-size:16px; line-height:1.6; color:#333333;">stačí jedno kliknutie a tvoj účet bude pripravený na objavovanie nových ľudí.</p>
-              </td>
-            </tr>
-            <tr>
-              <td align="center" style="padding:22px 28px 26px;">
-                <a href="{safe_url}" style="display:inline-block; background:#3b5a9d; color:#ffffff; text-decoration:none; padding:15px 24px; border-radius:999px; font-size:16px; font-weight:800;">Aktivovať účet</a>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:0 28px 28px;">
-                <p style="margin:0 0 12px; font-size:14px; line-height:1.55; color:#654a26;">Link platí 24 hodín.</p>
-                <p style="margin:0; font-size:13px; line-height:1.55; color:#666666;">Ak tlačidlo nefunguje, skopíruj tento odkaz do prehliadača:<br><a href="{safe_url}" style="color:#3b5a9d; word-break:break-all;">{safe_url}</a></p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>"""
+    return render_mail_template(
+        "activation.html",
+        activation_url=activation_url,
+        app_name=APP_NAME,
+        greeting_name=greeting_name.lower(),
+        logo_url=APP_LOGO_DATA_URI,
+        subject_text="aktivuj si účet",
+        title="Aktivuj si účet.",
+    )

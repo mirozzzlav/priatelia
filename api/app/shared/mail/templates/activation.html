@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<tr>
+  <td style="padding:30px 28px 10px;">
+    <p style="margin:0 0 16px; font-size:17px; line-height:1.55;">Ahoj <strong>{{ greeting_name }}</strong>, {{ subject_text }}.</p>
+    <p style="margin:0; font-size:16px; line-height:1.6; color:#333333;">Stačí jedno kliknutie a tvoj účet bude pripravený na objavovanie nových ľudí.</p>
+  </td>
+</tr>
+<tr>
+  <td align="center" style="padding:22px 28px 26px;">
+    <a href="{{ activation_url }}" style="display:inline-block; background:#3b5a9d; color:#ffffff; text-decoration:none; padding:15px 24px; border-radius:999px; font-size:16px; font-weight:800;">Aktivovať účet</a>
+  </td>
+</tr>
+<tr>
+  <td style="padding:0 28px 28px;">
+    <p style="margin:0 0 12px; font-size:14px; line-height:1.55; color:#654a26;">Link platí 24 hodín.</p>
+    <p style="margin:0; font-size:13px; line-height:1.55; color:#666666;">Ak tlačidlo nefunguje, skopíruj tento odkaz do prehliadača:<br><a href="{{ activation_url }}" style="color:#3b5a9d; word-break:break-all;">{{ activation_url }}</a></p>
+  </td>
+</tr>
+{% endblock %}
