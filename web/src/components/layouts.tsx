@@ -1,7 +1,9 @@
-import { Box, Heading, Text, type BoxProps } from "@chakra-ui/react";
-import type { ReactNode } from "react";
+import { Box, Text, type BoxProps } from "@chakra-ui/react";
+import { isValidElement, type ReactNode } from "react";
 
-type ScreenLayoutProps = BoxProps & {
+import { PanelHeading } from "src/components/PanelHeading";
+
+type ScreenLayoutProps = Omit<BoxProps, "title"> & {
   children: ReactNode;
   intro?: ReactNode;
   title: ReactNode;
@@ -16,12 +18,6 @@ const screenLayoutStyles = {
   header: {
     pt: "22px",
     pb: "18px",
-  },
-  title: {
-    color: "app.text",
-    fontSize: { base: "3xl", sm: "4xl" },
-    lineHeight: 1.05,
-    letterSpacing: 0,
   },
   intro: {
     mt: "8px",
@@ -40,9 +36,13 @@ export function ScreenLayout({
   return (
     <Box {...screenLayoutStyles.root} {...rootProps}>
       <Box {...screenLayoutStyles.header}>
-        <Heading as="h1" {...screenLayoutStyles.title}>
-          {title}
-        </Heading>
+        {isValidElement(title) ? (
+          title
+        ) : (
+          <PanelHeading as="h1" variant="main">
+            {title}
+          </PanelHeading>
+        )}
         {intro && <Text {...screenLayoutStyles.intro}>{intro}</Text>}
       </Box>
       {children}

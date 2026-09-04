@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
-import { Box, Heading } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
+
+import { PanelHeading } from "src/components/PanelHeading";
 
 const styles = {
   root: {
@@ -11,21 +13,6 @@ const styles = {
     bgGradient:
       "linear(to-b, rgba(241, 243, 246, 0.55), rgba(255, 255, 255, 0) 58%)",
   },
-  heading: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    mb: "16px",
-    color: "app.text",
-    fontSize: "xl",
-    fontWeight: "semibold",
-    lineHeight: 1.2,
-    letterSpacing: 0,
-    borderBottom: "2px solid",
-    borderColor: "app.info",
-    width: "max-content",
-    padding: "0 8px 4px 0",
-  },
 } as const;
 
 type DetailSectionProps = {
@@ -36,9 +23,7 @@ type DetailSectionProps = {
 export function DetailSection({ title, children }: DetailSectionProps) {
   return (
     <Box {...styles.root}>
-      <Heading as="h2" {...styles.heading}>
-        {title}
-      </Heading>
+      <PanelHeading>{title}</PanelHeading>
       {children}
     </Box>
   );

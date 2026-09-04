@@ -27,8 +27,6 @@ const styles = {
     px: "18px",
     bg: "app.base",
     color: "app.white",
-    borderBottom: "1px solid",
-    borderColor: "app.white",
     backdropFilter: "blur(18px)",
   },
   iconButton: {
