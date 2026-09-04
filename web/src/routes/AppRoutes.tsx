@@ -91,8 +91,14 @@ export function AppRoutes() {
                 isSubmittingPersonPreviewAction={
                   isSubmittingPersonPreviewAction
                 }
+                initialDiscoverySettings={discoverySettings}
                 onActionEnd={clearActiveAction}
                 onActionStart={startPersonPreviewAction}
+                onDiscoveryReload={async () => {
+                  resetDiscovery();
+                  await loadPersonPreview();
+                }}
+                onDiscoverySettingsSave={saveDiscoverySettings}
                 onPersonPreviewLoad={loadPersonPreview}
                 personPreview={personPreview}
               />

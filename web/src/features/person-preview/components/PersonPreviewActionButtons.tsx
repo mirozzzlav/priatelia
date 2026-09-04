@@ -95,7 +95,6 @@ const styles = {
     opacity: 0,
   },
   likeButton: {
-    borderBottomLeftRadius: "28px",
     borderRight: "1px solid",
     borderRightColor: "rgba(38, 57, 111, 0.36)",
     _hover: {
@@ -108,9 +107,7 @@ const styles = {
       borderRightColor: "rgba(38, 57, 111, 0.36)",
     },
   },
-  nopeButton: {
-    borderBottomRightRadius: "28px",
-  },
+  nopeButton: {},
 } as const;
 
 type PersonPreviewActionButtonProps = PersonPreviewActionHandlers & {

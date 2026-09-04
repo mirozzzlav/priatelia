@@ -46,7 +46,10 @@ export function usePersonPreview() {
     setError(null);
   };
 
-  const startPersonPreviewAction = (action: ActivePersonPreviewAction) => {
+  const startPersonPreviewAction = (
+    action: ActivePersonPreviewAction,
+    onAfterSuccessfulAction?: () => Promise<void>,
+  ) => {
     if (!action || !personPreview || isSubmittingPersonPreviewAction) {
       return;
     }
@@ -58,6 +61,7 @@ export function usePersonPreview() {
       try {
         await apiClient.submitPersonPreviewAction(personPreview.id, action);
         await loadPersonPreview();
+        await onAfterSuccessfulAction?.();
       } catch {
         setError("Nepodarilo sa uložiť tvoju voľbu.");
       } finally {

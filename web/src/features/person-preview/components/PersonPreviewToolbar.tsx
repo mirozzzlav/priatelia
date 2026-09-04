@@ -1,65 +1,57 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
 import type { PersonPreview } from "src/features/person-preview/types";
+import { getSlovakCountWord } from "src/utils/formatSlovakCount";
 
 const styles = {
   root: {
-    position: "sticky",
-    top: "64px",
-    zIndex: 8,
-    mx: "-16px",
-    px: "16px",
-    pt: "14px",
-    pb: "12px",
-    color: "app.white",
-    bgGradient: "linear(to-r, app.base, app.baseDark)",
-    borderBottom: "1px solid",
-    borderColor: "app.white",
-    backdropFilter: "blur(18px)",
-    sx: {
-      "@media (max-width: 390px)": {
-        mx: "-12px",
-        p: "12px",
-      },
-    },
+    px: "18px",
+    py: "14px",
+    color: "app.text",
+    bg: "app.white",
   },
-  headingRow: {
-    align: "baseline",
-    gap: "10px",
-    mb: "8px",
+  contentRow: {
+    align: "center",
     minW: 0,
+    w: "100%",
+    justify: "flex-start",
   },
   name: {
     m: 0,
     minW: 0,
+    maxW: { base: "48%", sm: "56%" },
     overflow: "hidden",
-    fontSize: { base: "2xl", sm: "3xl" },
+    fontSize: { base: "xl", sm: "2xl" },
     lineHeight: 1,
     letterSpacing: 0,
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-    _after: { content: '","' },
-    fontWeight: "normal",
+    fontWeight: "extrabold",
   },
   age: {
     flexShrink: 0,
-    fontSize: "3xl",
-    fontWeight: "semibold",
+    fontSize: { base: "xl", sm: "2xl" },
+    fontWeight: "medium",
     color: "app.info",
   },
-  metaList: {
-    flexWrap: "wrap",
-    gap: "8px",
+  city: {
+    flexShrink: 1,
+    maxW: { base: "24%", sm: "30%" },
     minW: 0,
+    overflow: "hidden",
+    color: "app.text",
+    fontSize: { base: "xl", sm: "2xl" },
+    fontWeight: "medium",
+    lineHeight: 1,
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   },
-  metaItem: {
-    px: "14px",
-    py: "7px",
-    borderRadius: "999px",
-    bg: "app.baseDark",
-    color: "app.white",
-    fontSize: "sm",
-    fontWeight: "semibold",
+  punctuation: {
+    flexShrink: 0,
+    color: "app.text",
+    fontSize: { base: "xl", sm: "2xl" },
+    fontWeight: "medium",
+    lineHeight: 1,
   },
 } as const;
 
@@ -68,21 +60,26 @@ type PersonPreviewToolbarProps = {
 };
 
 export function PersonPreviewToolbar({ person }: PersonPreviewToolbarProps) {
+  const city = person.meta[0];
+  const ageValue = Number.parseInt(person.age, 10);
+  const ageText = Number.isNaN(ageValue)
+    ? person.age
+    : `${ageValue} ${getSlovakCountWord("rok", ageValue)}`;
+
   return (
     <Box {...styles.root}>
-      <Flex {...styles.headingRow}>
+      <Flex {...styles.contentRow}>
         <Heading as="h1" {...styles.name}>
           {person.name}
         </Heading>
-        <Text {...styles.age}>{person.age}</Text>
-      </Flex>
-
-      <Flex {...styles.metaList}>
-        {person.meta.map((item) => (
-          <Text key={item} {...styles.metaItem}>
-            {item}
-          </Text>
-        ))}
+        {city && (
+          <>
+            <Text {...styles.punctuation}>,&nbsp;</Text>
+            <Text {...styles.city}>{city}</Text>
+            <Text {...styles.punctuation}>,&nbsp;</Text>
+          </>
+        )}
+        <Text {...styles.age}>{ageText}</Text>
       </Flex>
     </Box>
   );

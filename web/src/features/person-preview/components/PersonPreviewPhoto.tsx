@@ -5,6 +5,7 @@ import thumbDownIcon from "assets/thumb-down.svg";
 import thumbUpIcon from "assets/thumb-up.svg";
 import { LoadingPill } from "src/components/LoadingPill";
 import { PersonPreviewActionButtons } from "src/features/person-preview/components/PersonPreviewActionButtons";
+import { PersonPreviewToolbar } from "src/features/person-preview/components/PersonPreviewToolbar";
 import type {
   ActivePersonPreviewAction,
   PersonPreview,
@@ -17,7 +18,7 @@ const styles = {
     position: "relative",
     h: "min(52vh, 520px)",
     minH: { base: "320px", sm: "350px" },
-    mt: { base: "12px", sm: "16px" },
+    mt: { base: "22px", sm: "28px" },
     sx: {
       touchAction: "pan-y",
     },
@@ -25,10 +26,15 @@ const styles = {
   card: {
     position: "relative",
     inset: 0,
+    display: "flex",
+    flexDirection: "column",
     h: "100%",
     overflow: "hidden",
+    border: "1px solid",
+    borderColor: "rgba(38, 57, 111, 0.14)",
     borderRadius: "28px",
-    bg: "app.base",
+    bg: "app.white",
+    boxShadow: "0 18px 42px rgba(38, 57, 111, 0.18)",
     transformOrigin: "50% 86%",
     transition: "transform 180ms ease, opacity 180ms ease",
     userSelect: "none",
@@ -47,6 +53,13 @@ const styles = {
     }
 
     return {};
+  },
+  photoArea: {
+    position: "relative",
+    flex: 1,
+    minH: 0,
+    overflow: "hidden",
+    bg: "app.base",
   },
   photo: {
     position: "absolute",
@@ -140,25 +153,28 @@ export function PersonPreviewPhoto({
   return (
     <Box {...styles.stage}>
       <Box as="article" {...styles.card} {...styles.activeCard(activeAction)}>
-        <Image
-          src={person.photo}
-          alt={`${person.name}, hlavná profilová fotka`}
-          onClick={onPhotoClick}
-          {...styles.photo}
-        />
-        <DecisionBadge activeAction={activeAction} side="nope">
-          NIE
-        </DecisionBadge>
-        <DecisionBadge activeAction={activeAction} side="like">
-          ÁNO
-        </DecisionBadge>
-        <Box {...styles.actions}>
-          <PersonPreviewActionButtons
-            activeAction={activeAction}
-            isSubmitting={isSubmitting}
-            onActionEnd={onActionEnd}
-            onActionStart={onActionStart}
+        <PersonPreviewToolbar person={person} />
+        <Box {...styles.photoArea}>
+          <Image
+            src={person.photo}
+            alt={`${person.name}, hlavná profilová fotka`}
+            onClick={onPhotoClick}
+            {...styles.photo}
           />
+          <DecisionBadge activeAction={activeAction} side="nope">
+            NIE
+          </DecisionBadge>
+          <DecisionBadge activeAction={activeAction} side="like">
+            ÁNO
+          </DecisionBadge>
+          <Box {...styles.actions}>
+            <PersonPreviewActionButtons
+              activeAction={activeAction}
+              isSubmitting={isSubmitting}
+              onActionEnd={onActionEnd}
+              onActionStart={onActionStart}
+            />
+          </Box>
         </Box>
       </Box>
       {isLoadingNextPerson && (

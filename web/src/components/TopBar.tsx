@@ -13,7 +13,6 @@ import hugIcon from "assets/hug.svg";
 import logoutIcon from "assets/logout.svg";
 import messageIcon from "assets/message.svg";
 import personIcon from "assets/person.svg";
-import slidersIcon from "assets/sliders.svg";
 import { appConfig } from "src/config.js";
 import { SvgImage } from "src/components/SvgImage";
 
@@ -21,7 +20,7 @@ const styles = {
   root: {
     position: "sticky",
     top: 0,
-    zIndex: 10,
+    zIndex: 40,
     align: "center",
     justify: "space-between",
     h: "64px",
@@ -130,7 +129,6 @@ function TopBarIconButton({ label, icon, onClick }: TopBarIconButtonProps) {
 
 type TopBarProps = {
   isAuthenticated: boolean;
-  onCriteriaClick: () => void;
   onLogout: () => void;
   onMessagesClick: () => void;
   onProfileClick: () => void;
@@ -138,7 +136,6 @@ type TopBarProps = {
 
 export function TopBar({
   isAuthenticated,
-  onCriteriaClick,
   onLogout,
   onMessagesClick,
   onProfileClick,
@@ -157,10 +154,6 @@ export function TopBar({
             <MenuItem onClick={onProfileClick} {...styles.menuItem}>
               <SvgImage src={personIcon} {...styles.menuItemIcon} />
               <Text as="span">Profil</Text>
-            </MenuItem>
-            <MenuItem onClick={onCriteriaClick} {...styles.menuItem}>
-              <SvgImage src={slidersIcon} {...styles.menuItemIcon} />
-              <Text as="span">Kritériá výberu</Text>
             </MenuItem>
             <MenuItem onClick={onLogout} {...styles.menuItem}>
               <SvgImage src={logoutIcon} {...styles.menuItemIcon} />

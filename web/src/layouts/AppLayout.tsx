@@ -31,7 +31,6 @@ export function AppLayout({ onLogout }: AppLayoutProps) {
     <Box {...styles.app}>
       <TopBar
         isAuthenticated={auth.isAuthenticated}
-        onCriteriaClick={() => navigate("/criteria")}
         onLogout={handleLogout}
         onMessagesClick={() => navigate("/messages")}
         onProfileClick={() => navigate("/profile")}
