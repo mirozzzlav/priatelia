@@ -2,16 +2,18 @@ import {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
   useState,
   type ChangeEvent,
   type SubmitEvent,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Flex,
   FormControl,
   FormErrorMessage,
-  Image,
+  IconButton,
   SimpleGrid,
   Text,
   VStack,
@@ -19,10 +21,6 @@ import {
 
 import filterIcon from "assets/filter.svg";
 import matchIcon from "assets/match.svg";
-import {
-  ExpandableInfoBar,
-  type ExpandableInfoBarItem,
-} from "src/components/ExpandableInfoBar";
 import {
   FormActions,
   FormInput,
@@ -39,6 +37,7 @@ import { ScrollCue } from "src/components/ScrollCue";
 import { SvgImage } from "src/components/SvgImage";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import { InfoScreen } from "src/features/info";
+import { ChatMatchList } from "src/features/messages";
 import {
   type ActivePersonPreviewAction,
   PersonPreviewDetail,
@@ -79,6 +78,109 @@ const styles = {
     top: "64px",
     zIndex: 20,
   },
+  headerRoot: (
+    isExpanded: boolean,
+    expandedTop: number | null,
+    topOffset: number,
+  ) =>
+    ({
+      position: isExpanded ? "fixed" : "relative",
+      top: isExpanded ? `${expandedTop ?? topOffset}px` : undefined,
+      left: isExpanded ? "50%" : undefined,
+      zIndex: isExpanded ? 30 : 1,
+      w: isExpanded
+        ? "min(100%, 460px)"
+        : { base: "calc(100% + 24px)", sm: "calc(100% + 32px)" },
+      h: isExpanded ? `calc(100dvh - ${expandedTop ?? topOffset}px)` : "56px",
+      mx: isExpanded ? undefined : { base: "-12px", sm: "-16px" },
+      bg: "app.white",
+      borderTop: "1px solid",
+      borderBottom: "1px solid",
+      borderColor: "rgba(38, 57, 111, 0.14)",
+      boxShadow: isExpanded
+        ? "0 18px 42px rgba(38, 57, 111, 0.18)"
+        : "0 18px 42px rgba(38, 57, 111, 0.12)",
+      color: "app.text",
+      overflow: "hidden",
+      transform: isExpanded ? "translateX(-50%)" : undefined,
+      transition:
+        "height 220ms ease, box-shadow 220ms ease, background 220ms ease",
+    }) as const,
+  headerRow: {
+    align: "center",
+    justify: "space-between",
+    w: "100%",
+    h: "56px",
+    px: "12px",
+    pt: "5px",
+    pb: "9px",
+    gap: "10px",
+  },
+  filterToggle: {
+    align: "center",
+    display: "flex",
+    flex: 1,
+    gap: "9px",
+    minW: 0,
+    h: "42px",
+    overflow: "hidden",
+    px: "12px",
+    border: "1px solid",
+    borderColor: "rgba(38, 57, 111, 0.18)",
+    borderRadius: "999px",
+    bg: "app.white",
+    boxShadow: "0 3px 10px rgba(38, 57, 111, 0.08)",
+    textAlign: "left",
+    transition: "border-color 140ms ease, box-shadow 140ms ease",
+    _hover: {
+      borderColor: "rgba(38, 57, 111, 0.26)",
+      boxShadow: "0 4px 13px rgba(38, 57, 111, 0.11)",
+    },
+    _active: {
+      borderColor: "rgba(38, 57, 111, 0.28)",
+      boxShadow: "0 2px 8px rgba(38, 57, 111, 0.08)",
+    },
+  },
+  filterSummaryText: {
+    display: "block",
+    maxW: "100%",
+    overflow: "hidden",
+    fontSize: "sm",
+    fontWeight: "semibold",
+    lineHeight: 1.25,
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  connectionsButton: (isSelected: boolean) =>
+    ({
+      display: "grid",
+      placeItems: "center",
+      boxSize: "42px",
+      minW: "42px",
+      border: "1px solid",
+      borderColor: "rgba(38, 57, 111, 0.18)",
+      borderRadius: "999px",
+      color: "app.text",
+      bg: isSelected ? "app.bgAux" : "app.white",
+      boxShadow: "0 3px 10px rgba(38, 57, 111, 0.08)",
+      transition: "background 140ms ease, border-color 140ms ease",
+      _disabled: { opacity: 1 },
+      _hover: {
+        bg: isSelected ? "app.bgAux" : "app.white",
+        borderColor: "rgba(38, 57, 111, 0.26)",
+      },
+      _active: {
+        bg: isSelected ? "app.bgAux" : "app.white",
+        borderColor: "rgba(38, 57, 111, 0.28)",
+      },
+    }) as const,
+  headerPanel: {
+    h: "calc(100% - 56px)",
+    overflowY: "auto",
+    px: "18px",
+    pt: "22px",
+    pb: "32px",
+  },
   infoIcon: {
     filter: "grayscale(1) contrast(1.35)",
   },
@@ -91,25 +193,6 @@ const styles = {
     fontSize: "md",
     lineHeight: 1.55,
   },
-  connectionSummary: {
-    alignItems: "baseline",
-    display: "inline-flex",
-    gap: "4px",
-    maxW: "100%",
-    minW: 0,
-    overflow: "hidden",
-    whiteSpace: "nowrap",
-  },
-  connectionCount: {
-    color: "app.info",
-    fontSize: "lg",
-    fontWeight: "black",
-    lineHeight: 1,
-  },
-  connectionLabel: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  },
   matchIconWrap: {
     position: "relative",
     align: "center",
@@ -121,13 +204,22 @@ const styles = {
   },
   matchIconCount: {
     position: "absolute",
-    top: "48%",
-    left: "50%",
+    top: "-5px",
+    right: "-8px",
+    alignItems: "center",
+    justifyContent: "center",
+    minW: "20px",
+    h: "20px",
+    px: "4px",
+    border: "2px solid",
+    borderColor: "app.white",
+    borderRadius: "999px",
+    bg: "#F97316",
     color: "app.white",
-    fontSize: "9px",
+    fontSize: "11px",
     fontWeight: "black",
     lineHeight: 1,
-    transform: "translate(-50%, -50%)",
+    boxShadow: "0 1px 4px rgba(38, 57, 111, 0.28)",
   },
   filterForm: {
     display: "grid",
@@ -137,87 +229,21 @@ const styles = {
     columns: 2,
     gap: "10px",
   },
-  matchList: {
-    display: "grid",
-    gap: "10px",
-  },
-  matchItem: {
-    alignItems: "center",
-    display: "flex",
-    gap: "12px",
-    justifyContent: "space-between",
-    minH: "76px",
-    px: "14px",
-    py: "12px",
-    border: "1px solid",
-    borderColor: "rgba(38, 57, 111, 0.14)",
-    borderRadius: "12px",
-    bg: "app.white",
-  },
-  matchText: {
-    minW: 0,
-  },
-  matchName: {
-    color: "app.text",
-    fontSize: "md",
-    fontWeight: "extrabold",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  },
-  matchMeta: {
-    color: "app.text",
-    fontSize: "sm",
-    fontWeight: "medium",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  },
-  matchPhoto: {
-    boxSize: "52px",
-    flexShrink: 0,
-    borderRadius: "12px",
-    objectFit: "cover",
-  },
 } as const;
 
 function formatFilterSummary(settings: DiscoverySettingsData) {
   return `${settings.location}, ${settings.ageFrom}-${settings.ageTo} rokov, ${settings.radiusKm} km`;
 }
 
-function getNewConnectionLabel(count: number) {
-  if (count === 1) {
-    return "nové prepojenie";
-  }
-
-  if (count >= 2 && count <= 4) {
-    return "nové prepojenia";
-  }
-
-  return "nových prepojení";
-}
-
-function NewConnectionSummary({ count }: { count: number }) {
-  return (
-    <Box as="span" {...styles.connectionSummary}>
-      <Text as="span">Máš</Text>
-      <Text as="span" {...styles.connectionCount}>
-        {count}
-      </Text>
-      <Text as="span" {...styles.connectionLabel}>
-        {getNewConnectionLabel(count)}.
-      </Text>
-    </Box>
-  );
-}
-
 function MatchIconWithCount({ count }: { count: number }) {
   return (
     <Flex {...styles.matchIconWrap}>
-      <SvgImage src={matchIcon} boxSize="31px" {...styles.matchIconImage} />
-      <Text as="span" {...styles.matchIconCount}>
-        {count > 99 ? "99+" : count}
-      </Text>
+      <SvgImage src={matchIcon} boxSize="28px" {...styles.matchIconImage} />
+      {count > 0 && (
+        <Flex as="span" {...styles.matchIconCount}>
+          {count > 99 ? "99+" : count}
+        </Flex>
+      )}
     </Flex>
   );
 }
@@ -225,9 +251,14 @@ function MatchIconWithCount({ count }: { count: number }) {
 type MatchInfoPanelProps = {
   isLoading: boolean;
   matches: ChatMatch[];
+  onMatchClick: (matchId: string) => void;
 };
 
-function MatchInfoPanel({ isLoading, matches }: MatchInfoPanelProps) {
+function MatchInfoPanel({
+  isLoading,
+  matches,
+  onMatchClick,
+}: MatchInfoPanelProps) {
   if (isLoading) {
     return <Text {...styles.infoBody}>Načítavam nové prepojenia.</Text>;
   }
@@ -241,19 +272,7 @@ function MatchInfoPanel({ isLoading, matches }: MatchInfoPanelProps) {
   return (
     <VStack {...styles.infoContent}>
       <PanelHeading>Nové prepojenia</PanelHeading>
-      <Box {...styles.matchList}>
-        {matches.map((match) => (
-          <Box key={match.id} {...styles.matchItem}>
-            <Box {...styles.matchText}>
-              <Text {...styles.matchName}>{match.name}</Text>
-              <Text {...styles.matchMeta}>
-                {match.age}, {match.location}
-              </Text>
-            </Box>
-            <Image src={match.photo} alt={match.name} {...styles.matchPhoto} />
-          </Box>
-        ))}
-      </Box>
+      <ChatMatchList matches={matches} onMatchClick={onMatchClick} />
     </VStack>
   );
 }
@@ -420,52 +439,155 @@ function DiscoveryFilterPanel({
   );
 }
 
-type DiscoveryInfoBarProps = {
+type ActiveHeaderPanel = "filter" | "matches" | null;
+
+type DiscoveryHeaderProps = {
   initialDiscoverySettings: DiscoverySettingsData;
   isLoadingMatches: boolean;
   matches: ChatMatch[];
+  onMatchClick: (matchId: string) => void;
+  onNewMatchesSeen: (matchIds: string[]) => void;
   onDiscoveryReload: () => Promise<void>;
   onDiscoverySettingsSave: (data: DiscoverySettingsData) => void;
 };
 
-function DiscoveryInfoBar({
+function DiscoveryHeader({
   initialDiscoverySettings,
   isLoadingMatches,
   matches,
+  onMatchClick,
+  onNewMatchesSeen,
   onDiscoveryReload,
   onDiscoverySettingsSave,
-}: DiscoveryInfoBarProps) {
-  const newMatches = matches.filter((match) => !match.lastMessage);
-  const discoveryInfoBarItems: ExpandableInfoBarItem[] = [
-    {
-      collapsedContent: formatFilterSummary(initialDiscoverySettings),
-      expandedContent: (
-        <DiscoveryFilterPanel
-          key={formatFilterSummary(initialDiscoverySettings)}
-          initialSettings={initialDiscoverySettings}
-          onDiscoveryReload={onDiscoveryReload}
-          onSave={onDiscoverySettingsSave}
-        />
-      ),
-      icon: <SvgImage src={filterIcon} boxSize="21px" {...styles.infoIcon} />,
-      id: "filter",
-      label: "Filter",
-    },
-    {
-      collapsedContent: isLoadingMatches
-        ? "Načítavam nové prepojenia"
-        : <NewConnectionSummary count={newMatches.length} />,
-      expandedContent: (
-        <MatchInfoPanel isLoading={isLoadingMatches} matches={newMatches} />
-      ),
-      icon: <MatchIconWithCount count={newMatches.length} />,
-      id: "matches",
-      label: "Prepojenia",
-    },
-  ];
+}: DiscoveryHeaderProps) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [activePanel, setActivePanel] = useState<ActiveHeaderPanel>(null);
+  const [expandedTop, setExpandedTop] = useState<number | null>(null);
+  const [expandedPanelMatches, setExpandedPanelMatches] = useState<ChatMatch[]>(
+    [],
+  );
+  const newMatches = matches.filter(
+    (match) => match.isNew && !match.lastMessage,
+  );
+  const isExpanded = activePanel !== null;
+  const isFilterExpanded = activePanel === "filter";
+  const isMatchesExpanded = activePanel === "matches";
+  const canUseMatches =
+    isLoadingMatches ||
+    isMatchesExpanded ||
+    newMatches.length > 0 ||
+    expandedPanelMatches.length > 0;
+  const displayedNewMatches =
+    expandedPanelMatches.length > 0 ? expandedPanelMatches : newMatches;
+
+  useEffect(() => {
+    if (!isExpanded) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isExpanded]);
+
+  const openPanel = (panel: Exclude<ActiveHeaderPanel, null>) => {
+    setExpandedTop(rootRef.current?.getBoundingClientRect().top ?? 64);
+    setActivePanel(panel);
+  };
+
+  const toggleFilterPanel = () => {
+    setExpandedPanelMatches([]);
+    setActivePanel((currentPanel) => {
+      if (currentPanel === "filter") {
+        return null;
+      }
+
+      setExpandedTop(rootRef.current?.getBoundingClientRect().top ?? 64);
+      return "filter";
+    });
+  };
+
+  const toggleMatchesPanel = () => {
+    if (!canUseMatches) {
+      return;
+    }
+
+    if (isMatchesExpanded) {
+      setActivePanel(null);
+      return;
+    }
+
+    openPanel("matches");
+
+    if (newMatches.length === 0) {
+      return;
+    }
+
+    setExpandedPanelMatches(newMatches);
+    onNewMatchesSeen(newMatches.map((match) => match.id));
+  };
 
   return (
-    <ExpandableInfoBar defaultItemId="filter" items={discoveryInfoBarItems} />
+    <Box
+      ref={rootRef}
+      {...styles.headerRoot(isExpanded, expandedTop, 64)}
+      aria-live="polite"
+    >
+      <Flex {...styles.headerRow}>
+        <Flex
+          as="button"
+          type="button"
+          aria-expanded={isFilterExpanded}
+          aria-label={
+            isFilterExpanded ? "Zbaliť filter" : "Rozbaliť filter"
+          }
+          onClick={toggleFilterPanel}
+          {...styles.filterToggle}
+        >
+          <SvgImage src={filterIcon} boxSize="21px" {...styles.infoIcon} />
+          <Text as="span" {...styles.filterSummaryText}>
+            {formatFilterSummary(initialDiscoverySettings)}
+          </Text>
+        </Flex>
+
+        <IconButton
+          aria-label={
+            isMatchesExpanded
+              ? "Zavrieť nové prepojenia"
+              : "Zobraziť nové prepojenia"
+          }
+          aria-pressed={isMatchesExpanded}
+          icon={
+            <MatchIconWithCount count={newMatches.length} />
+          }
+          isDisabled={!canUseMatches}
+          onClick={toggleMatchesPanel}
+          {...styles.connectionsButton(isMatchesExpanded)}
+        />
+      </Flex>
+
+      {isExpanded && (
+        <Box {...styles.headerPanel}>
+          {isFilterExpanded ? (
+            <DiscoveryFilterPanel
+              key={formatFilterSummary(initialDiscoverySettings)}
+              initialSettings={initialDiscoverySettings}
+              onDiscoveryReload={onDiscoveryReload}
+              onSave={onDiscoverySettingsSave}
+            />
+          ) : (
+            <MatchInfoPanel
+              isLoading={isLoadingMatches}
+              matches={displayedNewMatches}
+              onMatchClick={onMatchClick}
+            />
+          )}
+        </Box>
+      )}
+    </Box>
   );
 }
 
@@ -482,6 +604,7 @@ export function DiscoveryRoute({
   onPersonPreviewLoad,
   personPreview,
 }: DiscoveryRouteProps) {
+  const navigate = useNavigate();
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null,
   );
@@ -513,6 +636,25 @@ export function DiscoveryRoute({
       setMatches([]);
     }
   }, []);
+  const handleNewMatchesSeen = useCallback(
+    (matchIds: string[]) => {
+      if (matchIds.length === 0) {
+        return;
+      }
+
+      const seenMatchIds = new Set(matchIds);
+      setMatches((currentMatches) =>
+        currentMatches.map((match) =>
+          seenMatchIds.has(match.id) ? { ...match, isNew: false } : match,
+        ),
+      );
+
+      apiClient.markChatMatchesSeen(matchIds).catch(() => {
+        void loadMatches();
+      });
+    },
+    [loadMatches],
+  );
   const handleActionStart = (action: ActivePersonPreviewAction) => {
     onActionStart(action, loadMatches);
   };
@@ -590,10 +732,12 @@ export function DiscoveryRoute({
       {personPreview && (
         <>
           <Box {...styles.stickyHeader}>
-            <DiscoveryInfoBar
+            <DiscoveryHeader
               initialDiscoverySettings={initialDiscoverySettings}
               isLoadingMatches={isLoadingMatches}
               matches={matches}
+              onMatchClick={(matchId) => navigate(`/messages/${matchId}`)}
+              onNewMatchesSeen={handleNewMatchesSeen}
               onDiscoveryReload={onDiscoveryReload}
               onDiscoverySettingsSave={onDiscoverySettingsSave}
             />

@@ -178,6 +178,13 @@ export const restClient: ApiClient = {
     return request(`/chats/matches/${matchId}`);
   },
 
+  async markChatMatchesSeen(matchIds) {
+    await request("/chats/matches/seen", {
+      body: JSON.stringify({ matchIds }),
+      method: "POST",
+    });
+  },
+
   login(data) {
     return request("/auth/login", {
       body: JSON.stringify(data),

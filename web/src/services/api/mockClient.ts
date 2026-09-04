@@ -35,6 +35,7 @@ const delay = () =>
 const submittedPersonPreviewDecisions: PersonPreviewDecision[] = [];
 const submittedPersonPreviewIds = new Set<string>();
 const chatMatchIds = new Set(mockInitialChatMatchIds);
+const seenChatMatchIds = new Set<string>();
 const chatMessagesByMatchId: Record<string, ChatMessage[]> = {
   ...mockChatMessagesByMatchId,
 };
@@ -138,6 +139,7 @@ function getChatMatch(personPreviewId: string): ChatMatch | null {
   return {
     id: personPreview.id,
     age: personPreview.age,
+    isNew: !seenChatMatchIds.has(personPreview.id),
     lastMessage: lastMessage?.text ?? null,
     lastMessageAt: lastMessage?.sentAt ?? null,
     location: personPreview.meta[0] ?? "",
@@ -432,6 +434,16 @@ export const mockClient: ApiClient = {
       match,
       messages: chatMessagesByMatchId[matchId] ?? [],
     };
+  },
+
+  async markChatMatchesSeen(matchIds) {
+    await delay();
+
+    matchIds.forEach((matchId) => {
+      if (chatMatchIds.has(matchId)) {
+        seenChatMatchIds.add(matchId);
+      }
+    });
   },
 
   async login(data) {

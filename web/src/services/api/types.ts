@@ -44,6 +44,7 @@ export type MutationSuccessData = {
 export type ChatMatch = {
   id: string;
   age: string;
+  isNew: boolean;
   lastMessage: string | null;
   lastMessageAt: string | null;
   location: string;
@@ -140,6 +141,7 @@ export type ApiClient = {
   activateAccount: (token: string | null) => Promise<UserSession>;
   getChatMatches: () => Promise<ChatMatch[]>;
   getChatThread: (matchId: string) => Promise<ChatThread>;
+  markChatMatchesSeen: (matchIds: string[]) => Promise<void>;
   getDiscoverySettings: () => Promise<DiscoverySettingsData>;
   getPersonPreview: () => Promise<PersonPreview>;
   getProfile: () => Promise<EditableProfileData>;
