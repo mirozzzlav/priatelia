@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from psycopg import AsyncConnection
 
 from app.modules.chats.repository import ChatRepository
-from app.modules.chats.schemas import SendChatMessageRequest
+from app.modules.chats.schemas import MarkChatMatchesSeenRequest, SendChatMessageRequest
 from app.modules.chats.service import ChatService
 from app.modules.matching.repository import MatchingRepository
 from app.modules.profiles.repository import ProfileRepository
@@ -31,6 +31,16 @@ async def list_chat_matches(
 ):
     matches = await _service(connection).list_chat_matches(current_user.id)
     return [match.model_dump() for match in matches]
+
+
+@router.post("/chats/matches/seen", status_code=status.HTTP_204_NO_CONTENT)
+async def mark_chat_matches_seen(
+    data: MarkChatMatchesSeenRequest,
+    current_user: CurrentUser = Depends(get_current_user),
+    connection: AsyncConnection = Depends(get_connection),
+):
+    await _service(connection).mark_matches_seen(current_user.id, data.matchIds)
+    await connection.commit()
 
 
 @router.get("/chats/matches/{match_id}")

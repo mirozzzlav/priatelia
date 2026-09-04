@@ -9,9 +9,14 @@ class SendChatMessageRequest(BaseModel):
     text: str
 
 
+class MarkChatMatchesSeenRequest(BaseModel):
+    matchIds: list[UUID]
+
+
 class ChatMatch(BaseModel):
     id: str
     age: str
+    isNew: bool
     lastMessage: str | None
     lastMessageAt: str | None
     location: str

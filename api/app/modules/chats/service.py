@@ -22,16 +22,16 @@ class ChatService:
 
     async def list_chat_matches(self, user_id: UUID) -> list[ChatMatch]:
         matches = await self.matching.list_matches(user_id)
+        match_ids = [match.id for match in matches]
         profile_rows = await self.profiles.get_public_profiles_by_ids(
             [match.other_user_id for match in matches]
         )
         profiles_by_user_id = {row["user_id"]: row for row in profile_rows}
-        last_messages = await self.chats.get_last_messages_by_match_ids(
-            [match.id for match in matches]
-        )
+        last_messages = await self.chats.get_last_messages_by_match_ids(match_ids)
+        seen_match_ids = await self.chats.get_seen_match_ids(user_id, match_ids)
         unread_counts = await self.chats.get_unread_counts_by_match_ids(
             user_id,
-            [match.id for match in matches],
+            match_ids,
         )
 
         chat_matches: list[ChatMatch] = []
@@ -44,6 +44,7 @@ class ChatService:
                 ChatMatch(
                     id=str(match.id),
                     age=str(profile["age"]),
+                    isNew=match.id not in seen_match_ids,
                     lastMessage=last_message.text if last_message else None,
                     lastMessageAt=last_message.sent_at.isoformat()
                     if last_message
@@ -56,6 +57,9 @@ class ChatService:
             )
 
         return chat_matches
+
+    async def mark_matches_seen(self, user_id: UUID, match_ids: list[UUID]) -> None:
+        await self.chats.mark_matches_seen(match_ids, user_id)
 
     async def get_thread(self, user_id: UUID, match_id: UUID) -> ChatThread | None:
         if not await self.matching.user_can_access_match(user_id, match_id):

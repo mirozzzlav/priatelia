@@ -82,6 +82,42 @@ class ChatRepository:
             (user_id, match_id),
         )
 
+    async def mark_matches_seen(self, match_ids: list[UUID], user_id: UUID) -> None:
+        if not match_ids:
+            return
+
+        await self.connection.execute(
+            """
+            INSERT INTO match_views (match_id, user_id, seen_at)
+            SELECT id, %s, now()
+            FROM matches
+            WHERE id = ANY(%s)
+              AND (first_user_id = %s OR second_user_id = %s)
+            ON CONFLICT (match_id, user_id) DO NOTHING
+            """,
+            (user_id, match_ids, user_id, user_id),
+        )
+
+    async def get_seen_match_ids(
+        self,
+        user_id: UUID,
+        match_ids: list[UUID],
+    ) -> set[UUID]:
+        if not match_ids:
+            return set()
+
+        cursor = await self.connection.execute(
+            """
+            SELECT match_id
+            FROM match_views
+            WHERE user_id = %s
+              AND match_id = ANY(%s)
+            """,
+            (user_id, match_ids),
+        )
+        rows = await cursor.fetchall()
+        return {row["match_id"] for row in rows}
+
     async def get_last_messages_by_match_ids(
         self,
         match_ids: list[UUID],
