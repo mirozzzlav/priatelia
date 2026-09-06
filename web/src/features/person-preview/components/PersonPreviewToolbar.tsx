@@ -1,57 +1,97 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
+import locationPinIcon from "assets/location-pin.svg";
+import { SvgImage } from "src/components/SvgImage";
 import type { PersonPreview } from "src/features/person-preview/types";
 import { getSlovakCountWord } from "src/utils/formatSlovakCount";
 
 const styles = {
   root: {
-    px: "18px",
-    py: "14px",
+    position: "relative",
+    px: { base: "18px", sm: "22px" },
+    pt: { base: "16px", sm: "19px" },
+    pb: { base: "14px", sm: "16px" },
     color: "app.text",
-    bg: "app.white",
+    bg: "linear-gradient(180deg, #ffffff 0%, #fbfcff 100%)",
+    borderBottom: "1px solid",
+    borderColor: "rgba(38, 57, 111, 0.08)",
+    boxShadow: "inset 0 -1px 0 rgba(255, 255, 255, 0.7)",
+    _before: {
+      position: "absolute",
+      top: 0,
+      right: "22px",
+      left: "22px",
+      h: "1px",
+      bg: "rgba(255, 255, 255, 0.95)",
+      content: '""',
+    },
   },
-  contentRow: {
+  identityRow: {
     align: "center",
     minW: 0,
     w: "100%",
-    justify: "flex-start",
+  },
+  identityGroup: {
+    align: "center",
+    columnGap: { base: "9px", sm: "11px" },
+    minW: 0,
+    maxW: "100%",
   },
   name: {
     m: 0,
     minW: 0,
-    maxW: { base: "48%", sm: "56%" },
     overflow: "hidden",
-    fontSize: { base: "xl", sm: "2xl" },
-    lineHeight: 1,
+    color: "app.text",
+    fontSize: { base: "2xl", sm: "3xl" },
+    lineHeight: 1.05,
     letterSpacing: 0,
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-    fontWeight: "extrabold",
+    fontWeight: "black",
   },
   age: {
     flexShrink: 0,
-    fontSize: { base: "xl", sm: "2xl" },
-    fontWeight: "medium",
-    color: "app.info",
+    fontSize: { base: "2xl", sm: "3xl" },
+    fontWeight: "bold",
+    color: "app.text",
+    lineHeight: 1.05,
+  },
+  identityDivider: {
+    flexShrink: 0,
+    alignSelf: "center",
+    w: "1px",
+    h: { base: "22px", sm: "26px" },
+    bg: "rgba(38, 57, 111, 0.22)",
+  },
+  metaRow: {
+    align: "center",
+    columnGap: "5px",
+    mt: { base: "9px", sm: "11px" },
+    minW: 0,
+    w: "fit-content",
+    maxW: "100%",
+    px: "8px",
+    py: "5px",
+    border: "1px solid",
+    borderColor: "rgba(38, 57, 111, 0.08)",
+    borderRadius: "999px",
+    bg: "rgba(38, 57, 111, 0.035)",
+  },
+  cityIcon: {
+    flexShrink: 0,
+    boxSize: { base: "20px", sm: "22px" },
+    filter:
+      "invert(34%) sepia(20%) saturate(2026%) hue-rotate(184deg) brightness(92%) contrast(92%)",
   },
   city: {
-    flexShrink: 1,
-    maxW: { base: "24%", sm: "30%" },
     minW: 0,
     overflow: "hidden",
     color: "app.text",
-    fontSize: { base: "xl", sm: "2xl" },
-    fontWeight: "medium",
+    fontSize: { base: "md", sm: "lg" },
+    fontWeight: "bold",
     lineHeight: 1,
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-  },
-  punctuation: {
-    flexShrink: 0,
-    color: "app.text",
-    fontSize: { base: "xl", sm: "2xl" },
-    fontWeight: "medium",
-    lineHeight: 1,
   },
 } as const;
 
@@ -68,19 +108,21 @@ export function PersonPreviewToolbar({ person }: PersonPreviewToolbarProps) {
 
   return (
     <Box {...styles.root}>
-      <Flex {...styles.contentRow}>
-        <Heading as="h1" {...styles.name}>
-          {person.name}
-        </Heading>
-        {city && (
-          <>
-            <Text {...styles.punctuation}>,&nbsp;</Text>
-            <Text {...styles.city}>{city}</Text>
-            <Text {...styles.punctuation}>,&nbsp;</Text>
-          </>
-        )}
-        <Text {...styles.age}>{ageText}</Text>
+      <Flex {...styles.identityRow}>
+        <Flex {...styles.identityGroup}>
+          <Heading as="h1" {...styles.name}>
+            {person.name}
+          </Heading>
+          <Box aria-hidden="true" {...styles.identityDivider} />
+          <Text {...styles.age}>{ageText}</Text>
+        </Flex>
       </Flex>
+      {city && (
+        <Flex {...styles.metaRow}>
+          <SvgImage src={locationPinIcon} {...styles.cityIcon} />
+          <Text {...styles.city}>{city}</Text>
+        </Flex>
+      )}
     </Box>
   );
 }
