@@ -17,9 +17,9 @@ const styles = {
       px: size === "sm" ? "7px" : "8px",
       py: size === "sm" ? "4px" : "5px",
       border: "1px solid",
-      borderColor: "rgba(38, 57, 111, 0.08)",
+      borderColor: "rgba(53, 87, 45, 0.08)",
       borderRadius: "999px",
-      bg: "rgba(38, 57, 111, 0.035)",
+      bg: "rgba(53, 87, 45, 0.035)",
     }) as const,
   specialTag: (size: ProfileMetaTagSize) =>
     ({
@@ -29,7 +29,7 @@ const styles = {
       borderColor: "app.info",
       bg: "app.bgAux",
       boxShadow:
-        "inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 7px rgba(38, 57, 111, 0.08)",
+        "inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 7px rgba(53, 87, 45, 0.08)",
     }) as const,
   icon: (
     type: ProfileMetaTagType,
@@ -150,7 +150,7 @@ export function ProfileMetaTag({
             bg: "app.base",
             borderColor: "app.base",
             color: "app.white",
-            boxShadow: "0 4px 11px rgba(38, 57, 111, 0.16)",
+            boxShadow: "0 4px 11px rgba(53, 87, 45, 0.16)",
           }
         : {})}
     >

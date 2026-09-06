@@ -32,10 +32,10 @@ const styles = {
     maxH: "196px",
     overflowY: "auto",
     border: "1px solid",
-    borderColor: "rgba(38, 57, 111, 0.18)",
+    borderColor: "rgba(53, 87, 45, 0.18)",
     borderRadius: "18px",
     bg: "app.white",
-    boxShadow: "0 14px 32px rgba(38, 57, 111, 0.14)",
+    boxShadow: "0 14px 32px rgba(53, 87, 45, 0.14)",
     p: "6px",
   },
   option: {
@@ -54,7 +54,7 @@ const styles = {
     _hover: { bg: "app.bgAux", color: "app.text" },
     _focusVisible: {
       bg: "app.bgAux",
-      boxShadow: "0 0 0 2px rgba(59, 90, 157, 0.22)",
+      boxShadow: "0 0 0 2px rgba(79, 131, 68, 0.22)",
       color: "app.text",
     },
   },

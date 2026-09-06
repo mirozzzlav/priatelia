@@ -96,15 +96,15 @@ const styles = {
   },
   likeButton: {
     borderRight: "1px solid",
-    borderRightColor: "rgba(38, 57, 111, 0.18)",
+    borderRightColor: "rgba(53, 87, 45, 0.18)",
     _hover: {
       bg: "rgba(255, 255, 255, 0.78)",
       borderColor: "rgba(255, 255, 255, 0.6)",
-      borderRightColor: "rgba(38, 57, 111, 0.18)",
+      borderRightColor: "rgba(53, 87, 45, 0.18)",
     },
     _active: {
       bg: "rgba(255, 255, 255, 0.84)",
-      borderRightColor: "rgba(38, 57, 111, 0.18)",
+      borderRightColor: "rgba(53, 87, 45, 0.18)",
     },
   },
   nopeButton: {},

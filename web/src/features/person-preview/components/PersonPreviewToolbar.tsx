@@ -14,7 +14,7 @@ const styles = {
     color: "app.text",
     bg: "linear-gradient(180deg, #ffffff 0%, #fbfcff 100%)",
     borderBottom: "1px solid",
-    borderColor: "rgba(38, 57, 111, 0.08)",
+    borderColor: "rgba(53, 87, 45, 0.08)",
     boxShadow: "inset 0 -1px 0 rgba(255, 255, 255, 0.7)",
     _before: {
       position: "absolute",
@@ -61,7 +61,7 @@ const styles = {
     alignSelf: "center",
     w: "1px",
     h: { base: "22px", sm: "26px" },
-    bg: "rgba(38, 57, 111, 0.22)",
+    bg: "rgba(53, 87, 45, 0.22)",
   },
   metaRow: {
     mt: { base: "9px", sm: "11px" },
@@ -95,7 +95,7 @@ export function PersonPreviewToolbar({ person }: PersonPreviewToolbarProps) {
         <Box {...styles.metaRow}>
           <ProfileMetaTag
             icon={locationPinIcon}
-            iconFilter="invert(34%) sepia(20%) saturate(2026%) hue-rotate(184deg) brightness(92%) contrast(92%)"
+            iconFilter="invert(53%) sepia(28%) saturate(833%) hue-rotate(62deg) brightness(90%) contrast(87%)"
             type="default"
           >
             {city}

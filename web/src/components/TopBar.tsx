@@ -4,6 +4,7 @@ import {
 } from "react";
 import {
   Flex,
+  Icon,
   IconButton,
   Menu,
   MenuButton,
@@ -14,10 +15,8 @@ import {
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
 import hugIcon from "assets/hug.svg";
-import logoutIcon from "assets/logout.svg";
 import matchIcon from "assets/match.svg";
 import messageIcon from "assets/message.svg";
-import personIcon from "assets/person.svg";
 import { appConfig } from "src/config.js";
 import { SvgImage } from "src/components/SvgImage";
 
@@ -58,9 +57,9 @@ const styles = {
     minW: "184px",
     mt: "8px",
     border: "1px solid",
-    borderColor: "app.base",
+    borderColor: "app.text",
     borderRadius: "8px",
-    boxShadow: "0 16px 34px rgba(38, 57, 111, 0.18)",
+    boxShadow: "0 16px 34px rgba(53, 87, 45, 0.18)",
     overflow: "hidden",
     p: 0,
   },
@@ -73,11 +72,12 @@ const styles = {
     gap: "12px",
     px: "16px",
     py: "12px",
-    _focus: { bg: "app.bgAux" },
-    _hover: { bg: "app.bgAux" },
+    _focus: { bg: "rgba(0, 0, 0, 0.06)" },
+    _hover: { bg: "rgba(0, 0, 0, 0.06)" },
   },
   menuItemIcon: {
     boxSize: "21px",
+    color: "app.baseDark",
     flexShrink: 0,
   },
   brand: {
@@ -151,7 +151,7 @@ const styles = {
     fontSize: "11px",
     fontWeight: "black",
     lineHeight: 1,
-    boxShadow: "0 1px 4px rgba(38, 57, 111, 0.28)",
+    boxShadow: "0 1px 4px rgba(53, 87, 45, 0.28)",
   },
 } as const;
 
@@ -201,6 +201,50 @@ function TopBarIconButton({ label, icon, onClick }: TopBarIconButtonProps) {
       onClick={onClick}
       {...styles.iconButton}
     />
+  );
+}
+
+function ProfileMenuIcon({
+  boxSize = "26px",
+  color = "app.baseDark",
+}: {
+  boxSize?: string;
+  color?: string;
+}) {
+  return (
+    <Icon
+      viewBox="0 0 24 24"
+      fill="none"
+      boxSize={boxSize}
+      color={color}
+      stroke="currentColor"
+      strokeWidth="2.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 12a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4z" />
+      <path d="M4.8 21a7.2 7.2 0 0 1 14.4 0" />
+    </Icon>
+  );
+}
+
+function LogoutMenuIcon() {
+  return (
+    <Icon
+      viewBox="0 0 24 24"
+      fill="none"
+      {...styles.menuItemIcon}
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M10 5H6.8A2.8 2.8 0 0 0 4 7.8v8.4A2.8 2.8 0 0 0 6.8 19H10" />
+      <path d="M14 8l4 4-4 4" />
+      <path d="M18 12H9" />
+    </Icon>
   );
 }
 
@@ -255,16 +299,16 @@ export function TopBar({
           <MenuButton
             as={IconButton}
             aria-label="Používateľské menu"
-            icon={<SvgImage src={personIcon} boxSize="26px" />}
+            icon={<ProfileMenuIcon color="app.base" />}
             {...styles.iconButton}
           />
           <MenuList {...styles.menuList}>
             <MenuItem onClick={onProfileClick} {...styles.menuItem}>
-              <SvgImage src={personIcon} {...styles.menuItemIcon} />
+              <ProfileMenuIcon boxSize="21px" />
               <Text as="span">Profil</Text>
             </MenuItem>
             <MenuItem onClick={onLogout} {...styles.menuItem}>
-              <SvgImage src={logoutIcon} {...styles.menuItemIcon} />
+              <LogoutMenuIcon />
               <Text as="span">Odhlásiť</Text>
             </MenuItem>
           </MenuList>

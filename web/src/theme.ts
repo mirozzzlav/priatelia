@@ -3,9 +3,9 @@ import { extendTheme } from "@chakra-ui/react";
 export const theme = extendTheme({
   colors: {
     app: {
-      base: "#3b5a9d",
-      baseDark: "#26396f",
-      info: "#ffa633",
+      base: "#4f8344",
+      baseDark: "#35572d",
+      info: "#c56a18",
       error: "#9f3f4a",
       success: "#3f8f65",
       white: "#ffffff",
@@ -44,7 +44,7 @@ export const theme = extendTheme({
           bgPosition: "center",
           bgSize: "cover",
           content: '""',
-          filter: "grayscale(1)",
+          filter: "grayscale(0.86) sepia(0.08) saturate(0.42) contrast(0.9) brightness(1.08)",
         },
         _after: {
           position: "fixed",
@@ -52,7 +52,7 @@ export const theme = extendTheme({
           zIndex: -1,
           bg: "app.base",
           content: '""',
-          opacity: 0.24,
+          opacity: 0.08,
         },
       },
       button: {

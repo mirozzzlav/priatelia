@@ -98,10 +98,10 @@ const styles = {
       bg: "linear-gradient(180deg, #ffffff 0%, #fbfcff 100%)",
       borderTop: "1px solid",
       borderBottom: "1px solid",
-      borderColor: "rgba(38, 57, 111, 0.14)",
+      borderColor: "rgba(53, 87, 45, 0.14)",
       boxShadow: isExpanded
-        ? "0 18px 42px rgba(38, 57, 111, 0.18)"
-        : "0 18px 42px rgba(38, 57, 111, 0.12)",
+        ? "0 18px 42px rgba(53, 87, 45, 0.18)"
+        : "0 18px 42px rgba(53, 87, 45, 0.12)",
       color: "app.text",
       overflow: isExpanded ? "hidden" : "visible",
       transform: isExpanded ? "translateX(-50%)" : undefined,
@@ -140,23 +140,23 @@ const styles = {
     h: "50px",
     px: "14px",
     border: "1px solid",
-    borderColor: "rgba(38, 57, 111, 0.16)",
+    borderColor: "rgba(53, 87, 45, 0.16)",
     borderRadius: "999px",
     bg: "rgba(255, 255, 255, 0.94)",
-    boxShadow: "0 7px 18px rgba(38, 57, 111, 0.08)",
+    boxShadow: "0 7px 18px rgba(53, 87, 45, 0.08)",
     textAlign: "left",
     transition: "border-color 140ms ease, box-shadow 140ms ease",
     _hover: {
-      borderColor: "rgba(38, 57, 111, 0.26)",
-      boxShadow: "0 9px 22px rgba(38, 57, 111, 0.11)",
+      borderColor: "rgba(53, 87, 45, 0.26)",
+      boxShadow: "0 9px 22px rgba(53, 87, 45, 0.11)",
     },
     _active: {
-      borderColor: "rgba(38, 57, 111, 0.28)",
-      boxShadow: "0 2px 8px rgba(38, 57, 111, 0.08)",
+      borderColor: "rgba(53, 87, 45, 0.28)",
+      boxShadow: "0 2px 8px rgba(53, 87, 45, 0.08)",
     },
     _focusWithin: {
-      borderColor: "rgba(59, 90, 157, 0.38)",
-      boxShadow: "0 0 0 3px rgba(59, 90, 157, 0.12)",
+      borderColor: "rgba(79, 131, 68, 0.38)",
+      boxShadow: "0 0 0 3px rgba(79, 131, 68, 0.12)",
     },
   },
   filterSummary: {
@@ -185,7 +185,7 @@ const styles = {
     },
   },
   filterSegmentLabel: {
-    color: "rgba(38, 57, 111, 0.62)",
+    color: "rgba(53, 87, 45, 0.62)",
     fontSize: "10px",
     fontWeight: "black",
     lineHeight: 1,
@@ -202,7 +202,7 @@ const styles = {
     justifySelf: "center",
     w: "1px",
     h: "34px",
-    bg: "rgba(38, 57, 111, 0.24)",
+    bg: "rgba(53, 87, 45, 0.24)",
   },
   filterEditorWrap: {
     position: "relative",
@@ -232,7 +232,7 @@ const styles = {
     gap: "7px",
   },
   filterEditorLabel: {
-    color: "rgba(38, 57, 111, 0.62)",
+    color: "rgba(53, 87, 45, 0.62)",
     fontSize: "10px",
     fontWeight: "black",
     lineHeight: 1,
@@ -250,7 +250,7 @@ const styles = {
     boxSize: "38px",
     minW: "38px",
     border: "1px solid",
-    borderColor: "rgba(38, 57, 111, 0.18)",
+    borderColor: "rgba(53, 87, 45, 0.18)",
     borderRadius: "999px",
     bg: "app.white",
     color: "app.base",
@@ -266,10 +266,10 @@ const styles = {
     maxH: "196px",
     overflowY: "auto",
     border: "1px solid",
-    borderColor: "rgba(38, 57, 111, 0.18)",
+    borderColor: "rgba(53, 87, 45, 0.18)",
     borderRadius: "18px",
     bg: "app.white",
-    boxShadow: "0 14px 32px rgba(38, 57, 111, 0.14)",
+    boxShadow: "0 14px 32px rgba(53, 87, 45, 0.14)",
     p: "6px",
   },
   locationOption: {
@@ -288,7 +288,7 @@ const styles = {
     _hover: { bg: "app.bgAux", color: "app.text" },
     _focusVisible: {
       bg: "app.bgAux",
-      boxShadow: "0 0 0 2px rgba(59, 90, 157, 0.22)",
+      boxShadow: "0 0 0 2px rgba(79, 131, 68, 0.22)",
       color: "app.text",
     },
   },

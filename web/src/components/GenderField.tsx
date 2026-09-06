@@ -19,15 +19,15 @@ const styles = {
       h: "38px",
       px: "13px",
       border: "1px solid",
-      borderColor: isSelected ? "app.base" : "rgba(38, 57, 111, 0.18)",
+      borderColor: isSelected ? "app.base" : "rgba(53, 87, 45, 0.18)",
       borderRadius: "999px",
-      bg: isSelected ? "app.base" : "rgba(38, 57, 111, 0.06)",
+      bg: isSelected ? "app.base" : "rgba(53, 87, 45, 0.06)",
       color: isSelected ? "app.white" : "app.text",
       fontSize: "sm",
       fontWeight: "bold",
       _hover: {
         bg: isSelected ? "app.baseDark" : "app.bgAux",
-        borderColor: isSelected ? "app.baseDark" : "rgba(38, 57, 111, 0.24)",
+        borderColor: isSelected ? "app.baseDark" : "rgba(53, 87, 45, 0.24)",
       },
       _active: {
         bg: isSelected ? "app.baseDark" : "app.bgAux",

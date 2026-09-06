@@ -25,19 +25,19 @@ const fieldInputStyles = {
   h: "48px",
   px: "14px",
   border: "1px solid",
-  borderColor: "rgba(38, 57, 111, 0.18)",
+  borderColor: "rgba(53, 87, 45, 0.18)",
   borderRadius: "999px",
-  bg: "rgba(38, 57, 111, 0.06)",
+  bg: "rgba(53, 87, 45, 0.06)",
   boxShadow: "none",
   color: "app.text",
   transition: "background 140ms ease, border-color 140ms ease",
   _hover: {
-    borderColor: "rgba(38, 57, 111, 0.18)",
-    bg: "rgba(38, 57, 111, 0.06)",
+    borderColor: "rgba(53, 87, 45, 0.18)",
+    bg: "rgba(53, 87, 45, 0.06)",
   },
   _focusVisible: {
-    borderColor: "rgba(38, 57, 111, 0.18)",
-    bg: "rgba(38, 57, 111, 0.06)",
+    borderColor: "rgba(53, 87, 45, 0.18)",
+    bg: "rgba(53, 87, 45, 0.06)",
     boxShadow: "none",
   },
   _invalid: {
@@ -70,7 +70,7 @@ const passwordInputStyles = {
       bg: "app.bgAux",
     },
     _focusVisible: {
-      boxShadow: "0 0 0 2px rgba(59, 90, 157, 0.28)",
+      boxShadow: "0 0 0 2px rgba(79, 131, 68, 0.28)",
     },
   },
   eye: {
@@ -109,10 +109,10 @@ const passwordInputStyles = {
 
 const fieldTextareaStyles = {
   ...fieldInputStyles,
-  minH: "88px",
+  minH: "140px",
   py: "12px",
   borderRadius: "18px",
-  resize: "vertical",
+  resize: "none",
 } as const;
 
 const primaryButtonStyles = {
