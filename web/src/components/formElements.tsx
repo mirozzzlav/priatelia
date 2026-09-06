@@ -118,15 +118,16 @@ const fieldTextareaStyles = {
 const primaryButtonStyles = {
   h: "52px",
   px: "18px",
+  border: "1px solid",
+  borderColor: "transparent",
   borderRadius: "999px",
   bg: "app.base",
   color: "app.white",
   fontWeight: "black",
-  _hover: { bg: "app.baseDark" },
-  _active: { bg: "app.baseDark" },
+  _hover: { bg: "app.baseDark", borderColor: "transparent" },
+  _active: { bg: "app.baseDark", borderColor: "transparent" },
   _disabled: {
     bg: "app.bgAux",
-    border: "1px solid",
     borderColor: "app.text",
     color: "app.text",
     cursor: "not-allowed",
@@ -143,7 +144,7 @@ const secondaryButtonStyles = {
   borderRadius: "999px",
   color: "app.base",
   fontWeight: "black",
-  _hover: { bg: "app.bgAux" },
+  _hover: { bg: "rgba(79, 131, 68, 0.1)" },
 } as const;
 
 const linkButtonStyles = {
