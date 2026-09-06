@@ -45,7 +45,7 @@ MIRKO = SeedProfile(
 
 CONNECTIONS = [
     SeedProfile(
-        nickname="lucia-dev",
+        nickname="Lucia",
         email="lucia-dev@priatelia.local",
         birth_date="1998-03-14",
         location="Bratislava, Slovensko",
@@ -64,7 +64,7 @@ CONNECTIONS = [
         interests=["knihy", "varenie", "kava", "vylety"],
     ),
     SeedProfile(
-        nickname="peter-dev",
+        nickname="Peter",
         email="peter-dev@priatelia.local",
         birth_date="1992-11-22",
         location="Pezinok, Slovensko",
@@ -83,7 +83,7 @@ CONNECTIONS = [
         interests=["bicykel", "varenie", "vylety", "kino"],
     ),
     SeedProfile(
-        nickname="veronika-dev",
+        nickname="Veronika",
         email="veronika-dev@priatelia.local",
         birth_date="2000-07-09",
         location="Senec, Slovensko",
@@ -102,7 +102,7 @@ CONNECTIONS = [
         interests=["plavanie", "cestovanie", "bistra", "vylety"],
     ),
     SeedProfile(
-        nickname="adam-dev",
+        nickname="Adam",
         email="adam-dev@priatelia.local",
         birth_date="1996-01-27",
         location="Bratislava, Slovensko",
@@ -121,7 +121,7 @@ CONNECTIONS = [
         interests=["koncerty", "beh", "jedlo", "vylety"],
     ),
     SeedProfile(
-        nickname="michaela-dev",
+        nickname="Michaela",
         email="michaela-dev@priatelia.local",
         birth_date="1993-09-18",
         location="Modra, Slovensko",
@@ -140,7 +140,7 @@ CONNECTIONS = [
         interests=["turistika", "kava", "vystavy", "fotografia"],
     ),
     SeedProfile(
-        nickname="jan-dev",
+        nickname="Ján",
         email="jan-dev@priatelia.local",
         birth_date="1989-12-04",
         location="Bratislava, Slovensko",
@@ -159,7 +159,7 @@ CONNECTIONS = [
         interests=["kino", "jedlo", "knihy", "kava"],
     ),
     SeedProfile(
-        nickname="zuzana-dev",
+        nickname="Zuzana",
         email="zuzana-dev@priatelia.local",
         birth_date="1997-06-30",
         location="Trnava, Slovensko",
@@ -178,7 +178,7 @@ CONNECTIONS = [
         interests=["podcasty", "beh", "varenie", "kava"],
     ),
     SeedProfile(
-        nickname="robert-dev",
+        nickname="Róbert",
         email="robert-dev@priatelia.local",
         birth_date="1991-02-11",
         location="Nitra, Slovensko",
@@ -197,7 +197,7 @@ CONNECTIONS = [
         interests=["fotografia", "turistika", "vylety", "knihy"],
     ),
     SeedProfile(
-        nickname="katarina-dev",
+        nickname="Katarína",
         email="katarina-dev@priatelia.local",
         birth_date="1995-10-06",
         location="Bratislava, Slovensko",
@@ -216,7 +216,7 @@ CONNECTIONS = [
         interests=["caj", "knihy", "vystavy", "vylety"],
     ),
     SeedProfile(
-        nickname="daniel-dev",
+        nickname="Daniel",
         email="daniel-dev@priatelia.local",
         birth_date="1999-04-21",
         location="Bratislava, Slovensko",
@@ -235,7 +235,7 @@ CONNECTIONS = [
         interests=["lezenie", "kava", "cestovanie", "varenie"],
     ),
     SeedProfile(
-        nickname="emilia-dev",
+        nickname="Emília",
         email="emilia-dev@priatelia.local",
         birth_date="2001-08-25",
         location="Bratislava, Slovensko",
@@ -254,7 +254,7 @@ CONNECTIONS = [
         interests=["dizajn", "vystavy", "bistra", "kava"],
     ),
     SeedProfile(
-        nickname="martin-dev",
+        nickname="Martin",
         email="martin-dev@priatelia.local",
         birth_date="1992-05-12",
         location="Hainburg an der Donau, Rakúsko",
@@ -273,8 +273,8 @@ CONNECTIONS = [
         interests=["varenie", "vylety", "plavanie", "turistika"],
     ),
     SeedProfile(
-        nickname="tereza-dev",
-        email="tereza-dev@priatelia.local",
+        nickname="Terézia",
+        email="terezia-dev@priatelia.local",
         birth_date="1996-12-19",
         location="Bratislava, Slovensko",
         latitude=48.1712,
@@ -291,7 +291,129 @@ CONNECTIONS = [
         ],
         interests=["cestovanie", "varenie", "kava", "koncerty"],
     ),
+    SeedProfile(
+        nickname="Ivana",
+        email="ivana-dev@priatelia.local",
+        birth_date="1998-02-08",
+        location="Bratislava, Slovensko",
+        latitude=48.1582,
+        longitude=17.1284,
+        bio=(
+            "Pracujem v škole a voľný čas najradšej trávim pri knihách, plávaní "
+            "alebo prechádzkach v meste. Mám rada pokojné stretnutia, jasné dohody "
+            "a ľudí, ktorí sa vedia prirodzene rozprávať. Rada spoznám niekoho na "
+            "kultúru, kávu alebo víkendový výlet."
+        ),
+        photos=[
+            "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=900&q=85",
+        ],
+        interests=["knihy", "plavanie", "kava", "vylety"],
+    ),
+    SeedProfile(
+        nickname="Matej",
+        email="matej-dev@priatelia.local",
+        birth_date="1994-09-03",
+        location="Bratislava, Slovensko",
+        latitude=48.1213,
+        longitude=17.1098,
+        bio=(
+            "Cez týždeň pracujem v technickom tíme a po práci chodím liezť alebo "
+            "do kina. Baví ma dobrá káva, jednoduché výlety a rozhovory bez "
+            "potreby všetko plánovať do detailu. Hľadám ľudí na aktívny oddych aj "
+            "pokojné večery."
+        ),
+        photos=[
+            "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=85",
+        ],
+        interests=["lezenie", "kino", "kava", "vylety"],
+    ),
+    SeedProfile(
+        nickname="Lenka",
+        email="lenka-dev@priatelia.local",
+        birth_date="2000-04-17",
+        location="Pezinok, Slovensko",
+        latitude=48.2893,
+        longitude=17.2691,
+        bio=(
+            "Rada chodím na trhy, krátke túry a objavujem malé podniky v okolí. "
+            "Vo vzťahoch aj priateľstvách si cením spoľahlivosť, humor a schopnosť "
+            "tešiť sa z obyčajných plánov. Rada spoznám niekoho na výlety alebo "
+            "pokojné stretnutia pri káve."
+        ),
+        photos=[
+            "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85",
+        ],
+        interests=["turistika", "bistra", "kava", "vylety"],
+    ),
+    SeedProfile(
+        nickname="Štefan",
+        email="stefan-dev@priatelia.local",
+        birth_date="1990-07-26",
+        location="Bratislava, Slovensko",
+        latitude=48.1764,
+        longitude=17.0849,
+        bio=(
+            "Po práci najradšej sadnem na bicykel alebo varím niečo jednoduché pre "
+            "kamarátov. Mám rád Malé Karpaty, dobré jedlo a ľudí, ktorí hovoria "
+            "priamo. Hľadám spoločnosť na šport, výlety aj bežné stretnutia bez "
+            "veľkého tlaku."
+        ),
+        photos=[
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=900&q=85",
+        ],
+        interests=["bicykel", "varenie", "vylety", "jedlo"],
+    ),
 ]
+
+LEGACY_NICKNAME_RENAMES = {
+    "lucia-dev": "Lucia",
+    "peter-dev": "Peter",
+    "veronika-dev": "Veronika",
+    "adam-dev": "Adam",
+    "michaela-dev": "Michaela",
+    "jan-dev": "Ján",
+    "zuzana-dev": "Zuzana",
+    "robert-dev": "Róbert",
+    "katarina-dev": "Katarína",
+    "daniel-dev": "Daniel",
+    "emilia-dev": "Emília",
+    "martin-dev": "Martin",
+    "tereza-dev": "Terézia",
+}
+
+
+def rename_legacy_seed_users(cursor: psycopg.Cursor) -> None:
+    for old_nickname, new_nickname in LEGACY_NICKNAME_RENAMES.items():
+        cursor.execute(
+            """
+            DELETE FROM users old_user
+            WHERE lower(old_user.nickname) = lower(%s)
+              AND EXISTS (
+                  SELECT 1
+                  FROM users new_user
+                  WHERE lower(new_user.nickname) = lower(%s)
+              )
+            """,
+            (old_nickname, new_nickname),
+        )
+        cursor.execute(
+            """
+            UPDATE users
+            SET nickname = %s,
+                updated_at = now()
+            WHERE lower(nickname) = lower(%s)
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM users existing_user
+                  WHERE lower(existing_user.nickname) = lower(%s)
+              )
+            """,
+            (new_nickname, old_nickname, new_nickname),
+        )
 
 
 def upsert_user(cursor: psycopg.Cursor, profile: SeedProfile) -> str:
@@ -385,6 +507,7 @@ def main() -> None:
 
     with psycopg.connect(settings.database_url, row_factory=dict_row) as connection:
         with connection.cursor() as cursor:
+            rename_legacy_seed_users(cursor)
             mirko_id = upsert_user(cursor, MIRKO)
             cursor.execute(
                 """

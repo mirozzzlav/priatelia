@@ -19,7 +19,7 @@ const styles = {
     p: "10px",
     border: "1px solid",
     borderColor: "app.text",
-    borderRadius: "12px",
+    borderRadius: "22px",
     bg: "app.white",
     color: "app.text",
     textAlign: "left",

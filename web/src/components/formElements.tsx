@@ -23,14 +23,22 @@ const fieldLabelStyles = {
 
 const fieldInputStyles = {
   h: "48px",
+  px: "14px",
   border: "1px solid",
-  borderColor: "app.text",
-  borderRadius: "10px",
-  bg: "app.white",
+  borderColor: "rgba(38, 57, 111, 0.18)",
+  borderRadius: "999px",
+  bg: "rgba(38, 57, 111, 0.06)",
+  boxShadow: "none",
   color: "app.text",
+  transition: "background 140ms ease, border-color 140ms ease",
+  _hover: {
+    borderColor: "rgba(38, 57, 111, 0.18)",
+    bg: "rgba(38, 57, 111, 0.06)",
+  },
   _focusVisible: {
-    borderColor: "app.base",
-    boxShadow: "0 0 0 2px rgba(59, 90, 157, 0.28)",
+    borderColor: "rgba(38, 57, 111, 0.18)",
+    bg: "rgba(38, 57, 111, 0.06)",
+    boxShadow: "none",
   },
   _invalid: {
     borderColor: "app.error",
@@ -102,12 +110,15 @@ const passwordInputStyles = {
 const fieldTextareaStyles = {
   ...fieldInputStyles,
   minH: "88px",
+  py: "12px",
+  borderRadius: "18px",
   resize: "vertical",
 } as const;
 
 const primaryButtonStyles = {
   h: "52px",
-  borderRadius: "14px",
+  px: "18px",
+  borderRadius: "999px",
   bg: "app.base",
   color: "app.white",
   fontWeight: "black",
@@ -128,7 +139,8 @@ const secondaryButtonStyles = {
   h: "48px",
   border: "1px solid",
   borderColor: "app.base",
-  borderRadius: "14px",
+  px: "18px",
+  borderRadius: "999px",
   color: "app.base",
   fontWeight: "black",
   _hover: { bg: "app.bgAux" },

@@ -36,7 +36,7 @@ const styles = {
     h: "48px",
     border: "1px solid",
     borderColor: "app.base",
-    borderRadius: "12px",
+    borderRadius: "999px",
     bg: "app.base",
     color: "app.white",
     cursor: "pointer",
@@ -44,8 +44,9 @@ const styles = {
     _active: { bg: "app.baseDark" },
   },
   photoGrid: {
-    columns: 2,
+    gridTemplateColumns: "repeat(2, minmax(0, 40%))",
     gap: "10px",
+    justifyContent: "start",
     mt: "12px",
   },
   photoCard: {
@@ -86,9 +87,9 @@ const styles = {
   },
   smallButton: {
     h: "32px",
-    px: "9px",
-    borderRadius: "8px",
-    fontSize: "xs",
+    px: "7px",
+    borderRadius: "999px",
+    fontSize: "11px",
     fontWeight: "extrabold",
   },
 } as const;

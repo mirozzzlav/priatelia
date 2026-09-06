@@ -23,6 +23,19 @@ function isApiErrorResponse(value: unknown) {
   );
 }
 
+function getResponseDetail(value: unknown) {
+  if (
+    typeof value === "object" &&
+    value !== null &&
+    "detail" in value &&
+    typeof value.detail === "string"
+  ) {
+    return value.detail;
+  }
+
+  return null;
+}
+
 async function request<TResponse>(
   path: string,
   options?: RequestInit,
@@ -53,10 +66,14 @@ async function request<TResponse>(
     return undefined as TResponse;
   }
 
-  const data = (await response.json()) as unknown;
+  const data = response.headers.get("content-type")?.includes("application/json")
+    ? ((await response.json()) as unknown)
+    : null;
 
   if (!response.ok && !isApiErrorResponse(data)) {
-    throw new Error(`API request failed: ${response.status}`);
+    throw new Error(
+      getResponseDetail(data) ?? `API request failed: ${response.status}`,
+    );
   }
 
   return data as TResponse;

@@ -6,6 +6,20 @@ import type {
 } from "src/features/person-preview";
 import { apiClient } from "src/services/api";
 
+const noDiscoveryProfilesMessage =
+  "V tejto chvíli sa nám nepodarilo nájsť žiadneho nového priateľa, skús upraviť podmienky hľadania.";
+
+function getPersonPreviewErrorMessage(error: unknown) {
+  if (
+    error instanceof Error &&
+    error.message === "No discovery profiles available"
+  ) {
+    return noDiscoveryProfilesMessage;
+  }
+
+  return "Nepodarilo sa načítať človeka na výber.";
+}
+
 export function usePersonPreview() {
   const [activeAction, setActiveAction] =
     useState<ActivePersonPreviewAction>(null);
@@ -24,9 +38,9 @@ export function usePersonPreview() {
     try {
       const preview = await apiClient.getPersonPreview();
       setPersonPreview(preview);
-    } catch {
+    } catch (error) {
       setPersonPreview(null);
-      setError("Nepodarilo sa načítať človeka na výber.");
+      setError(getPersonPreviewErrorMessage(error));
     } finally {
       setIsLoadingPersonPreview(false);
     }

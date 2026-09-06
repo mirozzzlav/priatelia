@@ -45,7 +45,6 @@ const styles = {
     mt: "12px",
     h: "42px",
     px: "12px",
-    borderRadius: "12px",
   },
   photo: {
     boxSize: "46px",

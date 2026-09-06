@@ -360,8 +360,8 @@ export const mockPersonPreviews: PersonPreview[] = [
     ],
   },
   {
-    id: "mock-profile-tereza",
-    name: "Tereza",
+    id: "mock-profile-terezia",
+    name: "Terézia",
     age: "30 rokov",
     meta: ["Bratislava", "5 km", "Tanec a cestovanie"],
     photo:
@@ -378,6 +378,90 @@ export const mockPersonPreviews: PersonPreview[] = [
       { id: "kultura", name: "Kultúra" },
       { id: "sport", name: "Šport" },
       { id: "kava", name: "Káva" },
+    ],
+  },
+  {
+    id: "mock-profile-ivana",
+    name: "Ivana",
+    age: "28 rokov",
+    meta: ["Bratislava", "6 km", "Knihy a plávanie"],
+    photo:
+      "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?auto=format&fit=crop&w=1200&q=85",
+    bio: "Pracujem v škole a voľný čas najradšej trávim pri knihách, plávaní alebo prechádzkach v meste. Mám rada pokojné stretnutia, jasné dohody a ľudí, ktorí sa vedia prirodzene rozprávať. Rada spoznám niekoho na kultúru, kávu alebo víkendový výlet.",
+    photos: [
+      "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=900&q=85",
+    ],
+    tags: [
+      { id: "knihy", name: "Knihy" },
+      { id: "plavanie", name: "Plávanie" },
+      { id: "kava", name: "Káva" },
+      { id: "kultura", name: "Kultúra" },
+      { id: "vylety", name: "Výlety" },
+    ],
+  },
+  {
+    id: "mock-profile-matej",
+    name: "Matej",
+    age: "32 rokov",
+    meta: ["Bratislava", "8 km", "Lezenie a kino"],
+    photo:
+      "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1200&q=85",
+    bio: "Cez týždeň pracujem v technickom tíme a po práci chodím liezť alebo do kina. Baví ma dobrá káva, jednoduché výlety a rozhovory bez potreby všetko plánovať do detailu. Hľadám ľudí na aktívny oddych aj pokojné večery.",
+    photos: [
+      "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=85",
+    ],
+    tags: [
+      { id: "lezenie", name: "Lezenie" },
+      { id: "kino", name: "Kino" },
+      { id: "kava", name: "Káva" },
+      { id: "vylety", name: "Výlety" },
+      { id: "sport", name: "Šport" },
+    ],
+  },
+  {
+    id: "mock-profile-lenka",
+    name: "Lenka",
+    age: "26 rokov",
+    meta: ["Pezinok", "18 km", "Trhy a turistika"],
+    photo:
+      "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=1200&q=85",
+    bio: "Rada chodím na trhy, krátke túry a objavujem malé podniky v okolí. Vo vzťahoch aj priateľstvách si cením spoľahlivosť, humor a schopnosť tešiť sa z obyčajných plánov. Rada spoznám niekoho na výlety alebo pokojné stretnutia pri káve.",
+    photos: [
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?auto=format&fit=crop&w=900&q=85",
+    ],
+    tags: [
+      { id: "trhy", name: "Trhy" },
+      { id: "turistika", name: "Turistika" },
+      { id: "bistra", name: "Bistrá" },
+      { id: "kava", name: "Káva" },
+      { id: "priroda", name: "Príroda" },
+    ],
+  },
+  {
+    id: "mock-profile-stefan",
+    name: "Štefan",
+    age: "36 rokov",
+    meta: ["Bratislava", "10 km", "Bicykel a varenie"],
+    photo:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=85",
+    bio: "Po práci najradšej sadnem na bicykel alebo varím niečo jednoduché pre kamarátov. Mám rád Malé Karpaty, dobré jedlo a ľudí, ktorí hovoria priamo. Hľadám spoločnosť na šport, výlety aj bežné stretnutia bez veľkého tlaku.",
+    photos: [
+      "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=85",
+    ],
+    tags: [
+      { id: "bicykel", name: "Bicykel" },
+      { id: "varenie", name: "Varenie" },
+      { id: "vylety", name: "Výlety" },
+      { id: "jedlo", name: "Jedlo" },
+      { id: "priroda", name: "Príroda" },
     ],
   },
 ];
@@ -398,7 +482,11 @@ export const mockIncomingLikePersonPreviewIds = new Set([
   "mock-profile-daniel",
   "mock-profile-emilia",
   "mock-profile-martin",
-  "mock-profile-tereza",
+  "mock-profile-terezia",
+  "mock-profile-ivana",
+  "mock-profile-matej",
+  "mock-profile-lenka",
+  "mock-profile-stefan",
 ]);
 
 export const mockInitialChatMatchIds = [
@@ -417,7 +505,11 @@ export const mockInitialChatMatchIds = [
   "mock-profile-daniel",
   "mock-profile-emilia",
   "mock-profile-martin",
-  "mock-profile-tereza",
+  "mock-profile-terezia",
+  "mock-profile-ivana",
+  "mock-profile-matej",
+  "mock-profile-lenka",
+  "mock-profile-stefan",
 ];
 
 export const mockChatMessagesByMatchId: Record<string, ChatMessage[]> = {

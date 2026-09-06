@@ -4,37 +4,33 @@ import {
   useMemo,
   useRef,
   useState,
-  type ChangeEvent,
-  type SubmitEvent,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
+  Button,
   Flex,
-  FormControl,
-  FormErrorMessage,
+  Icon,
   IconButton,
-  SimpleGrid,
+  InputGroup,
+  InputRightElement,
+  Spinner,
   Text,
   VStack,
 } from "@chakra-ui/react";
 
 import filterIcon from "assets/filter.svg";
-import matchIcon from "assets/match.svg";
-import {
-  FormActions,
-  FormInput,
-  FormSubmitButton,
-  RequiredFieldLabel,
-} from "src/components/formElements";
-import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { FormInput } from "src/components/formElements";
 import { CenteredStatusLayout } from "src/components/layouts";
-import { LocationSearchField } from "src/components/LocationSearchField";
 import { LoadingPill } from "src/components/LoadingPill";
 import { PanelHeading } from "src/components/PanelHeading";
 import { PhotoViewer } from "src/components/PhotoViewer";
 import { ScrollCue } from "src/components/ScrollCue";
 import { SvgImage } from "src/components/SvgImage";
+import {
+  discoveryMatchesSummaryEvent,
+  toggleDiscoveryMatchesEvent,
+} from "src/components/TopBar";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import { InfoScreen } from "src/features/info";
 import { ChatMatchList } from "src/features/messages";
@@ -47,7 +43,7 @@ import {
 import {
   apiClient,
   type ChatMatch,
-  type DiscoverySettingsFieldErrors,
+  type LocationOption,
 } from "src/services/api";
 
 type DiscoveryRouteProps = {
@@ -91,7 +87,7 @@ const styles = {
       w: isExpanded
         ? "min(100%, 460px)"
         : { base: "calc(100% + 24px)", sm: "calc(100% + 32px)" },
-      h: isExpanded ? `calc(100dvh - ${expandedTop ?? topOffset}px)` : "56px",
+      h: isExpanded ? `calc(100dvh - ${expandedTop ?? topOffset}px)` : "78px",
       mx: isExpanded ? undefined : { base: "-12px", sm: "-16px" },
       bg: "app.white",
       borderTop: "1px solid",
@@ -101,7 +97,7 @@ const styles = {
         ? "0 18px 42px rgba(38, 57, 111, 0.18)"
         : "0 18px 42px rgba(38, 57, 111, 0.12)",
       color: "app.text",
-      overflow: "hidden",
+      overflow: isExpanded ? "hidden" : "visible",
       transform: isExpanded ? "translateX(-50%)" : undefined,
       transition:
         "height 220ms ease, box-shadow 220ms ease, background 220ms ease",
@@ -110,21 +106,21 @@ const styles = {
     align: "center",
     justify: "space-between",
     w: "100%",
-    h: "56px",
+    h: "78px",
     px: "12px",
-    pt: "5px",
-    pb: "9px",
+    pt: "10px",
+    pb: "18px",
     gap: "10px",
   },
   filterToggle: {
     align: "center",
     display: "flex",
     flex: 1,
-    gap: "9px",
+    gap: "5px",
     minW: 0,
-    h: "42px",
-    overflow: "hidden",
-    px: "12px",
+    h: "50px",
+    pl: "12px",
+    pr: "12px",
     border: "1px solid",
     borderColor: "rgba(38, 57, 111, 0.18)",
     borderRadius: "999px",
@@ -141,48 +137,155 @@ const styles = {
       boxShadow: "0 2px 8px rgba(38, 57, 111, 0.08)",
     },
   },
-  filterSummaryText: {
-    display: "block",
-    maxW: "100%",
+  filterSummary: {
+    align: "center",
+    display: "grid",
+    flex: 1,
+    gridTemplateColumns: "minmax(0, 1.25fr) 13px minmax(54px, 0.6fr) 13px minmax(50px, 0.55fr)",
+    minW: 0,
+  },
+  filterSegment: {
+    display: "grid",
+    gap: "2px",
+    minW: 0,
     overflow: "hidden",
+    px: "3px",
+    color: "app.text",
     fontSize: "sm",
     fontWeight: "semibold",
     lineHeight: 1.25,
+    textAlign: "left",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    _hover: {
+      color: "app.base",
+    },
+  },
+  filterSegmentLabel: {
+    color: "rgba(38, 57, 111, 0.62)",
+    fontSize: "10px",
+    fontWeight: "black",
+    lineHeight: 1,
+    textTransform: "uppercase",
+  },
+  filterSegmentValue: {
+    display: "block",
+    minW: 0,
+    overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
   },
-  connectionsButton: (isSelected: boolean) =>
-    ({
-      display: "grid",
-      placeItems: "center",
-      boxSize: "42px",
-      minW: "42px",
-      border: "1px solid",
-      borderColor: "rgba(38, 57, 111, 0.18)",
-      borderRadius: "999px",
+  filterDivider: {
+    justifySelf: "center",
+    w: "1px",
+    h: "34px",
+    bg: "rgba(38, 57, 111, 0.24)",
+  },
+  filterIconButton: {
+    display: "grid",
+    placeItems: "center",
+    flexShrink: 0,
+    boxSize: "24px",
+    borderRadius: "999px",
+  },
+  filterEditorWrap: {
+    position: "relative",
+    flex: 1,
+    minW: 0,
+  },
+  filterEditorGrid: {
+    display: "grid",
+    alignItems: "center",
+    gridTemplateColumns: "38px minmax(0, 1fr) 38px",
+    gap: "6px",
+  },
+  filterAgeEditorGrid: {
+    display: "grid",
+    alignItems: "center",
+    gridTemplateColumns: "28px minmax(0, 1fr) minmax(0, 1fr) 38px",
+    gap: "6px",
+  },
+  filterEditorLabel: {
+    color: "rgba(38, 57, 111, 0.62)",
+    fontSize: "10px",
+    fontWeight: "black",
+    lineHeight: 1,
+    textTransform: "uppercase",
+  },
+  inlineInput: {
+    h: "38px",
+    px: "10px",
+    borderRadius: "999px",
+    fontSize: "sm",
+  },
+  confirmButton: {
+    display: "grid",
+    placeItems: "center",
+    boxSize: "38px",
+    minW: "38px",
+    border: "1px solid",
+    borderColor: "rgba(38, 57, 111, 0.18)",
+    borderRadius: "999px",
+    bg: "app.white",
+    color: "app.base",
+    _hover: { bg: "app.bgAux" },
+    _active: { bg: "app.bgAux" },
+  },
+  locationOptions: {
+    position: "absolute",
+    top: "calc(100% + 8px)",
+    left: 0,
+    right: 0,
+    zIndex: 50,
+    maxH: "196px",
+    overflowY: "auto",
+    border: "1px solid",
+    borderColor: "rgba(38, 57, 111, 0.18)",
+    borderRadius: "18px",
+    bg: "app.white",
+    boxShadow: "0 14px 32px rgba(38, 57, 111, 0.14)",
+    p: "6px",
+  },
+  locationOption: {
+    h: "auto",
+    minH: "38px",
+    w: "100%",
+    justifyContent: "flex-start",
+    px: "10px",
+    py: "8px",
+    borderRadius: "999px",
+    color: "app.text",
+    fontSize: "sm",
+    fontWeight: "bold",
+    textAlign: "left",
+    whiteSpace: "normal",
+    _hover: { bg: "app.bgAux", color: "app.text" },
+    _focusVisible: {
+      bg: "app.bgAux",
+      boxShadow: "0 0 0 2px rgba(59, 90, 157, 0.22)",
       color: "app.text",
-      bg: isSelected ? "app.bgAux" : "app.white",
-      boxShadow: "0 3px 10px rgba(38, 57, 111, 0.08)",
-      transition: "background 140ms ease, border-color 140ms ease",
-      _disabled: { opacity: 1 },
-      _hover: {
-        bg: isSelected ? "app.bgAux" : "app.white",
-        borderColor: "rgba(38, 57, 111, 0.26)",
-      },
-      _active: {
-        bg: isSelected ? "app.bgAux" : "app.white",
-        borderColor: "rgba(38, 57, 111, 0.28)",
-      },
-    }) as const,
+    },
+  },
+  inlineLoaderWrap: {
+    h: "38px",
+    w: "38px",
+  },
+  inlineLoader: {
+    color: "app.base",
+    opacity: 0.72,
+    speed: "0.7s",
+    thickness: "2px",
+    size: "sm",
+  },
+  infoIcon: {
+    filter: "grayscale(1) contrast(1.35)",
+  },
   headerPanel: {
-    h: "calc(100% - 56px)",
+    h: "calc(100% - 78px)",
     overflowY: "auto",
     px: "18px",
     pt: "22px",
     pb: "32px",
-  },
-  infoIcon: {
-    filter: "grayscale(1) contrast(1.35)",
   },
   infoContent: {
     align: "stretch",
@@ -193,58 +296,280 @@ const styles = {
     fontSize: "md",
     lineHeight: 1.55,
   },
-  matchIconWrap: {
-    position: "relative",
-    align: "center",
-    justify: "center",
-    boxSize: "31px",
-  },
-  matchIconImage: {
-    filter: "grayscale(1) contrast(1.35)",
-  },
-  matchIconCount: {
-    position: "absolute",
-    top: "-5px",
-    right: "-8px",
-    alignItems: "center",
-    justifyContent: "center",
-    minW: "20px",
-    h: "20px",
-    px: "4px",
-    border: "2px solid",
-    borderColor: "app.white",
-    borderRadius: "999px",
-    bg: "#F97316",
-    color: "app.white",
-    fontSize: "11px",
-    fontWeight: "black",
-    lineHeight: 1,
-    boxShadow: "0 1px 4px rgba(38, 57, 111, 0.28)",
-  },
-  filterForm: {
-    display: "grid",
-    gap: "16px",
-  },
-  filterAgeGrid: {
-    columns: 2,
-    gap: "10px",
-  },
 } as const;
 
-function formatFilterSummary(settings: DiscoverySettingsData) {
-  return `${settings.location}, ${settings.ageFrom}-${settings.ageTo} rokov, ${settings.radiusKm} km`;
+type InlineFilterField = "location" | "age" | "radius";
+
+function CheckMarkIcon() {
+  return (
+    <Icon viewBox="0 0 24 24" boxSize="18px" aria-hidden="true">
+      <path
+        d="M5 12.5 9.2 16.5 19 7.5"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2.8"
+      />
+    </Icon>
+  );
 }
 
-function MatchIconWithCount({ count }: { count: number }) {
+type FilterSummarySegmentsProps = {
+  onEdit: (field: InlineFilterField) => void;
+  settings: DiscoverySettingsData;
+};
+
+function FilterSummarySegments({
+  onEdit,
+  settings,
+}: FilterSummarySegmentsProps) {
   return (
-    <Flex {...styles.matchIconWrap}>
-      <SvgImage src={matchIcon} boxSize="28px" {...styles.matchIconImage} />
-      {count > 0 && (
-        <Flex as="span" {...styles.matchIconCount}>
-          {count > 99 ? "99+" : count}
-        </Flex>
+    <Box {...styles.filterSummary}>
+      <Box
+        as="button"
+        type="button"
+        aria-label="Upraviť lokalitu"
+        onClick={() => onEdit("location")}
+        {...styles.filterSegment}
+      >
+        <Text as="span" {...styles.filterSegmentLabel}>
+          Mesto
+        </Text>
+        <Text as="span" {...styles.filterSegmentValue}>
+          {settings.location}
+        </Text>
+      </Box>
+      <Box aria-hidden="true" {...styles.filterDivider} />
+      <Box
+        as="button"
+        type="button"
+        aria-label="Upraviť vek"
+        onClick={() => onEdit("age")}
+        {...styles.filterSegment}
+      >
+        <Text as="span" {...styles.filterSegmentLabel}>
+          Vek
+        </Text>
+        <Text as="span" {...styles.filterSegmentValue}>
+          {settings.ageFrom}-{settings.ageTo}
+        </Text>
+      </Box>
+      <Box aria-hidden="true" {...styles.filterDivider} />
+      <Box
+        as="button"
+        type="button"
+        aria-label="Upraviť radius"
+        onClick={() => onEdit("radius")}
+        {...styles.filterSegment}
+      >
+        <Text as="span" {...styles.filterSegmentLabel}>
+          Radius
+        </Text>
+        <Text as="span" {...styles.filterSegmentValue}>
+          {settings.radiusKm}
+        </Text>
+      </Box>
+    </Box>
+  );
+}
+
+type InlineLocationFilterEditorProps = {
+  isSaving: boolean;
+  onQueryChange: (location: string) => void;
+  onSelect: (option: LocationOption) => void;
+  query: string;
+};
+
+function InlineLocationFilterEditor({
+  isSaving,
+  onQueryChange,
+  onSelect,
+  query,
+}: InlineLocationFilterEditorProps) {
+  const [options, setOptions] = useState<LocationOption[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const latestQueryRef = useRef(query);
+  const canSearch = query.trim().length >= 3;
+  const visibleOptions = canSearch ? options : [];
+
+  useEffect(() => {
+    latestQueryRef.current = query;
+
+    if (!canSearch) {
+      return;
+    }
+
+    let isActive = true;
+    const timeoutId = window.setTimeout(() => {
+      setIsSearching(true);
+      apiClient
+        .searchLocations(query.trim())
+        .then((results) => {
+          if (!isActive || latestQueryRef.current.trim() !== query.trim()) {
+            return;
+          }
+
+          setOptions(results);
+        })
+        .catch(() => {
+          if (isActive) {
+            setOptions([]);
+          }
+        })
+        .finally(() => {
+          if (isActive) {
+            setIsSearching(false);
+          }
+        });
+    }, 450);
+
+    return () => {
+      isActive = false;
+      window.clearTimeout(timeoutId);
+    };
+  }, [canSearch, query]);
+
+  return (
+    <Box {...styles.filterEditorWrap}>
+      <Box {...styles.filterEditorGrid}>
+        <Text as="span" {...styles.filterEditorLabel}>
+          Mesto
+        </Text>
+        <InputGroup>
+          <FormInput
+            autoFocus
+            aria-autocomplete="list"
+            autoComplete="off"
+            isDisabled={isSaving}
+            onChange={(event) => onQueryChange(event.target.value)}
+            placeholder="Mesto"
+            role="combobox"
+            value={query}
+            {...styles.inlineInput}
+          />
+          {((canSearch && isSearching) || isSaving) && (
+            <InputRightElement {...styles.inlineLoaderWrap}>
+              <Spinner {...styles.inlineLoader} />
+            </InputRightElement>
+          )}
+        </InputGroup>
+      </Box>
+
+      {visibleOptions.length > 0 && !isSaving && (
+        <Box role="listbox" {...styles.locationOptions}>
+          {visibleOptions.map((option) => (
+            <Button
+              key={option.id}
+              onMouseDown={(event) => {
+                event.preventDefault();
+                onSelect(option);
+              }}
+              role="option"
+              type="button"
+              variant="ghost"
+              {...styles.locationOption}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </Box>
       )}
-    </Flex>
+    </Box>
+  );
+}
+
+type InlineNumericFilterEditorProps = {
+  draftSettings: DiscoverySettingsData;
+  field: Exclude<InlineFilterField, "location">;
+  isSaving: boolean;
+  onChange: (field: keyof DiscoverySettingsData, value: string) => void;
+  onConfirm: () => void;
+};
+
+function getDigitsOnly(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+function InlineNumericFilterEditor({
+  draftSettings,
+  field,
+  isSaving,
+  onChange,
+  onConfirm,
+}: InlineNumericFilterEditorProps) {
+  if (field === "age") {
+    return (
+      <Box {...styles.filterEditorWrap}>
+        <Box {...styles.filterAgeEditorGrid}>
+          <Text as="span" {...styles.filterEditorLabel}>
+            Vek
+          </Text>
+          <FormInput
+            autoFocus
+            aria-label="Vek od"
+            inputMode="numeric"
+            isDisabled={isSaving}
+            onChange={(event) =>
+              onChange("ageFrom", getDigitsOnly(event.target.value))
+            }
+            pattern="[0-9]*"
+            type="text"
+            value={draftSettings.ageFrom}
+            {...styles.inlineInput}
+          />
+          <FormInput
+            aria-label="Vek do"
+            inputMode="numeric"
+            isDisabled={isSaving}
+            onChange={(event) =>
+              onChange("ageTo", getDigitsOnly(event.target.value))
+            }
+            pattern="[0-9]*"
+            type="text"
+            value={draftSettings.ageTo}
+            {...styles.inlineInput}
+          />
+          <IconButton
+            aria-label="Potvrdiť vek"
+            icon={<CheckMarkIcon />}
+            isDisabled={isSaving}
+            onClick={onConfirm}
+            {...styles.confirmButton}
+          />
+        </Box>
+      </Box>
+    );
+  }
+
+  return (
+    <Box {...styles.filterEditorWrap}>
+      <Box {...styles.filterEditorGrid}>
+        <Text as="span" {...styles.filterEditorLabel}>
+          Radius
+        </Text>
+        <FormInput
+          autoFocus
+          aria-label="Radius"
+          inputMode="numeric"
+          isDisabled={isSaving}
+          onChange={(event) =>
+            onChange("radiusKm", getDigitsOnly(event.target.value))
+          }
+          pattern="[0-9]*"
+          type="text"
+          value={draftSettings.radiusKm}
+          {...styles.inlineInput}
+        />
+        <IconButton
+          aria-label="Potvrdiť radius"
+          icon={<CheckMarkIcon />}
+          isDisabled={isSaving}
+          onClick={onConfirm}
+          {...styles.confirmButton}
+        />
+      </Box>
+    </Box>
   );
 }
 
@@ -277,169 +602,7 @@ function MatchInfoPanel({
   );
 }
 
-type DiscoveryFilterPanelProps = {
-  initialSettings: DiscoverySettingsData;
-  onDiscoveryReload: () => Promise<void>;
-  onSave: (data: DiscoverySettingsData) => void;
-};
-
-function DiscoveryFilterPanel({
-  initialSettings,
-  onDiscoveryReload,
-  onSave,
-}: DiscoveryFilterPanelProps) {
-  const [formData, setFormData] =
-    useState<DiscoverySettingsData>(initialSettings);
-  const [fieldErrors, setFieldErrors] = useState<DiscoverySettingsFieldErrors>(
-    {},
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [wasSubmitted, setWasSubmitted] = useState(false);
-
-  const updateField =
-    (field: keyof DiscoverySettingsData) =>
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setFieldErrors({});
-      setSubmitError(null);
-      setWasSubmitted(false);
-      setIsSuccess(false);
-      setFormData((current) => ({
-        ...current,
-        [field]: event.target.value,
-      }));
-    };
-
-  const handleLocationChange = (nextLocation: {
-    latitude: number | null;
-    location: string;
-    longitude: number | null;
-  }) => {
-    setFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
-    setIsSuccess(false);
-    setFormData((current) => ({
-      ...current,
-      location: nextLocation.location,
-      locationLatitude: nextLocation.latitude,
-      locationLongitude: nextLocation.longitude,
-    }));
-  };
-
-  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(true);
-    setIsSuccess(false);
-
-    if (isSubmitting) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const response = await apiClient.updateDiscoverySettings(formData);
-
-      if (response.status === "error") {
-        setFieldErrors(response.data.errors);
-        setSubmitError("Skontroluj si vstupné údaje.");
-        return;
-      }
-
-      onSave(formData);
-      await onDiscoveryReload();
-      setWasSubmitted(false);
-      setIsSuccess(true);
-    } catch {
-      setSubmitError("Kritériá sa nepodarilo uložiť. Skús to znova.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <Box as="form" noValidate onSubmit={handleSubmit} {...styles.filterForm}>
-      <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.location)}>
-        <LocationSearchField
-          error={fieldErrors.location}
-          isInvalid={wasSubmitted && Boolean(fieldErrors.location)}
-          label="Hľadať v lokalite"
-          onChange={handleLocationChange}
-          value={formData.location}
-          placeholder="napr. Bratislava a okolie"
-        />
-      </FormControl>
-
-      <SimpleGrid {...styles.filterAgeGrid}>
-        <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.ageFrom)}>
-          <RequiredFieldLabel>Vek od</RequiredFieldLabel>
-          <FormInput
-            type="number"
-            min={18}
-            value={formData.ageFrom}
-            onChange={updateField("ageFrom")}
-          />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.ageFrom}
-          </FormErrorMessage>
-        </FormControl>
-
-        <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.ageTo)}>
-          <RequiredFieldLabel>Vek do</RequiredFieldLabel>
-          <FormInput
-            type="number"
-            min={18}
-            value={formData.ageTo}
-            onChange={updateField("ageTo")}
-          />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.ageTo}
-          </FormErrorMessage>
-        </FormControl>
-      </SimpleGrid>
-
-      <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.radiusKm)}>
-        <RequiredFieldLabel>Radius</RequiredFieldLabel>
-        <FormInput
-          type="number"
-          min={1}
-          max={500}
-          value={formData.radiusKm}
-          onChange={updateField("radiusKm")}
-        />
-        <FormErrorMessage color="app.error">
-          {fieldErrors.radiusKm}
-        </FormErrorMessage>
-      </FormControl>
-
-      {submitError && (
-        <FormStatusMessage variant="error">{submitError}</FormStatusMessage>
-      )}
-
-      {isSuccess && (
-        <FormStatusMessage variant="success">
-          Kritériá sú uložené.
-        </FormStatusMessage>
-      )}
-
-      <FormActions>
-        <FormSubmitButton
-          isDisabled={isSubmitting}
-          isLoading={isSubmitting}
-          loadingText="Ukladám kritériá"
-        >
-          Uložiť kritériá
-        </FormSubmitButton>
-      </FormActions>
-    </Box>
-  );
-}
-
-type ActiveHeaderPanel = "filter" | "matches" | null;
+type ActiveHeaderPanel = "matches" | null;
 
 type DiscoveryHeaderProps = {
   initialDiscoverySettings: DiscoverySettingsData;
@@ -461,16 +624,22 @@ function DiscoveryHeader({
   onDiscoverySettingsSave,
 }: DiscoveryHeaderProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const filterRef = useRef<HTMLDivElement | null>(null);
   const [activePanel, setActivePanel] = useState<ActiveHeaderPanel>(null);
+  const [activeInlineFilter, setActiveInlineFilter] =
+    useState<InlineFilterField | null>(null);
+  const [draftSettings, setDraftSettings] = useState<DiscoverySettingsData>(
+    initialDiscoverySettings,
+  );
   const [expandedTop, setExpandedTop] = useState<number | null>(null);
   const [expandedPanelMatches, setExpandedPanelMatches] = useState<ChatMatch[]>(
     [],
   );
+  const [isSavingInlineFilter, setIsSavingInlineFilter] = useState(false);
   const newMatches = matches.filter(
     (match) => match.isNew && !match.lastMessage,
   );
   const isExpanded = activePanel !== null;
-  const isFilterExpanded = activePanel === "filter";
   const isMatchesExpanded = activePanel === "matches";
   const canUseMatches =
     isLoadingMatches ||
@@ -493,24 +662,25 @@ function DiscoveryHeader({
     };
   }, [isExpanded]);
 
-  const openPanel = (panel: Exclude<ActiveHeaderPanel, null>) => {
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(discoveryMatchesSummaryEvent, {
+        detail: {
+          canUseMatches,
+          count: newMatches.length,
+        },
+      }),
+    );
+  }, [canUseMatches, newMatches.length]);
+
+  const openPanel = (panel: NonNullable<ActiveHeaderPanel>) => {
     setExpandedTop(rootRef.current?.getBoundingClientRect().top ?? 64);
     setActivePanel(panel);
   };
 
-  const toggleFilterPanel = () => {
-    setExpandedPanelMatches([]);
-    setActivePanel((currentPanel) => {
-      if (currentPanel === "filter") {
-        return null;
-      }
-
-      setExpandedTop(rootRef.current?.getBoundingClientRect().top ?? 64);
-      return "filter";
-    });
-  };
-
   const toggleMatchesPanel = () => {
+    setActiveInlineFilter(null);
+
     if (!canUseMatches) {
       return;
     }
@@ -530,6 +700,92 @@ function DiscoveryHeader({
     onNewMatchesSeen(newMatches.map((match) => match.id));
   };
 
+  useEffect(() => {
+    const handleToggleMatches = () => {
+      toggleMatchesPanel();
+    };
+
+    window.addEventListener(toggleDiscoveryMatchesEvent, handleToggleMatches);
+
+    return () => {
+      window.removeEventListener(
+        toggleDiscoveryMatchesEvent,
+        handleToggleMatches,
+      );
+    };
+  });
+
+  useEffect(() => {
+    if (activeInlineFilter === null) {
+      return;
+    }
+
+    const closeInlineFilter = (event: PointerEvent) => {
+      if (filterRef.current?.contains(event.target as Node)) {
+        return;
+      }
+
+      setActiveInlineFilter(null);
+    };
+
+    document.addEventListener("pointerdown", closeInlineFilter);
+
+    return () => {
+      document.removeEventListener("pointerdown", closeInlineFilter);
+    };
+  }, [activeInlineFilter]);
+
+  const editInlineFilter = (field: InlineFilterField) => {
+    setActivePanel(null);
+    setExpandedPanelMatches([]);
+    setDraftSettings(initialDiscoverySettings);
+    setActiveInlineFilter(field);
+  };
+
+  const updateDraftField = (
+    field: keyof DiscoverySettingsData,
+    value: string,
+  ) => {
+    setDraftSettings((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const saveInlineFilter = async (nextSettings = draftSettings) => {
+    if (isSavingInlineFilter) {
+      return;
+    }
+
+    setIsSavingInlineFilter(true);
+
+    try {
+      const response = await apiClient.updateDiscoverySettings(nextSettings);
+
+      if (response.status === "error") {
+        return;
+      }
+
+      onDiscoverySettingsSave(nextSettings);
+      await onDiscoveryReload();
+      setActiveInlineFilter(null);
+    } finally {
+      setIsSavingInlineFilter(false);
+    }
+  };
+
+  const selectInlineLocation = (option: LocationOption) => {
+    const nextSettings = {
+      ...draftSettings,
+      location: option.label,
+      locationLatitude: option.latitude,
+      locationLongitude: option.longitude,
+    };
+
+    setDraftSettings(nextSettings);
+    void saveInlineFilter(nextSettings);
+  };
+
   return (
     <Box
       ref={rootRef}
@@ -537,54 +793,50 @@ function DiscoveryHeader({
       aria-live="polite"
     >
       <Flex {...styles.headerRow}>
-        <Flex
-          as="button"
-          type="button"
-          aria-expanded={isFilterExpanded}
-          aria-label={
-            isFilterExpanded ? "Zbaliť filter" : "Rozbaliť filter"
-          }
-          onClick={toggleFilterPanel}
-          {...styles.filterToggle}
-        >
-          <SvgImage src={filterIcon} boxSize="21px" {...styles.infoIcon} />
-          <Text as="span" {...styles.filterSummaryText}>
-            {formatFilterSummary(initialDiscoverySettings)}
-          </Text>
+        <Flex ref={filterRef} {...styles.filterToggle}>
+          <Box aria-hidden="true" {...styles.filterIconButton}>
+            <SvgImage src={filterIcon} boxSize="21px" {...styles.infoIcon} />
+          </Box>
+          {activeInlineFilter === null ? (
+            <FilterSummarySegments
+              onEdit={editInlineFilter}
+              settings={initialDiscoverySettings}
+            />
+          ) : activeInlineFilter === "location" ? (
+            <InlineLocationFilterEditor
+              isSaving={isSavingInlineFilter}
+              onQueryChange={(location) => {
+                setDraftSettings((current) => ({
+                  ...current,
+                  location,
+                  locationLatitude: null,
+                  locationLongitude: null,
+                }));
+              }}
+              onSelect={selectInlineLocation}
+              query={draftSettings.location}
+            />
+          ) : (
+            <InlineNumericFilterEditor
+              draftSettings={draftSettings}
+              field={activeInlineFilter}
+              isSaving={isSavingInlineFilter}
+              onChange={updateDraftField}
+              onConfirm={() => {
+                void saveInlineFilter();
+              }}
+            />
+          )}
         </Flex>
-
-        <IconButton
-          aria-label={
-            isMatchesExpanded
-              ? "Zavrieť nové prepojenia"
-              : "Zobraziť nové prepojenia"
-          }
-          aria-pressed={isMatchesExpanded}
-          icon={
-            <MatchIconWithCount count={newMatches.length} />
-          }
-          isDisabled={!canUseMatches}
-          onClick={toggleMatchesPanel}
-          {...styles.connectionsButton(isMatchesExpanded)}
-        />
       </Flex>
 
       {isExpanded && (
         <Box {...styles.headerPanel}>
-          {isFilterExpanded ? (
-            <DiscoveryFilterPanel
-              key={formatFilterSummary(initialDiscoverySettings)}
-              initialSettings={initialDiscoverySettings}
-              onDiscoveryReload={onDiscoveryReload}
-              onSave={onDiscoverySettingsSave}
-            />
-          ) : (
-            <MatchInfoPanel
-              isLoading={isLoadingMatches}
-              matches={displayedNewMatches}
-              onMatchClick={onMatchClick}
-            />
-          )}
+          <MatchInfoPanel
+            isLoading={isLoadingMatches}
+            matches={displayedNewMatches}
+            onMatchClick={onMatchClick}
+          />
         </Box>
       )}
     </Box>
@@ -705,6 +957,20 @@ export function DiscoveryRoute({
     return () => window.clearInterval(intervalId);
   }, [loadMatches]);
 
+  const discoveryHeader = (
+    <Box {...styles.stickyHeader}>
+      <DiscoveryHeader
+        initialDiscoverySettings={initialDiscoverySettings}
+        isLoadingMatches={isLoadingMatches}
+        matches={matches}
+        onMatchClick={(matchId) => navigate(`/messages/${matchId}`)}
+        onNewMatchesSeen={handleNewMatchesSeen}
+        onDiscoveryReload={onDiscoveryReload}
+        onDiscoverySettingsSave={onDiscoverySettingsSave}
+      />
+    </Box>
+  );
+
   if (isLoadingPersonPreview && !personPreview) {
     return (
       <Box {...styles.deck}>
@@ -716,12 +982,15 @@ export function DiscoveryRoute({
   }
 
   if (error) {
+    const isEmptyDiscovery = error.includes("žiadneho nového priateľa");
+
     return (
       <Box {...styles.deck}>
+        {isEmptyDiscovery && discoveryHeader}
         <InfoScreen
-          message="V tejto chvíli sa nám nepodarilo nájsť žiadneho nového priateľa, skús upraviť podmienky hľadania."
-          title="Žiadny nový priateľ"
-          variant="info"
+          message={error}
+          title={isEmptyDiscovery ? "Žiadny nový priateľ" : "Chyba načítania"}
+          variant={isEmptyDiscovery ? "info" : "error"}
         />
       </Box>
     );
@@ -731,17 +1000,7 @@ export function DiscoveryRoute({
     <Box {...styles.deck}>
       {personPreview && (
         <>
-          <Box {...styles.stickyHeader}>
-            <DiscoveryHeader
-              initialDiscoverySettings={initialDiscoverySettings}
-              isLoadingMatches={isLoadingMatches}
-              matches={matches}
-              onMatchClick={(matchId) => navigate(`/messages/${matchId}`)}
-              onNewMatchesSeen={handleNewMatchesSeen}
-              onDiscoveryReload={onDiscoveryReload}
-              onDiscoverySettingsSave={onDiscoverySettingsSave}
-            />
-          </Box>
+          {discoveryHeader}
           <PersonPreviewPhoto
             activeAction={activeAction}
             isLoadingNextPerson={isSubmittingPersonPreviewAction}

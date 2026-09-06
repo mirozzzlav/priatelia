@@ -6,6 +6,7 @@ import { PhotoGalleryField } from "src/components/PhotoGalleryField";
 import {
   FormActions,
   FormInput,
+  FormLinkButton,
   FormSecondaryButton,
   FormSubmitButton,
   FormTextarea,
@@ -31,6 +32,9 @@ const styles = {
   form: {
     display: "grid",
     gap: "18px",
+  },
+  passwordLink: {
+    justifySelf: "start",
   },
 } as const;
 
@@ -214,13 +218,6 @@ export function ProfileSettingsScreen({
           </FormErrorMessage>
         </FormControl>
 
-        <FormSecondaryButton
-          borderRadius="12px"
-          onClick={onPasswordChangeClick}
-        >
-          Zmeniť heslo
-        </FormSecondaryButton>
-
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.birthDate)}>
           <RequiredFieldLabel>Dátum narodenia</RequiredFieldLabel>
           <FormInput
@@ -271,6 +268,13 @@ export function ProfileSettingsScreen({
           onRemovePhoto={removePhoto}
           onSetPrimaryPhoto={setPrimaryPhoto}
         />
+
+        <FormLinkButton
+          onClick={onPasswordChangeClick}
+          {...styles.passwordLink}
+        >
+          Zmeniť heslo
+        </FormLinkButton>
 
         {submitError && (
           <FormStatusMessage variant="error">{submitError}</FormStatusMessage>
