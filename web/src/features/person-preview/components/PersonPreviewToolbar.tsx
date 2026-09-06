@@ -1,5 +1,6 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
+import locationPinIcon from "assets/location-pin.svg";
 import { ProfileMetaTag } from "src/components/ProfileMetaTag";
 import type { PersonPreview } from "src/features/person-preview/types";
 import { getSlovakCountWord } from "src/utils/formatSlovakCount";
@@ -92,7 +93,13 @@ export function PersonPreviewToolbar({ person }: PersonPreviewToolbarProps) {
       </Flex>
       {city && (
         <Box {...styles.metaRow}>
-          <ProfileMetaTag type="city">{city}</ProfileMetaTag>
+          <ProfileMetaTag
+            icon={locationPinIcon}
+            iconFilter="invert(34%) sepia(20%) saturate(2026%) hue-rotate(184deg) brightness(92%) contrast(92%)"
+            type="default"
+          >
+            {city}
+          </ProfileMetaTag>
         </Box>
       )}
     </Box>

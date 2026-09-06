@@ -1,8 +1,11 @@
 from dataclasses import dataclass
 from datetime import date
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel
+
+Gender = Literal["male", "female", "unspecified"]
 
 
 class ProfilePhoto(BaseModel):
@@ -20,6 +23,7 @@ class InterestTag(BaseModel):
 class ProfileUpdateRequest(BaseModel):
     bio: str
     birthDate: str
+    gender: Gender
     interests: list[InterestTag]
     location: str
     locationLatitude: float | None = None
@@ -39,6 +43,7 @@ class ProfileRecord:
     user_id: UUID
     nickname: str
     birth_date: date
+    gender: Gender
     location: str
     latitude: float | None
     longitude: float | None

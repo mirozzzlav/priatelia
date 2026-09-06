@@ -70,6 +70,7 @@ class ProfileService:
             user_id=user_id,
             nickname=data.nickname.strip(),
             birth_date=data.birthDate,
+            gender=data.gender,
             location=data.location.strip(),
             latitude=coordinates.latitude if coordinates else None,
             longitude=coordinates.longitude if coordinates else None,

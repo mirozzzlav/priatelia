@@ -15,12 +15,15 @@ import {
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { GenderPreferenceField } from "src/components/GenderField";
 import { LocationSearchField } from "src/components/LocationSearchField";
+import type { Gender } from "src/constants/gender";
 import type { DiscoverySettingsFieldErrors } from "src/services/api";
 
 export type DiscoverySettingsData = {
   ageFrom: string;
   ageTo: string;
+  genderPreferences: Gender[];
   location: string;
   locationLatitude?: number | null;
   locationLongitude?: number | null;
@@ -88,6 +91,17 @@ export function DiscoverySettingsScreen({
       location: nextLocation.location,
       locationLatitude: nextLocation.latitude,
       locationLongitude: nextLocation.longitude,
+    }));
+  };
+
+  const handleGenderPreferencesChange = (genderPreferences: Gender[]) => {
+    setFieldErrors({});
+    setSubmitError(null);
+    setWasSubmitted(false);
+    setIsSuccess(false);
+    setFormData((current) => ({
+      ...current,
+      genderPreferences,
     }));
   };
 
@@ -166,6 +180,14 @@ export function DiscoverySettingsScreen({
             </FormErrorMessage>
           </FormControl>
         </SimpleGrid>
+
+        <GenderPreferenceField
+          error={fieldErrors.genderPreferences}
+          isInvalid={wasSubmitted && Boolean(fieldErrors.genderPreferences)}
+          label="Pohlavie"
+          onChange={handleGenderPreferencesChange}
+          value={formData.genderPreferences}
+        />
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.radiusKm)}>
           <RequiredFieldLabel>Radius</RequiredFieldLabel>

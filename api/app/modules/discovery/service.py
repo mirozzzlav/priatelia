@@ -38,6 +38,8 @@ def validate_settings(
         errors_by_field["ageTo"] = "Vek do nemôže byť menší ako vek od."
     if "radiusKm" not in errors_by_field and not 1 <= radius_km <= 500:
         errors_by_field["radiusKm"] = "Radius musí byť od 1 do 500 km."
+    if not data.genderPreferences:
+        errors_by_field["genderPreferences"] = "Vyber aspoň jednu možnosť."
 
     return errors_by_field, age_from, age_to, radius_km
 
@@ -65,6 +67,7 @@ class DiscoveryService:
             user_id=user_id,
             age_from=age_from,
             age_to=age_to,
+            gender_preferences=list(dict.fromkeys(data.genderPreferences)),
             location=data.location.strip(),
             latitude=coordinates.latitude if coordinates else None,
             longitude=coordinates.longitude if coordinates else None,

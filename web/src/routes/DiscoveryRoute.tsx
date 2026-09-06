@@ -20,13 +20,19 @@ import {
 } from "@chakra-ui/react";
 
 import slidersIcon from "assets/sliders.svg";
+import personIcon from "assets/person.svg";
 import { FormInput } from "src/components/formElements";
 import { CenteredStatusLayout } from "src/components/layouts";
 import { LoadingPill } from "src/components/LoadingPill";
 import { PanelHeading } from "src/components/PanelHeading";
 import { PhotoViewer } from "src/components/PhotoViewer";
+import { ProfileMetaTag } from "src/components/ProfileMetaTag";
 import { ScrollCue } from "src/components/ScrollCue";
 import { SvgImage } from "src/components/SvgImage";
+import {
+  getGenderFilterSummary,
+  type Gender,
+} from "src/constants/gender";
 import {
   discoveryMatchesSummaryEvent,
   toggleDiscoveryMatchesEvent,
@@ -157,7 +163,8 @@ const styles = {
     align: "center",
     display: "grid",
     flex: 1,
-    gridTemplateColumns: "minmax(0, 1.25fr) 13px minmax(54px, 0.6fr) 13px minmax(50px, 0.55fr)",
+    gridTemplateColumns:
+      "minmax(0, 1.1fr) 13px minmax(42px, 0.48fr) 13px minmax(58px, 0.72fr) 13px minmax(45px, 0.45fr)",
     minW: 0,
   },
   filterSegment: {
@@ -213,6 +220,16 @@ const styles = {
     alignItems: "center",
     gridTemplateColumns: "28px minmax(0, 1fr) minmax(0, 1fr) 38px",
     gap: "6px",
+  },
+  filterGenderEditor: {
+    align: "center",
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr) 38px",
+    gap: "6px",
+  },
+  inlineGenderOptions: {
+    flexWrap: "wrap",
+    gap: "7px",
   },
   filterEditorLabel: {
     color: "rgba(38, 57, 111, 0.62)",
@@ -304,7 +321,7 @@ const styles = {
   },
 } as const;
 
-type InlineFilterField = "location" | "age" | "radius";
+type InlineFilterField = "location" | "age" | "gender" | "radius";
 
 function CheckMarkIcon() {
   return (
@@ -359,6 +376,21 @@ function FilterSummarySegments({
         </Text>
         <Text as="span" {...styles.filterSegmentValue}>
           {settings.ageFrom}-{settings.ageTo}
+        </Text>
+      </Box>
+      <Box aria-hidden="true" {...styles.filterDivider} />
+      <Box
+        as="button"
+        type="button"
+        aria-label="Upraviť pohlavie"
+        onClick={() => onEdit("gender")}
+        {...styles.filterSegment}
+      >
+        <Text as="span" {...styles.filterSegmentLabel}>
+          Pohlavie
+        </Text>
+        <Text as="span" {...styles.filterSegmentValue}>
+          {getGenderFilterSummary(settings.genderPreferences)}
         </Text>
       </Box>
       <Box aria-hidden="true" {...styles.filterDivider} />
@@ -487,11 +519,88 @@ function InlineLocationFilterEditor({
 
 type InlineNumericFilterEditorProps = {
   draftSettings: DiscoverySettingsData;
-  field: Exclude<InlineFilterField, "location">;
+  field: Exclude<InlineFilterField, "location" | "gender">;
   isSaving: boolean;
   onChange: (field: keyof DiscoverySettingsData, value: string) => void;
   onConfirm: () => void;
 };
+
+type InlineGenderFilterEditorProps = {
+  genderPreferences: Gender[];
+  isSaving: boolean;
+  onChange: (genderPreferences: Gender[]) => void;
+  onConfirm: () => void;
+};
+
+function InlineGenderFilterEditor({
+  genderPreferences,
+  isSaving,
+  onChange,
+  onConfirm,
+}: InlineGenderFilterEditorProps) {
+  const selectedValues = genderPreferences;
+
+  const options: Array<{ label: string; value: Gender }> = [
+    { label: "Muži", value: "male" },
+    { label: "Ženy", value: "female" },
+    { label: "Neuvedené", value: "unspecified" },
+  ];
+  const selectedOptions = options.filter((option) =>
+    selectedValues.includes(option.value),
+  );
+  const availableOptions = options.filter(
+    (option) => !selectedValues.includes(option.value),
+  );
+
+  const toggleValue = (value: Gender) => {
+    const nextValues = selectedValues.includes(value)
+      ? selectedValues.filter((selectedValue) => selectedValue !== value)
+      : [...selectedValues, value];
+
+    onChange(nextValues);
+  };
+
+  return (
+    <Box {...styles.filterEditorWrap}>
+      <Box {...styles.filterGenderEditor}>
+        <Flex {...styles.inlineGenderOptions}>
+          {selectedOptions.map((option) => (
+            <ProfileMetaTag
+              key={option.value}
+              icon={personIcon}
+              isSelected
+              isDisabled={isSaving}
+              onClick={() => toggleValue(option.value)}
+              size="sm"
+              type="default"
+            >
+              {option.label}
+            </ProfileMetaTag>
+          ))}
+          {availableOptions.map((option) => (
+            <ProfileMetaTag
+              key={option.value}
+              icon={personIcon}
+              isDisabled={isSaving}
+              onClick={() => toggleValue(option.value)}
+              size="sm"
+              type="default"
+            >
+              {option.label}
+            </ProfileMetaTag>
+          ))}
+        </Flex>
+        <IconButton
+          aria-label="Potvrdiť pohlavie"
+          icon={<CheckMarkIcon />}
+          isDisabled={isSaving}
+          onClick={onConfirm}
+          {...styles.confirmButton}
+        />
+      </Box>
+    </Box>
+  );
+}
 
 function getDigitsOnly(value: string) {
   return value.replace(/\D/g, "");
@@ -758,6 +867,13 @@ function DiscoveryHeader({
     }));
   };
 
+  const updateDraftGenderPreferences = (genderPreferences: Gender[]) => {
+    setDraftSettings((current) => ({
+      ...current,
+      genderPreferences,
+    }));
+  };
+
   const saveInlineFilter = async (nextSettings = draftSettings) => {
     if (isSavingInlineFilter) {
       return;
@@ -822,6 +938,15 @@ function DiscoveryHeader({
               }}
               onSelect={selectInlineLocation}
               query={draftSettings.location}
+            />
+          ) : activeInlineFilter === "gender" ? (
+            <InlineGenderFilterEditor
+              genderPreferences={draftSettings.genderPreferences}
+              isSaving={isSavingInlineFilter}
+              onChange={updateDraftGenderPreferences}
+              onConfirm={() => {
+                void saveInlineFilter();
+              }}
             />
           ) : (
             <InlineNumericFilterEditor

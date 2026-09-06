@@ -116,6 +116,7 @@ class AuthService:
         await self.repository.create_profile(
             user_id=user.id,
             birth_date=data.birthDate,
+            gender=data.gender,
             location=data.location.strip(),
             latitude=coordinates.latitude if coordinates else None,
             longitude=coordinates.longitude if coordinates else None,

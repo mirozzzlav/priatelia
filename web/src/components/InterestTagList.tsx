@@ -1,5 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 
+import interestIcon from "assets/interest.svg";
 import type { InterestTag } from "src/features/interests/types";
 import { ProfileMetaTag } from "src/components/ProfileMetaTag";
 
@@ -21,9 +22,10 @@ export function InterestTagList({ onRemove, tags }: InterestTagListProps) {
       {tags.map((tag) => (
         <ProfileMetaTag
           key={tag.id}
+          icon={interestIcon}
           onRemove={onRemove ? () => onRemove(tag.id) : undefined}
           removeLabel={`Odstrániť záujem ${tag.name}`}
-          type="interest"
+          type="special"
         >
           {tag.name}
         </ProfileMetaTag>

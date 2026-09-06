@@ -16,6 +16,7 @@ class SeedProfile:
     nickname: str
     email: str
     birth_date: str
+    gender: str
     location: str
     latitude: float
     longitude: float
@@ -28,6 +29,7 @@ MIRKO = SeedProfile(
     nickname="mirko",
     email="mirko@priatelia.local",
     birth_date="1994-05-16",
+    gender="male",
     location="Bratislava, Slovensko",
     latitude=48.1486,
     longitude=17.1077,
@@ -48,6 +50,7 @@ CONNECTIONS = [
         nickname="Lucia",
         email="lucia-dev@priatelia.local",
         birth_date="1998-03-14",
+        gender="female",
         location="Bratislava, Slovensko",
         latitude=48.1517,
         longitude=17.1093,
@@ -67,6 +70,7 @@ CONNECTIONS = [
         nickname="Peter",
         email="peter-dev@priatelia.local",
         birth_date="1992-11-22",
+        gender="male",
         location="Pezinok, Slovensko",
         latitude=48.2899,
         longitude=17.2666,
@@ -86,6 +90,7 @@ CONNECTIONS = [
         nickname="Veronika",
         email="veronika-dev@priatelia.local",
         birth_date="2000-07-09",
+        gender="female",
         location="Senec, Slovensko",
         latitude=48.2195,
         longitude=17.4004,
@@ -105,6 +110,7 @@ CONNECTIONS = [
         nickname="Adam",
         email="adam-dev@priatelia.local",
         birth_date="1996-01-27",
+        gender="male",
         location="Bratislava, Slovensko",
         latitude=48.1461,
         longitude=17.1188,
@@ -124,6 +130,7 @@ CONNECTIONS = [
         nickname="Michaela",
         email="michaela-dev@priatelia.local",
         birth_date="1993-09-18",
+        gender="female",
         location="Modra, Slovensko",
         latitude=48.3335,
         longitude=17.3076,
@@ -143,6 +150,7 @@ CONNECTIONS = [
         nickname="Ján",
         email="jan-dev@priatelia.local",
         birth_date="1989-12-04",
+        gender="male",
         location="Bratislava, Slovensko",
         latitude=48.1549,
         longitude=17.0646,
@@ -162,6 +170,7 @@ CONNECTIONS = [
         nickname="Zuzana",
         email="zuzana-dev@priatelia.local",
         birth_date="1997-06-30",
+        gender="female",
         location="Trnava, Slovensko",
         latitude=48.3774,
         longitude=17.5872,
@@ -181,6 +190,7 @@ CONNECTIONS = [
         nickname="Róbert",
         email="robert-dev@priatelia.local",
         birth_date="1991-02-11",
+        gender="male",
         location="Nitra, Slovensko",
         latitude=48.3061,
         longitude=18.0764,
@@ -200,6 +210,7 @@ CONNECTIONS = [
         nickname="Katarína",
         email="katarina-dev@priatelia.local",
         birth_date="1995-10-06",
+        gender="female",
         location="Bratislava, Slovensko",
         latitude=48.1607,
         longitude=17.1394,
@@ -219,6 +230,7 @@ CONNECTIONS = [
         nickname="Daniel",
         email="daniel-dev@priatelia.local",
         birth_date="1999-04-21",
+        gender="male",
         location="Bratislava, Slovensko",
         latitude=48.1348,
         longitude=17.1137,
@@ -238,6 +250,7 @@ CONNECTIONS = [
         nickname="Emília",
         email="emilia-dev@priatelia.local",
         birth_date="2001-08-25",
+        gender="female",
         location="Bratislava, Slovensko",
         latitude=48.1498,
         longitude=17.1327,
@@ -257,6 +270,7 @@ CONNECTIONS = [
         nickname="Martin",
         email="martin-dev@priatelia.local",
         birth_date="1992-05-12",
+        gender="male",
         location="Hainburg an der Donau, Rakúsko",
         latitude=48.1460,
         longitude=16.9456,
@@ -276,6 +290,7 @@ CONNECTIONS = [
         nickname="Terézia",
         email="terezia-dev@priatelia.local",
         birth_date="1996-12-19",
+        gender="female",
         location="Bratislava, Slovensko",
         latitude=48.1712,
         longitude=17.1893,
@@ -295,6 +310,7 @@ CONNECTIONS = [
         nickname="Ivana",
         email="ivana-dev@priatelia.local",
         birth_date="1998-02-08",
+        gender="female",
         location="Bratislava, Slovensko",
         latitude=48.1582,
         longitude=17.1284,
@@ -314,6 +330,7 @@ CONNECTIONS = [
         nickname="Matej",
         email="matej-dev@priatelia.local",
         birth_date="1994-09-03",
+        gender="male",
         location="Bratislava, Slovensko",
         latitude=48.1213,
         longitude=17.1098,
@@ -333,6 +350,7 @@ CONNECTIONS = [
         nickname="Lenka",
         email="lenka-dev@priatelia.local",
         birth_date="2000-04-17",
+        gender="female",
         location="Pezinok, Slovensko",
         latitude=48.2893,
         longitude=17.2691,
@@ -352,6 +370,7 @@ CONNECTIONS = [
         nickname="Štefan",
         email="stefan-dev@priatelia.local",
         birth_date="1990-07-26",
+        gender="male",
         location="Bratislava, Slovensko",
         latitude=48.1764,
         longitude=17.0849,
@@ -435,10 +454,11 @@ def upsert_user(cursor: psycopg.Cursor, profile: SeedProfile) -> str:
     cursor.execute(
         """
         INSERT INTO profiles
-            (user_id, birth_date, location, latitude, longitude, bio)
-        VALUES (%s, %s, %s, %s, %s, %s)
+            (user_id, birth_date, gender, location, latitude, longitude, bio)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (user_id) DO UPDATE
         SET birth_date = EXCLUDED.birth_date,
+            gender = EXCLUDED.gender,
             location = EXCLUDED.location,
             latitude = EXCLUDED.latitude,
             longitude = EXCLUDED.longitude,
@@ -448,6 +468,7 @@ def upsert_user(cursor: psycopg.Cursor, profile: SeedProfile) -> str:
         (
             user_id,
             profile.birth_date,
+            profile.gender,
             profile.location,
             profile.latitude,
             profile.longitude,
@@ -512,11 +533,21 @@ def main() -> None:
             cursor.execute(
                 """
                 INSERT INTO discovery_settings
-                    (user_id, age_from, age_to, location, latitude, longitude, radius_km)
-                VALUES (%s, 18, 99, %s, %s, %s, 50)
+                    (
+                        user_id,
+                        age_from,
+                        age_to,
+                        gender_preferences,
+                        location,
+                        latitude,
+                        longitude,
+                        radius_km
+                    )
+                VALUES (%s, 18, 99, ARRAY['male', 'female', 'unspecified']::text[], %s, %s, %s, 50)
                 ON CONFLICT (user_id) DO UPDATE
                 SET age_from = 18,
                     age_to = 99,
+                    gender_preferences = EXCLUDED.gender_preferences,
                     location = EXCLUDED.location,
                     latitude = EXCLUDED.latitude,
                     longitude = EXCLUDED.longitude,

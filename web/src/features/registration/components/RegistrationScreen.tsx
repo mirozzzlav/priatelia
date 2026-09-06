@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { Box, FormControl, FormErrorMessage } from "@chakra-ui/react";
 
+import { GenderField } from "src/components/GenderField";
 import { InterestSelectField } from "src/components/InterestSelectField";
 import { PasswordConfirmationFields } from "src/components/PasswordConfirmationFields";
 import { PhotoGalleryField } from "src/components/PhotoGalleryField";
@@ -14,6 +15,7 @@ import {
 import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
 import type { InterestTag } from "src/features/interests/types";
+import type { Gender } from "src/constants/gender";
 import { LocationSearchField } from "src/components/LocationSearchField";
 import type {
   RegistrationFormData,
@@ -44,6 +46,7 @@ const initialFormData: RegistrationFormData = {
   bio: "",
   birthDate: "",
   email: "",
+  gender: "unspecified",
   interests: [],
   location: "",
   locationLatitude: null,
@@ -117,6 +120,16 @@ export function RegistrationScreen({
       location: nextLocation.location,
       locationLatitude: nextLocation.latitude,
       locationLongitude: nextLocation.longitude,
+    }));
+  };
+
+  const handleGenderChange = (gender: Gender) => {
+    setServerFieldErrors({});
+    setSubmitError(null);
+    setWasSubmitted(false);
+    setFormData((current) => ({
+      ...current,
+      gender,
     }));
   };
 
@@ -287,6 +300,14 @@ export function RegistrationScreen({
             {fieldErrors.birthDate}
           </FormErrorMessage>
         </FormControl>
+
+        <GenderField
+          error={fieldErrors.gender}
+          isInvalid={wasSubmitted && Boolean(fieldErrors.gender)}
+          label="Pohlavie"
+          onChange={handleGenderChange}
+          value={formData.gender}
+        />
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.location)}>
           <LocationSearchField

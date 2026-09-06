@@ -35,6 +35,7 @@ async def get_profile(
         return {
             "nickname": current_user.nickname,
             "birthDate": "",
+            "gender": "unspecified",
             "interests": [],
             "location": "",
             "locationLatitude": None,
@@ -46,6 +47,7 @@ async def get_profile(
     return {
         "nickname": profile.nickname,
         "birthDate": profile.birth_date.isoformat(),
+        "gender": profile.gender,
         "interests": [interest.model_dump() for interest in interests],
         "location": profile.location,
         "locationLatitude": profile.latitude,

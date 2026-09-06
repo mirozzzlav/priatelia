@@ -1,9 +1,14 @@
+from typing import Literal
+
 from pydantic import BaseModel
+
+Gender = Literal["male", "female", "unspecified"]
 
 
 class DiscoverySettingsRequest(BaseModel):
     ageFrom: str
     ageTo: str
+    genderPreferences: list[Gender]
     location: str
     locationLatitude: float | None = None
     locationLongitude: float | None = None
@@ -13,6 +18,7 @@ class DiscoverySettingsRequest(BaseModel):
 class DiscoverySettingsResponse(BaseModel):
     ageFrom: str
     ageTo: str
+    genderPreferences: list[Gender]
     location: str
     locationLatitude: float | None = None
     locationLongitude: float | None = None

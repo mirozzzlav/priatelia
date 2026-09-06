@@ -16,6 +16,7 @@ class ProfileRepository:
                 p.user_id,
                 u.nickname,
                 p.birth_date,
+                p.gender,
                 p.location,
                 p.latitude,
                 p.longitude,
@@ -53,6 +54,7 @@ class ProfileRepository:
         user_id: UUID,
         nickname: str,
         birth_date: str,
+        gender: str,
         location: str,
         latitude: float | None,
         longitude: float | None,
@@ -71,17 +73,18 @@ class ProfileRepository:
         await self.connection.execute(
             """
             INSERT INTO profiles
-                (user_id, birth_date, location, latitude, longitude, bio)
-            VALUES (%s, %s, %s, %s, %s, %s)
+                (user_id, birth_date, gender, location, latitude, longitude, bio)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (user_id) DO UPDATE
             SET birth_date = EXCLUDED.birth_date,
+                gender = EXCLUDED.gender,
                 location = EXCLUDED.location,
                 latitude = EXCLUDED.latitude,
                 longitude = EXCLUDED.longitude,
                 bio = EXCLUDED.bio,
                 updated_at = now()
             """,
-            (user_id, birth_date, location, latitude, longitude, bio),
+            (user_id, birth_date, gender, location, latitude, longitude, bio),
         )
         await self.connection.execute(
             "DELETE FROM profile_interests WHERE user_id = %s",

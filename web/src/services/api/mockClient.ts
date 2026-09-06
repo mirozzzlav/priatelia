@@ -10,6 +10,7 @@ import type {
 } from "src/services/api/types";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import type { EditableProfileData } from "src/features/profile";
+import type { Gender } from "src/constants/gender";
 import {
   mockChatMessagesByMatchId,
   mockIncomingLikePersonPreviewIds,
@@ -38,6 +39,30 @@ const chatMatchIds = new Set(mockInitialChatMatchIds);
 const seenChatMatchIds = new Set<string>();
 const chatMessagesByMatchId: Record<string, ChatMessage[]> = {
   ...mockChatMessagesByMatchId,
+};
+const mockGenderByPersonPreviewId: Record<string, Gender> = {
+  "mock-profile-nina": "female",
+  "mock-profile-tomas": "male",
+  "mock-profile-ela": "female",
+  "mock-profile-marek": "male",
+  "mock-profile-sara": "female",
+  "mock-profile-lucia": "female",
+  "mock-profile-peter": "male",
+  "mock-profile-veronika": "female",
+  "mock-profile-adam": "male",
+  "mock-profile-michaela": "female",
+  "mock-profile-jan": "male",
+  "mock-profile-zuzana": "female",
+  "mock-profile-robert": "male",
+  "mock-profile-katarina": "female",
+  "mock-profile-daniel": "male",
+  "mock-profile-emilia": "female",
+  "mock-profile-martin": "male",
+  "mock-profile-terezia": "female",
+  "mock-profile-ivana": "female",
+  "mock-profile-matej": "male",
+  "mock-profile-lenka": "female",
+  "mock-profile-stefan": "male",
 };
 const mockLocationOptions = [
   {
@@ -74,6 +99,7 @@ const mockLocationOptions = [
 let currentProfile: EditableProfileData = {
   bio: "Rád spoznávam ľudí cez dobré jedlo, výlety a pokojné rozhovory.",
   birthDate: "1996-04-18",
+  gender: "male",
   interests: [
     { id: "cestovanie", name: "Cestovanie" },
     { id: "kava", name: "Káva" },
@@ -97,6 +123,7 @@ let currentProfile: EditableProfileData = {
 let currentDiscoverySettings: DiscoverySettingsData = {
   ageFrom: "18",
   ageTo: "35",
+  genderPreferences: ["male", "female", "unspecified"],
   location: "Bratislava, Slovensko",
   locationLatitude: 48.1486,
   locationLongitude: 17.1077,
@@ -108,13 +135,29 @@ function getRandomItem<TItem>(items: TItem[]) {
 }
 
 function getRandomPersonPreview() {
+  const genderPreferences =
+    currentDiscoverySettings.genderPreferences.length > 0
+      ? currentDiscoverySettings.genderPreferences
+      : ["male", "female", "unspecified"];
   const availablePreviews = mockPersonPreviews.filter(
-    (personPreview) => !submittedPersonPreviewIds.has(personPreview.id),
+    (personPreview) =>
+      !submittedPersonPreviewIds.has(personPreview.id) &&
+      genderPreferences.includes(
+        mockGenderByPersonPreviewId[personPreview.id] ?? "unspecified",
+      ),
   );
 
   if (availablePreviews.length === 0) {
     submittedPersonPreviewIds.clear();
-    return getRandomItem(mockPersonPreviews);
+    const matchingPreviews = mockPersonPreviews.filter((personPreview) =>
+      genderPreferences.includes(
+        mockGenderByPersonPreviewId[personPreview.id] ?? "unspecified",
+      ),
+    );
+
+    return getRandomItem(
+      matchingPreviews.length > 0 ? matchingPreviews : mockPersonPreviews,
+    );
   }
 
   return getRandomItem(availablePreviews);
@@ -224,6 +267,10 @@ function getRegistrationErrors(data: Parameters<ApiClient["register"]>[0]) {
     errors.birthDate = "Vyplň dátum narodenia.";
   }
 
+  if (!data.gender) {
+    errors.gender = "Vyber pohlavie.";
+  }
+
   if (data.location.trim().length === 0) {
     errors.location = "Vyplň svoju lokalitu.";
   }
@@ -255,6 +302,10 @@ function getProfileErrors(data: Parameters<ApiClient["updateProfile"]>[0]) {
 
   if (data.birthDate.length === 0) {
     errors.birthDate = "Vyplň dátum narodenia.";
+  }
+
+  if (!data.gender) {
+    errors.gender = "Vyber pohlavie.";
   }
 
   if (data.location.trim().length === 0) {
@@ -334,6 +385,10 @@ function getDiscoverySettingsErrors(
     errors.radiusKm = "Radius musí byť celé číslo.";
   } else if (radiusKm < 1 || radiusKm > 500) {
     errors.radiusKm = "Radius musí byť od 1 do 500 km.";
+  }
+
+  if (data.genderPreferences.length === 0) {
+    errors.genderPreferences = "Vyber aspoň jednu možnosť.";
   }
 
   return errors;

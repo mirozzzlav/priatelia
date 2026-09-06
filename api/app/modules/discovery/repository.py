@@ -15,6 +15,7 @@ class DiscoveryRepository:
             SELECT
                 age_from::text AS "ageFrom",
                 age_to::text AS "ageTo",
+                gender_preferences AS "genderPreferences",
                 location,
                 latitude AS "locationLatitude",
                 longitude AS "locationLongitude",
@@ -32,6 +33,7 @@ class DiscoveryRepository:
         user_id: UUID,
         age_from: int,
         age_to: int,
+        gender_preferences: list[str],
         location: str,
         latitude: float | None,
         longitude: float | None,
@@ -44,29 +46,47 @@ class DiscoveryRepository:
                     user_id,
                     age_from,
                     age_to,
+                    gender_preferences,
                     location,
                     latitude,
                     longitude,
                     radius_km
                 )
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (user_id) DO UPDATE
             SET age_from = EXCLUDED.age_from,
                 age_to = EXCLUDED.age_to,
+                gender_preferences = EXCLUDED.gender_preferences,
                 location = EXCLUDED.location,
                 latitude = EXCLUDED.latitude,
                 longitude = EXCLUDED.longitude,
                 radius_km = EXCLUDED.radius_km,
                 updated_at = now()
             """,
-            (user_id, age_from, age_to, location, latitude, longitude, radius_km),
+            (
+                user_id,
+                age_from,
+                age_to,
+                gender_preferences,
+                location,
+                latitude,
+                longitude,
+                radius_km,
+            ),
         )
 
     async def get_next_profile(self, user_id: UUID) -> PersonPreview | None:
         cursor = await self.connection.execute(
             """
             WITH settings AS (
-                SELECT age_from, age_to, location, latitude, longitude, radius_km
+                SELECT
+                    age_from,
+                    age_to,
+                    gender_preferences,
+                    location,
+                    latitude,
+                    longitude,
+                    radius_km
                 FROM discovery_settings
                 WHERE user_id = %s
             )
@@ -105,6 +125,7 @@ class DiscoveryRepository:
             ) interest_list ON true
             WHERE p.user_id <> %s
               AND date_part('year', age(p.birth_date)) BETWEEN s.age_from AND s.age_to
+              AND p.gender = ANY(s.gender_preferences)
               AND (
                   (
                       s.latitude IS NOT NULL

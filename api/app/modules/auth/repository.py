@@ -116,6 +116,7 @@ class AuthRepository:
         self,
         user_id: UUID,
         birth_date: str,
+        gender: str,
         location: str,
         latitude: float | None,
         longitude: float | None,
@@ -126,10 +127,10 @@ class AuthRepository:
         await self.connection.execute(
             """
             INSERT INTO profiles
-                (user_id, birth_date, location, latitude, longitude, bio)
-            VALUES (%s, %s, %s, %s, %s, %s)
+                (user_id, birth_date, gender, location, latitude, longitude, bio)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             """,
-            (user_id, birth_date, location, latitude, longitude, bio),
+            (user_id, birth_date, gender, location, latitude, longitude, bio),
         )
 
         for position, interest_id in enumerate(interest_ids):
@@ -161,8 +162,17 @@ class AuthRepository:
         await self.connection.execute(
             """
             INSERT INTO discovery_settings
-                (user_id, age_from, age_to, location, latitude, longitude, radius_km)
-            VALUES (%s, 18, 99, %s, %s, %s, 50)
+                (
+                    user_id,
+                    age_from,
+                    age_to,
+                    gender_preferences,
+                    location,
+                    latitude,
+                    longitude,
+                    radius_km
+                )
+            VALUES (%s, 18, 99, ARRAY['male', 'female', 'unspecified'], %s, %s, %s, 50)
             """,
             (user_id, location, latitude, longitude),
         )

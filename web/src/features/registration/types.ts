@@ -1,4 +1,5 @@
 import type { InterestTag } from "src/features/interests/types";
+import type { Gender } from "src/constants/gender";
 
 export type RegistrationPhoto = {
   file?: File;
@@ -12,6 +13,7 @@ export type RegistrationFormData = {
   bio: string;
   birthDate: string;
   email: string;
+  gender: Gender;
   interests: InterestTag[];
   location: string;
   locationLatitude?: number | null;

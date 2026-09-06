@@ -6,6 +6,7 @@ import { apiClient } from "src/services/api";
 const initialDiscoverySettings: DiscoverySettingsData = {
   ageFrom: "18",
   ageTo: "35",
+  genderPreferences: ["male", "female", "unspecified"],
   location: "Bratislava, Slovensko",
   locationLatitude: 48.1486,
   locationLongitude: 17.1077,
