@@ -28,7 +28,7 @@ const styles = {
     align: "center",
     justify: "space-between",
     h: "64px",
-    px: "18px",
+    px: { base: "12px", sm: "18px" },
     bg: "app.base",
     color: "app.white",
     backdropFilter: "blur(18px)",
@@ -82,7 +82,7 @@ const styles = {
   },
   brand: {
     align: "center",
-    gap: "6px",
+    gap: { base: "11px", sm: "12px" },
     h: "44px",
     cursor: "pointer",
     textDecoration: "none",
@@ -91,9 +91,13 @@ const styles = {
     },
   },
   brandMark: {
-    w: "48px",
-    h: "41px",
+    boxSize: "42px",
+    minW: "42px",
     align: "center",
+    bg: "app.white",
+    border: "1px solid",
+    borderColor: "app.white",
+    borderRadius: "999px",
     justify: "center",
   },
   brandText: {
@@ -102,7 +106,7 @@ const styles = {
     color: "app.white",
     fontFamily:
       '"Comic Sans MS", "Comic Neue", "Trebuchet MS", Verdana, sans-serif',
-    fontSize: "24px",
+    fontSize: { base: "21px", sm: "24px" },
     fontWeight: "normal",
     lineHeight: 1,
     letterSpacing: "3px",
@@ -120,19 +124,18 @@ const styles = {
   },
   rightActions: {
     align: "center",
-    gap: "8px",
+    gap: { base: "6px", sm: "8px" },
+  },
+  leftActions: {
+    align: "center",
+    gap: { base: "6px", sm: "8px" },
+    minW: 0,
   },
   matchIconWrap: {
     position: "relative",
     align: "center",
     justify: "center",
     boxSize: "31px",
-    transition: "opacity 140ms ease",
-    sx: {
-      "&[data-disabled='true']": {
-        opacity: 0.44,
-      },
-    },
   },
   matchIconCount: {
     position: "absolute",
@@ -165,18 +168,9 @@ type DiscoveryMatchesSummary = {
   count: number;
 };
 
-function MatchIconWithCount({
-  count,
-  isDisabled = false,
-}: {
-  count: number;
-  isDisabled?: boolean;
-}) {
+function MatchIconWithCount({ count }: { count: number }) {
   return (
-    <Flex
-      data-disabled={isDisabled ? "true" : undefined}
-      {...styles.matchIconWrap}
-    >
+    <Flex {...styles.matchIconWrap}>
       <SvgImage src={matchIcon} boxSize="31px" />
       {count > 0 && (
         <Flex as="span" {...styles.matchIconCount}>
@@ -250,6 +244,7 @@ function LogoutMenuIcon() {
 
 type TopBarProps = {
   isAuthenticated: boolean;
+  onDiscoverClick: () => void;
   onLogout: () => void;
   onMessagesClick: () => void;
   onProfileClick: () => void;
@@ -257,6 +252,7 @@ type TopBarProps = {
 
 export function TopBar({
   isAuthenticated,
+  onDiscoverClick,
   onLogout,
   onMessagesClick,
   onProfileClick,
@@ -294,66 +290,71 @@ export function TopBar({
 
   return (
     <Flex as="header" {...styles.root}>
-      {isAuthenticated ? (
-        <Menu placement="bottom-start">
-          <MenuButton
-            as={IconButton}
-            aria-label="Používateľské menu"
-            icon={<ProfileMenuIcon color="app.base" />}
-            {...styles.iconButton}
-          />
-          <MenuList {...styles.menuList}>
-            <MenuItem onClick={onProfileClick} {...styles.menuItem}>
-              <ProfileMenuIcon boxSize="21px" />
-              <Text as="span">Profil</Text>
-            </MenuItem>
-            <MenuItem onClick={onLogout} {...styles.menuItem}>
-              <LogoutMenuIcon />
-              <Text as="span">Odhlásiť</Text>
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      ) : (
-        <Flex aria-hidden="true" {...styles.emptySlot} />
-      )}
-
-      <Flex
-        as={RouterLink}
-        to="/discover"
-        aria-label={appConfig.name}
-        {...styles.brand}
-      >
-        <Flex {...styles.brandMark}>
-          <SvgImage src={hugIcon} w="41px" h="35px" />
+      <Flex {...styles.leftActions}>
+        <Flex
+          as={RouterLink}
+          to="/discover"
+          aria-label="Objavovať"
+          {...styles.brand}
+        >
+          <Flex {...styles.brandMark}>
+            <SvgImage
+              src={hugIcon}
+              w="34px"
+              h="30px"
+            />
+          </Flex>
+          <Text as="span" {...styles.brandText}>
+            {appConfig.name}
+          </Text>
         </Flex>
-        <Text as="span" {...styles.brandText}>
-          {appConfig.name}
-        </Text>
       </Flex>
 
       {isAuthenticated ? (
         <Flex {...styles.rightActions}>
+          <Menu placement="bottom-end">
+            <MenuButton
+              as={IconButton}
+              aria-label="Používateľské menu"
+              icon={<ProfileMenuIcon color="app.base" />}
+              {...styles.iconButton}
+            />
+            <MenuList {...styles.menuList}>
+              <MenuItem onClick={onProfileClick} {...styles.menuItem}>
+                <ProfileMenuIcon boxSize="21px" />
+                <Text as="span">Profil</Text>
+              </MenuItem>
+              <MenuItem onClick={onLogout} {...styles.menuItem}>
+                <LogoutMenuIcon />
+                <Text as="span">Odhlásiť</Text>
+              </MenuItem>
+            </MenuList>
+          </Menu>
           <TopBarIconButton
             label="Správy"
             icon={messageIcon}
             onClick={onMessagesClick}
           />
-          {isDiscoverRoute && (
-            <IconButton
-              aria-label="Zobraziť nové prepojenia"
-              icon={
-                <MatchIconWithCount
-                  count={discoveryMatchesSummary.count}
-                  isDisabled={!discoveryMatchesSummary.canUseMatches}
-                />
-              }
-              isDisabled={!discoveryMatchesSummary.canUseMatches}
-              onClick={() => {
+          <IconButton
+            aria-label="Zobraziť nové prepojenia"
+            icon={
+              <MatchIconWithCount
+                count={discoveryMatchesSummary.count}
+              />
+            }
+            isDisabled={
+              isDiscoverRoute && !discoveryMatchesSummary.canUseMatches
+            }
+            onClick={() => {
+              if (isDiscoverRoute) {
                 window.dispatchEvent(new CustomEvent(toggleDiscoveryMatchesEvent));
-              }}
-              {...styles.iconButton}
-            />
-          )}
+                return;
+              }
+
+              onDiscoverClick();
+            }}
+            {...styles.iconButton}
+          />
         </Flex>
       ) : (
         <Flex aria-hidden="true" {...styles.emptySlot} />
