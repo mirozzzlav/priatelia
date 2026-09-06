@@ -54,7 +54,7 @@ const styles = {
     },
   },
   menuList: {
-    minW: "184px",
+    minW: "148px",
     mt: "8px",
     border: "1px solid",
     borderColor: "app.text",
@@ -72,8 +72,8 @@ const styles = {
     gap: "12px",
     px: "16px",
     py: "12px",
-    _focus: { bg: "rgba(0, 0, 0, 0.06)" },
-    _hover: { bg: "rgba(0, 0, 0, 0.06)" },
+    _focus: { bg: "rgba(79, 131, 68, 0.1)" },
+    _hover: { bg: "rgba(79, 131, 68, 0.1)" },
   },
   menuItemIcon: {
     boxSize: "21px",
@@ -312,7 +312,7 @@ export function TopBar({
 
       {isAuthenticated ? (
         <Flex {...styles.rightActions}>
-          <Menu placement="bottom-end">
+          <Menu placement="bottom-end" offset={[108, 8]}>
             <MenuButton
               as={IconButton}
               aria-label="Používateľské menu"
