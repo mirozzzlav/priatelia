@@ -1,7 +1,6 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 
-import locationPinIcon from "assets/location-pin.svg";
-import { SvgImage } from "src/components/SvgImage";
+import { ProfileMetaTag } from "src/components/ProfileMetaTag";
 import type { PersonPreview } from "src/features/person-preview/types";
 import { getSlovakCountWord } from "src/utils/formatSlovakCount";
 
@@ -64,34 +63,8 @@ const styles = {
     bg: "rgba(38, 57, 111, 0.22)",
   },
   metaRow: {
-    align: "center",
-    columnGap: "5px",
     mt: { base: "9px", sm: "11px" },
     minW: 0,
-    w: "fit-content",
-    maxW: "100%",
-    px: "8px",
-    py: "5px",
-    border: "1px solid",
-    borderColor: "rgba(38, 57, 111, 0.08)",
-    borderRadius: "999px",
-    bg: "rgba(38, 57, 111, 0.035)",
-  },
-  cityIcon: {
-    flexShrink: 0,
-    boxSize: { base: "20px", sm: "22px" },
-    filter:
-      "invert(34%) sepia(20%) saturate(2026%) hue-rotate(184deg) brightness(92%) contrast(92%)",
-  },
-  city: {
-    minW: 0,
-    overflow: "hidden",
-    color: "app.text",
-    fontSize: { base: "md", sm: "lg" },
-    fontWeight: "bold",
-    lineHeight: 1,
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
   },
 } as const;
 
@@ -118,10 +91,9 @@ export function PersonPreviewToolbar({ person }: PersonPreviewToolbarProps) {
         </Flex>
       </Flex>
       {city && (
-        <Flex {...styles.metaRow}>
-          <SvgImage src={locationPinIcon} {...styles.cityIcon} />
-          <Text {...styles.city}>{city}</Text>
-        </Flex>
+        <Box {...styles.metaRow}>
+          <ProfileMetaTag type="city">{city}</ProfileMetaTag>
+        </Box>
       )}
     </Box>
   );

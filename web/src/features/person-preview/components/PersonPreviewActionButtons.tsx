@@ -19,22 +19,22 @@ const styles = {
   },
   button: {
     flex: "1 1 50%",
-    h: "68px",
+    h: { base: "58px", sm: "60px" },
     minW: 0,
     p: 0,
     border: 0,
     borderTop: "1px solid",
-    borderColor: "rgba(255, 255, 255, 0.46)",
+    borderColor: "rgba(255, 255, 255, 0.38)",
     borderRadius: 0,
-    bg: "rgba(255, 255, 255, 0.72)",
-    backdropFilter: "blur(16px)",
+    bg: "rgba(255, 255, 255, 0.62)",
+    backdropFilter: "blur(14px)",
     transition: "background 140ms ease, border-color 140ms ease",
     _hover: {
-      bg: "rgba(255, 255, 255, 0.86)",
-      borderColor: "rgba(255, 255, 255, 0.72)",
+      bg: "rgba(255, 255, 255, 0.78)",
+      borderColor: "rgba(255, 255, 255, 0.6)",
     },
     _active: {
-      bg: "rgba(255, 255, 255, 0.92)",
+      bg: "rgba(255, 255, 255, 0.84)",
     },
     sx: {
       "&:hover [data-outline-icon], &:active [data-outline-icon], &[data-active='true'] [data-outline-icon]":
@@ -81,7 +81,7 @@ const styles = {
   },
   iconWrap: {
     position: "relative",
-    boxSize: "39px",
+    boxSize: { base: "33px", sm: "34px" },
   },
   icon: {
     position: "absolute",
@@ -96,15 +96,15 @@ const styles = {
   },
   likeButton: {
     borderRight: "1px solid",
-    borderRightColor: "rgba(38, 57, 111, 0.36)",
+    borderRightColor: "rgba(38, 57, 111, 0.18)",
     _hover: {
-      bg: "rgba(255, 255, 255, 0.86)",
-      borderColor: "rgba(255, 255, 255, 0.72)",
-      borderRightColor: "rgba(38, 57, 111, 0.36)",
+      bg: "rgba(255, 255, 255, 0.78)",
+      borderColor: "rgba(255, 255, 255, 0.6)",
+      borderRightColor: "rgba(38, 57, 111, 0.18)",
     },
     _active: {
-      bg: "rgba(255, 255, 255, 0.92)",
-      borderRightColor: "rgba(38, 57, 111, 0.36)",
+      bg: "rgba(255, 255, 255, 0.84)",
+      borderRightColor: "rgba(38, 57, 111, 0.18)",
     },
   },
   nopeButton: {},
@@ -177,15 +177,15 @@ function PersonPreviewActionButton({
       <Box data-action-icon={action} {...styles.iconWrap}>
         <SvgImage
           src={icon}
-          boxSize="39px"
           data-outline-icon
+          boxSize="100%"
           {...styles.icon}
           {...styles.outlineIcon}
         />
         <SvgImage
           src={filledIcon}
-          boxSize="39px"
           data-filled-icon
+          boxSize="100%"
           {...styles.icon}
           {...styles.filledIcon}
         />

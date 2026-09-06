@@ -19,7 +19,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 
-import filterIcon from "assets/filter.svg";
+import slidersIcon from "assets/sliders.svg";
 import { FormInput } from "src/components/formElements";
 import { CenteredStatusLayout } from "src/components/layouts";
 import { LoadingPill } from "src/components/LoadingPill";
@@ -87,9 +87,9 @@ const styles = {
       w: isExpanded
         ? "min(100%, 460px)"
         : { base: "calc(100% + 24px)", sm: "calc(100% + 32px)" },
-      h: isExpanded ? `calc(100dvh - ${expandedTop ?? topOffset}px)` : "78px",
+      h: isExpanded ? `calc(100dvh - ${expandedTop ?? topOffset}px)` : "96px",
       mx: isExpanded ? undefined : { base: "-12px", sm: "-16px" },
-      bg: "app.white",
+      bg: "linear-gradient(180deg, #ffffff 0%, #fbfcff 100%)",
       borderTop: "1px solid",
       borderBottom: "1px solid",
       borderColor: "rgba(38, 57, 111, 0.14)",
@@ -103,38 +103,54 @@ const styles = {
         "height 220ms ease, box-shadow 220ms ease, background 220ms ease",
     }) as const,
   headerRow: {
-    align: "center",
-    justify: "space-between",
+    align: "stretch",
+    direction: "column",
+    justify: "center",
     w: "100%",
-    h: "78px",
+    h: "96px",
     px: "12px",
     pt: "10px",
-    pb: "18px",
-    gap: "10px",
+    pb: "14px",
+    gap: "8px",
+  },
+  filterLabel: {
+    align: "center",
+    gap: "7px",
+    color: "app.baseDark",
+    fontSize: { base: "xs", sm: "sm" },
+    fontWeight: "black",
+    lineHeight: 1,
+    px: "4px",
+    textTransform: "uppercase",
+  },
+  filterLabelIcon: {
+    boxSize: { base: "17px", sm: "18px" },
   },
   filterToggle: {
     align: "center",
     display: "flex",
     flex: 1,
-    gap: "5px",
     minW: 0,
     h: "50px",
-    pl: "12px",
-    pr: "12px",
+    px: "14px",
     border: "1px solid",
-    borderColor: "rgba(38, 57, 111, 0.18)",
+    borderColor: "rgba(38, 57, 111, 0.16)",
     borderRadius: "999px",
-    bg: "app.white",
-    boxShadow: "0 3px 10px rgba(38, 57, 111, 0.08)",
+    bg: "rgba(255, 255, 255, 0.94)",
+    boxShadow: "0 7px 18px rgba(38, 57, 111, 0.08)",
     textAlign: "left",
     transition: "border-color 140ms ease, box-shadow 140ms ease",
     _hover: {
       borderColor: "rgba(38, 57, 111, 0.26)",
-      boxShadow: "0 4px 13px rgba(38, 57, 111, 0.11)",
+      boxShadow: "0 9px 22px rgba(38, 57, 111, 0.11)",
     },
     _active: {
       borderColor: "rgba(38, 57, 111, 0.28)",
       boxShadow: "0 2px 8px rgba(38, 57, 111, 0.08)",
+    },
+    _focusWithin: {
+      borderColor: "rgba(59, 90, 157, 0.38)",
+      boxShadow: "0 0 0 3px rgba(59, 90, 157, 0.12)",
     },
   },
   filterSummary: {
@@ -180,13 +196,6 @@ const styles = {
     w: "1px",
     h: "34px",
     bg: "rgba(38, 57, 111, 0.24)",
-  },
-  filterIconButton: {
-    display: "grid",
-    placeItems: "center",
-    flexShrink: 0,
-    boxSize: "24px",
-    borderRadius: "999px",
   },
   filterEditorWrap: {
     position: "relative",
@@ -277,11 +286,8 @@ const styles = {
     thickness: "2px",
     size: "sm",
   },
-  infoIcon: {
-    filter: "grayscale(1) contrast(1.35)",
-  },
   headerPanel: {
-    h: "calc(100% - 78px)",
+    h: "calc(100% - 96px)",
     overflowY: "auto",
     px: "18px",
     pt: "22px",
@@ -793,10 +799,11 @@ function DiscoveryHeader({
       aria-live="polite"
     >
       <Flex {...styles.headerRow}>
+        <Flex {...styles.filterLabel}>
+          <SvgImage src={slidersIcon} {...styles.filterLabelIcon} />
+          <Text as="span">Kritériá hľadania</Text>
+        </Flex>
         <Flex ref={filterRef} {...styles.filterToggle}>
-          <Box aria-hidden="true" {...styles.filterIconButton}>
-            <SvgImage src={filterIcon} boxSize="21px" {...styles.infoIcon} />
-          </Box>
           {activeInlineFilter === null ? (
             <FilterSummarySegments
               onEdit={editInlineFilter}
