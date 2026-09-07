@@ -1,7 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 
-import hugIcon from "assets/hug.svg";
+import logo from "assets/logo.svg";
 import { appConfig } from "src/config.js";
 import { SvgImage } from "src/components/SvgImage";
 import { topBarStyles as styles } from "src/components/top-bar/topBarStyles";
@@ -15,7 +15,7 @@ export function TopBarBrand() {
       {...styles.brand}
     >
       <Flex {...styles.brandMark}>
-        <SvgImage src={hugIcon} w="34px" h="30px" />
+        <SvgImage src={logo} />
       </Flex>
       <Text as="span" {...styles.brandText}>
         {appConfig.name}
