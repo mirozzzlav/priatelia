@@ -60,6 +60,7 @@ export function DiscoveryTopPanel({
     expandedTop,
     filterRef,
     isExpanded,
+    isMatchesExpanded,
     isSavingInlineFilter,
     rootRef,
     saveCurrentInlineFilter,
@@ -77,6 +78,8 @@ export function DiscoveryTopPanel({
     onNewMatchesSeen,
   });
 
+  const contentHeight = isMatchesExpanded ? "100%" : "calc(100% - 112px)";
+
   return (
     <HeaderSurface
       ref={rootRef}
@@ -84,22 +87,24 @@ export function DiscoveryTopPanel({
       {...styles.headerRoot(isExpanded, expandedTop, 64)}
       aria-live="polite"
     >
-      <DiscoveryFilterBar
-        activeInlineFilter={activeInlineFilter}
-        draftSettings={draftSettings}
-        filterRef={filterRef}
-        initialDiscoverySettings={initialDiscoverySettings}
-        isSavingInlineFilter={isSavingInlineFilter}
-        onDraftFieldChange={updateDraftField}
-        onDraftGenderPreferencesChange={updateDraftGenderPreferences}
-        onEditInlineFilter={editInlineFilter}
-        onInlineFilterSave={saveCurrentInlineFilter}
-        onLocationQueryChange={updateLocationQuery}
-        onLocationSelect={selectInlineLocation}
-      />
+      {!isMatchesExpanded && (
+        <DiscoveryFilterBar
+          activeInlineFilter={activeInlineFilter}
+          draftSettings={draftSettings}
+          filterRef={filterRef}
+          initialDiscoverySettings={initialDiscoverySettings}
+          isSavingInlineFilter={isSavingInlineFilter}
+          onDraftFieldChange={updateDraftField}
+          onDraftGenderPreferencesChange={updateDraftGenderPreferences}
+          onEditInlineFilter={editInlineFilter}
+          onInlineFilterSave={saveCurrentInlineFilter}
+          onLocationQueryChange={updateLocationQuery}
+          onLocationSelect={selectInlineLocation}
+        />
+      )}
 
       {isExpanded && (
-        <Box {...styles.topPanelContent}>
+        <Box {...styles.topPanelContent} h={contentHeight}>
           <DiscoveryMatchesPanel
             isLoading={isLoadingMatches}
             matches={displayedNewMatches}

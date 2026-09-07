@@ -89,6 +89,7 @@ class ChatService:
         if not await self.matching.user_can_access_match(user_id, match_id):
             return None
 
+        await self.chats.ensure_thread(match_id)
         return await self.chats.mark_thread_read(match_id, user_id)
 
     async def mark_thread_delivered(
@@ -99,6 +100,7 @@ class ChatService:
         if not await self.matching.user_can_access_match(user_id, match_id):
             return None
 
+        await self.chats.ensure_thread(match_id)
         return await self.chats.mark_thread_delivered(match_id, user_id)
 
     async def get_thread(self, user_id: UUID, match_id: UUID) -> ChatThread | None:

@@ -231,6 +231,7 @@ export function useDiscoveryTopPanelState({
     expandedTop,
     filterRef,
     isExpanded,
+    isMatchesExpanded,
     isSavingInlineFilter,
     rootRef,
     saveCurrentInlineFilter,
