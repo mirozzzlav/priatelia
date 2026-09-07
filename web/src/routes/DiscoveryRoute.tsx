@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 
@@ -84,13 +84,22 @@ export function DiscoveryRoute({
       src,
     }));
   }, [personPreview]);
-  const openPreviewPhoto = (photoSrc: string) => {
+  const openPreviewPhoto = useCallback((photoSrc: string) => {
     const photoIndex = previewPhotos.findIndex((photo) => photo.src === photoSrc);
     setSelectedPhotoIndex(photoIndex >= 0 ? photoIndex : 0);
-  };
-  const handleActionStart = (action: ActivePersonPreviewAction) => {
+  }, [previewPhotos]);
+  const handleActionStart = useCallback((action: ActivePersonPreviewAction) => {
     onActionStart(action, loadMatches);
-  };
+  }, [loadMatches, onActionStart]);
+  const handleMatchClick = useCallback((matchId: string) => {
+    navigate(`/messages/${matchId}`);
+  }, [navigate]);
+  const openFirstPreviewPhoto = useCallback(() => {
+    setSelectedPhotoIndex(0);
+  }, []);
+  const closePhotoViewer = useCallback(() => {
+    setSelectedPhotoIndex(null);
+  }, []);
 
   useEffect(() => {
     if (personPreview || isLoadingPersonPreview || error) {
@@ -110,7 +119,7 @@ export function DiscoveryRoute({
         initialDiscoverySettings={initialDiscoverySettings}
         isLoadingMatches={isLoadingMatches}
         matches={matches}
-        onMatchClick={(matchId) => navigate(`/messages/${matchId}`)}
+        onMatchClick={handleMatchClick}
         onNewMatchesSeen={markMatchesSeen}
         onDiscoveryReload={onDiscoveryReload}
         onDiscoverySettingsSave={onDiscoverySettingsSave}
@@ -154,7 +163,7 @@ export function DiscoveryRoute({
             isSubmitting={isSubmittingPersonPreviewAction}
             onActionEnd={onActionEnd}
             onActionStart={handleActionStart}
-            onPhotoClick={() => setSelectedPhotoIndex(0)}
+            onPhotoClick={openFirstPreviewPhoto}
             person={personPreview}
           />
           <ScrollCue />
@@ -165,7 +174,7 @@ export function DiscoveryRoute({
           <PhotoViewer
             initialIndex={selectedPhotoIndex}
             isOpen={selectedPhotoIndex !== null}
-            onClose={() => setSelectedPhotoIndex(null)}
+            onClose={closePhotoViewer}
             onIndexChange={setSelectedPhotoIndex}
             photos={previewPhotos}
           />

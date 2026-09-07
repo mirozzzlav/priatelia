@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   discoveryMatchesSummaryEvent,
@@ -45,8 +45,9 @@ export function useDiscoveryTopPanelState({
     [],
   );
   const [isSavingInlineFilter, setIsSavingInlineFilter] = useState(false);
-  const newMatches = matches.filter(
-    (match) => match.isNew && !match.lastMessage,
+  const newMatches = useMemo(
+    () => matches.filter((match) => match.isNew && !match.lastMessage),
+    [matches],
   );
   const isExpanded = activePanel !== null;
   const isMatchesExpanded = activePanel === "matches";
@@ -55,8 +56,10 @@ export function useDiscoveryTopPanelState({
     isMatchesExpanded ||
     newMatches.length > 0 ||
     expandedPanelMatches.length > 0;
-  const displayedNewMatches =
-    expandedPanelMatches.length > 0 ? expandedPanelMatches : newMatches;
+  const displayedNewMatches = useMemo(
+    () => (expandedPanelMatches.length > 0 ? expandedPanelMatches : newMatches),
+    [expandedPanelMatches, newMatches],
+  );
 
   useEffect(() => {
     if (!isExpanded) {
@@ -82,12 +85,12 @@ export function useDiscoveryTopPanelState({
     );
   }, [canUseMatches, newMatches.length]);
 
-  const openPanel = (panel: NonNullable<ActiveTopPanel>) => {
+  const openPanel = useCallback((panel: NonNullable<ActiveTopPanel>) => {
     setExpandedTop(rootRef.current?.getBoundingClientRect().top ?? 64);
     setActivePanel(panel);
-  };
+  }, []);
 
-  const toggleMatchesPanel = () => {
+  const toggleMatchesPanel = useCallback(() => {
     setActiveInlineFilter(null);
 
     if (!canUseMatches) {
@@ -107,7 +110,13 @@ export function useDiscoveryTopPanelState({
 
     setExpandedPanelMatches(newMatches);
     onNewMatchesSeen(newMatches.map((match) => match.id));
-  };
+  }, [
+    canUseMatches,
+    isMatchesExpanded,
+    newMatches,
+    onNewMatchesSeen,
+    openPanel,
+  ]);
 
   useEffect(() => {
     const handleToggleMatches = () => {
@@ -122,7 +131,7 @@ export function useDiscoveryTopPanelState({
         handleToggleMatches,
       );
     };
-  });
+  }, [toggleMatchesPanel]);
 
   useEffect(() => {
     if (activeInlineFilter === null) {

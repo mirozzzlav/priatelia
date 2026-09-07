@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { ChatThreadScreen } from "src/features/messages";
@@ -123,11 +123,11 @@ export function ChatThreadRoute() {
     };
   }, [matchId, thread?.match.id]);
 
-  if (!matchId) {
-    return <Navigate to="/messages" replace />;
-  }
+  const handleSendMessage = useCallback(async (text: string) => {
+    if (!matchId) {
+      return;
+    }
 
-  const handleSendMessage = async (text: string) => {
     setIsSending(true);
 
     try {
@@ -146,14 +146,22 @@ export function ChatThreadRoute() {
     } finally {
       setIsSending(false);
     }
-  };
+  }, [matchId]);
+
+  const handleBack = useCallback(() => {
+    navigate("/messages");
+  }, [navigate]);
+
+  if (!matchId) {
+    return <Navigate to="/messages" replace />;
+  }
 
   return (
     <ChatThreadScreen
       error={error}
       isLoading={isLoading}
       isSending={isSending}
-      onBack={() => navigate("/messages")}
+      onBack={handleBack}
       onSendMessage={handleSendMessage}
       thread={thread}
     />
