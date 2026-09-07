@@ -13,6 +13,21 @@ class AuthRepository:
     def __init__(self, connection: AsyncConnection):
         self.connection = connection
 
+    async def _profile_has_looking_for_column(self) -> bool:
+        cursor = await self.connection.execute(
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'profiles'
+                  AND column_name = 'looking_for'
+            ) AS exists
+            """
+        )
+        row = await cursor.fetchone()
+        return bool(row["exists"])
+
     async def get_user_by_nickname(self, nickname: str) -> UserRecord | None:
         cursor = await self.connection.execute(
             """
@@ -121,17 +136,46 @@ class AuthRepository:
         latitude: float | None,
         longitude: float | None,
         bio: str,
+        looking_for: str | None,
         interest_ids: list[str],
         photos: list[RegistrationPhoto],
     ) -> None:
-        await self.connection.execute(
-            """
-            INSERT INTO profiles
-                (user_id, birth_date, gender, location, latitude, longitude, bio)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """,
-            (user_id, birth_date, gender, location, latitude, longitude, bio),
-        )
+        if await self._profile_has_looking_for_column():
+            await self.connection.execute(
+                """
+                INSERT INTO profiles
+                    (
+                        user_id,
+                        birth_date,
+                        gender,
+                        location,
+                        latitude,
+                        longitude,
+                        bio,
+                        looking_for
+                    )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """,
+                (
+                    user_id,
+                    birth_date,
+                    gender,
+                    location,
+                    latitude,
+                    longitude,
+                    bio,
+                    looking_for,
+                ),
+            )
+        else:
+            await self.connection.execute(
+                """
+                INSERT INTO profiles
+                    (user_id, birth_date, gender, location, latitude, longitude, bio)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """,
+                (user_id, birth_date, gender, location, latitude, longitude, bio),
+            )
 
         for position, interest_id in enumerate(interest_ids):
             await self.connection.execute(

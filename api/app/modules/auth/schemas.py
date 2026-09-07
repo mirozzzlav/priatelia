@@ -26,6 +26,7 @@ class RegisterRequest(BaseModel):
     email: str
     gender: Gender
     interests: list[InterestTag]
+    lookingFor: str = ""
     location: str
     locationLatitude: float | None = None
     locationLongitude: float | None = None

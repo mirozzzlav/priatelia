@@ -9,6 +9,7 @@ const initialProfileData: EditableProfileData = {
   birthDate: "",
   gender: "unspecified",
   interests: [],
+  lookingFor: "",
   location: "",
   locationLatitude: null,
   locationLongitude: null,
@@ -34,6 +35,7 @@ export function useProfileState() {
   const syncRegisteredProfile = useCallback((data: RegistrationFormData) => {
     setProfileData({
       ...data,
+      lookingFor: data.lookingFor.trim(),
       nickname: data.nickname.trim(),
       password: "",
       passwordConfirmation: "",
@@ -43,6 +45,7 @@ export function useProfileState() {
   const saveProfile = useCallback((data: EditableProfileData) => {
     setProfileData({
       ...data,
+      lookingFor: data.lookingFor.trim(),
       nickname: data.nickname.trim(),
       password: "",
       passwordConfirmation: "",

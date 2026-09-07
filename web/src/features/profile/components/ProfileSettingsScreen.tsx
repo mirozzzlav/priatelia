@@ -11,6 +11,7 @@ import {
   FormLinkButton,
   FormSubmitButton,
   FormTextarea,
+  OptionalFieldLabel,
   RequiredFieldLabel,
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
@@ -59,14 +60,11 @@ export function ProfileSettingsScreen({
     setIsSuccess(false);
   };
 
-  const {
-    handlePhotoUpload,
-    removePhoto,
-    setPrimaryPhoto,
-  } = usePhotoGalleryState({
-    resetFeedback,
-    setFormData,
-  });
+  const { handlePhotoUpload, removePhoto, setPrimaryPhoto } =
+    usePhotoGalleryState({
+      resetFeedback,
+      setFormData,
+    });
 
   const updateField =
     (field: keyof Omit<EditableProfileData, "interests" | "photos">) =>
@@ -198,6 +196,20 @@ export function ProfileSettingsScreen({
           />
           <FormErrorMessage color="app.error">
             {fieldErrors.bio}
+          </FormErrorMessage>
+        </FormControl>
+
+        <FormControl
+          isInvalid={wasSubmitted && Boolean(fieldErrors.lookingFor)}
+        >
+          <OptionalFieldLabel>Čo hľadám</OptionalFieldLabel>
+          <FormTextarea
+            value={formData.lookingFor}
+            onChange={updateField("lookingFor")}
+            placeholder="Aký typ priateľstva, aktivít alebo ľudí by ti sadol?"
+          />
+          <FormErrorMessage color="app.error">
+            {fieldErrors.lookingFor}
           </FormErrorMessage>
         </FormControl>
 

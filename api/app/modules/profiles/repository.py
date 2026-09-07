@@ -9,9 +9,29 @@ class ProfileRepository:
     def __init__(self, connection: AsyncConnection):
         self.connection = connection
 
-    async def get_profile(self, user_id: UUID) -> ProfileRecord | None:
+    async def _profile_has_looking_for_column(self) -> bool:
         cursor = await self.connection.execute(
             """
+            SELECT EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'profiles'
+                  AND column_name = 'looking_for'
+            ) AS exists
+            """
+        )
+        row = await cursor.fetchone()
+        return bool(row["exists"])
+
+    async def get_profile(self, user_id: UUID) -> ProfileRecord | None:
+        looking_for_select = (
+            "p.looking_for"
+            if await self._profile_has_looking_for_column()
+            else "NULL AS looking_for"
+        )
+        cursor = await self.connection.execute(
+            f"""
             SELECT
                 p.user_id,
                 u.nickname,
@@ -20,7 +40,8 @@ class ProfileRepository:
                 p.location,
                 p.latitude,
                 p.longitude,
-                p.bio
+                p.bio,
+                {looking_for_select}
             FROM profiles p
             JOIN users u ON u.id = p.user_id
             WHERE p.user_id = %s
@@ -59,9 +80,11 @@ class ProfileRepository:
         latitude: float | None,
         longitude: float | None,
         bio: str,
+        looking_for: str | None,
         interest_ids: list[str],
         photos: list[ProfilePhoto],
     ) -> None:
+        has_looking_for_column = await self._profile_has_looking_for_column()
         await self.connection.execute(
             """
             UPDATE users
@@ -70,22 +93,59 @@ class ProfileRepository:
             """,
             (nickname, user_id),
         )
-        await self.connection.execute(
-            """
-            INSERT INTO profiles
-                (user_id, birth_date, gender, location, latitude, longitude, bio)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (user_id) DO UPDATE
-            SET birth_date = EXCLUDED.birth_date,
-                gender = EXCLUDED.gender,
-                location = EXCLUDED.location,
-                latitude = EXCLUDED.latitude,
-                longitude = EXCLUDED.longitude,
-                bio = EXCLUDED.bio,
-                updated_at = now()
-            """,
-            (user_id, birth_date, gender, location, latitude, longitude, bio),
-        )
+        if has_looking_for_column:
+            await self.connection.execute(
+                """
+                INSERT INTO profiles
+                    (
+                        user_id,
+                        birth_date,
+                        gender,
+                        location,
+                        latitude,
+                        longitude,
+                        bio,
+                        looking_for
+                    )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (user_id) DO UPDATE
+                SET birth_date = EXCLUDED.birth_date,
+                    gender = EXCLUDED.gender,
+                    location = EXCLUDED.location,
+                    latitude = EXCLUDED.latitude,
+                    longitude = EXCLUDED.longitude,
+                    bio = EXCLUDED.bio,
+                    looking_for = EXCLUDED.looking_for,
+                    updated_at = now()
+                """,
+                (
+                    user_id,
+                    birth_date,
+                    gender,
+                    location,
+                    latitude,
+                    longitude,
+                    bio,
+                    looking_for,
+                ),
+            )
+        else:
+            await self.connection.execute(
+                """
+                INSERT INTO profiles
+                    (user_id, birth_date, gender, location, latitude, longitude, bio)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (user_id) DO UPDATE
+                SET birth_date = EXCLUDED.birth_date,
+                    gender = EXCLUDED.gender,
+                    location = EXCLUDED.location,
+                    latitude = EXCLUDED.latitude,
+                    longitude = EXCLUDED.longitude,
+                    bio = EXCLUDED.bio,
+                    updated_at = now()
+                """,
+                (user_id, birth_date, gender, location, latitude, longitude, bio),
+            )
         await self.connection.execute(
             "DELETE FROM profile_interests WHERE user_id = %s",
             (user_id,),
@@ -180,14 +240,20 @@ class ProfileRepository:
         if not user_ids:
             return []
 
+        looking_for_select = (
+            "p.looking_for"
+            if await self._profile_has_looking_for_column()
+            else "NULL AS looking_for"
+        )
         cursor = await self.connection.execute(
-            """
+            f"""
             SELECT
                 p.user_id,
                 u.nickname,
                 date_part('year', age(p.birth_date))::int AS age,
                 p.location,
                 p.bio,
+                {looking_for_select},
                 COALESCE(primary_photo.url, '') AS photo,
                 COALESCE(interest_list.interests, ARRAY[]::json[]) AS interests
             FROM profiles p

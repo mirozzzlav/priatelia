@@ -9,6 +9,21 @@ class DiscoveryRepository:
     def __init__(self, connection: AsyncConnection):
         self.connection = connection
 
+    async def _profile_has_looking_for_column(self) -> bool:
+        cursor = await self.connection.execute(
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'profiles'
+                  AND column_name = 'looking_for'
+            ) AS exists
+            """
+        )
+        row = await cursor.fetchone()
+        return bool(row["exists"])
+
     async def get_settings(self, user_id: UUID) -> DiscoverySettingsResponse | None:
         cursor = await self.connection.execute(
             """
@@ -76,8 +91,13 @@ class DiscoveryRepository:
         )
 
     async def get_next_profile(self, user_id: UUID) -> PersonPreview | None:
+        looking_for_select = (
+            "COALESCE(p.looking_for, '') AS \"lookingFor\""
+            if await self._profile_has_looking_for_column()
+            else "'' AS \"lookingFor\""
+        )
         cursor = await self.connection.execute(
-            """
+            f"""
             WITH settings AS (
                 SELECT
                     age_from,
@@ -94,6 +114,7 @@ class DiscoveryRepository:
                 p.user_id::text AS id,
                 date_part('year', age(p.birth_date))::int::text AS age,
                 p.bio,
+                {looking_for_select},
                 ARRAY[p.location] AS meta,
                 u.nickname AS name,
                 COALESCE(primary_photo.url, '') AS photo,

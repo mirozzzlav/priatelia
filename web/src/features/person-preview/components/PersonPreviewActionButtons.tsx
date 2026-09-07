@@ -1,5 +1,5 @@
 import type { KeyboardEvent } from "react";
-import { Box, Button, Flex, type ButtonProps } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, type ButtonProps } from "@chakra-ui/react";
 
 import thumbDownFilledIcon from "assets/thumb-down-filled.svg";
 import thumbDownIcon from "assets/thumb-down.svg";
@@ -21,13 +21,15 @@ const styles = {
     flex: "1 1 50%",
     h: { base: "58px", sm: "60px" },
     minW: 0,
-    p: 0,
+    px: { base: "14px", sm: "18px" },
+    py: 0,
     border: "1px solid",
     borderColor: "rgba(53, 87, 45, 0.14)",
     borderRadius: "18px",
     bg: "app.white",
     boxShadow: "0 12px 28px rgba(53, 87, 45, 0.12)",
-    transition: "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
+    transition:
+      "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
     _hover: {
       bg: "rgba(255, 255, 255, 0.92)",
       borderColor: "rgba(53, 87, 45, 0.22)",
@@ -82,7 +84,8 @@ const styles = {
   },
   iconWrap: {
     position: "relative",
-    boxSize: { base: "33px", sm: "34px" },
+    flexShrink: 0,
+    boxSize: { base: "28px", sm: "30px" },
   },
   icon: {
     position: "absolute",
@@ -94,6 +97,19 @@ const styles = {
   },
   filledIcon: {
     opacity: 0,
+  },
+  buttonContent: {
+    align: "center",
+    justify: "center",
+    gap: { base: "8px", sm: "10px" },
+    minW: 0,
+  },
+  label: {
+    color: "app.text",
+    fontSize: "sm",
+    fontWeight: "extrabold",
+    lineHeight: 1,
+    textTransform: "uppercase",
   },
   likeButton: {
     _hover: {
@@ -117,6 +133,7 @@ type PersonPreviewActionButtonProps = PersonPreviewActionHandlers & {
   filledIcon: string;
   icon: string;
   isSubmitting: boolean;
+  label: string;
 };
 
 function PersonPreviewActionButton({
@@ -127,6 +144,7 @@ function PersonPreviewActionButton({
   filledIcon,
   icon,
   isSubmitting,
+  label,
   onActionEnd,
   onActionStart,
 }: PersonPreviewActionButtonProps) {
@@ -173,22 +191,25 @@ function PersonPreviewActionButton({
       {...styles.button}
       {...buttonStyles}
     >
-      <Box data-action-icon={action} {...styles.iconWrap}>
-        <SvgImage
-          src={icon}
-          data-outline-icon
-          boxSize="100%"
-          {...styles.icon}
-          {...styles.outlineIcon}
-        />
-        <SvgImage
-          src={filledIcon}
-          data-filled-icon
-          boxSize="100%"
-          {...styles.icon}
-          {...styles.filledIcon}
-        />
-      </Box>
+      <Flex {...styles.buttonContent}>
+        <Box data-action-icon={action} {...styles.iconWrap}>
+          <SvgImage
+            src={icon}
+            data-outline-icon
+            boxSize="100%"
+            {...styles.icon}
+            {...styles.outlineIcon}
+          />
+          <SvgImage
+            src={filledIcon}
+            data-filled-icon
+            boxSize="100%"
+            {...styles.icon}
+            {...styles.filledIcon}
+          />
+        </Box>
+        <Text {...styles.label}>{label}</Text>
+      </Flex>
     </Button>
   );
 }
@@ -198,10 +219,8 @@ function LikeButton({
   isSubmitting,
   onActionEnd,
   onActionStart,
-}: PersonPreviewActionHandlers & Pick<
-  PersonPreviewActionButtonProps,
-  "activeAction" | "isSubmitting"
->) {
+}: PersonPreviewActionHandlers &
+  Pick<PersonPreviewActionButtonProps, "activeAction" | "isSubmitting">) {
   return (
     <PersonPreviewActionButton
       action="like"
@@ -210,6 +229,7 @@ function LikeButton({
       filledIcon={thumbUpFilledIcon}
       icon={thumbUpIcon}
       isSubmitting={isSubmitting}
+      label="Áno"
       onActionEnd={onActionEnd}
       onActionStart={onActionStart}
       buttonStyles={styles.likeButton}
@@ -222,10 +242,8 @@ function NopeButton({
   isSubmitting,
   onActionEnd,
   onActionStart,
-}: PersonPreviewActionHandlers & Pick<
-  PersonPreviewActionButtonProps,
-  "activeAction" | "isSubmitting"
->) {
+}: PersonPreviewActionHandlers &
+  Pick<PersonPreviewActionButtonProps, "activeAction" | "isSubmitting">) {
   return (
     <PersonPreviewActionButton
       action="nope"
@@ -234,6 +252,7 @@ function NopeButton({
       filledIcon={thumbDownFilledIcon}
       icon={thumbDownIcon}
       isSubmitting={isSubmitting}
+      label="Nie"
       onActionEnd={onActionEnd}
       onActionStart={onActionStart}
       buttonStyles={styles.nopeButton}
@@ -246,10 +265,8 @@ export function PersonPreviewActionButtons({
   isSubmitting,
   onActionEnd,
   onActionStart,
-}: PersonPreviewActionHandlers & Pick<
-  PersonPreviewActionButtonProps,
-  "activeAction" | "isSubmitting"
->) {
+}: PersonPreviewActionHandlers &
+  Pick<PersonPreviewActionButtonProps, "activeAction" | "isSubmitting">) {
   return (
     <Flex {...styles.grid}>
       <LikeButton

@@ -41,6 +41,7 @@ async def get_profile(
             "locationLatitude": None,
             "locationLongitude": None,
             "bio": "",
+            "lookingFor": "",
             "photos": [],
         }
 
@@ -53,6 +54,7 @@ async def get_profile(
         "locationLatitude": profile.latitude,
         "locationLongitude": profile.longitude,
         "bio": profile.bio,
+        "lookingFor": profile.looking_for or "",
         "photos": [photo.model_dump() for photo in photos],
     }
 

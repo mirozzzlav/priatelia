@@ -75,6 +75,7 @@ class ProfileService:
             latitude=coordinates.latitude if coordinates else None,
             longitude=coordinates.longitude if coordinates else None,
             bio=data.bio.strip(),
+            looking_for=data.lookingFor.strip() or None,
             interest_ids=interest_ids,
             photos=data.photos,
         )

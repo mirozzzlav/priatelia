@@ -4,6 +4,7 @@ export type PersonPreview = {
   age: string;
   bio: string;
   id: string;
+  lookingFor?: string;
   meta: string[];
   name: string;
   photo: string;

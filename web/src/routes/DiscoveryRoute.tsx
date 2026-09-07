@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 
@@ -10,7 +10,7 @@ import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import { InfoScreen } from "src/features/info";
 import {
   type ActivePersonPreviewAction,
-  PersonPreviewActionButtons,
+  PersonPreviewActionSection,
   PersonPreviewDetail,
   PersonPreviewPhoto,
   type PersonPreview,
@@ -45,10 +45,6 @@ const styles = {
     top: "64px",
     zIndex: 20,
   },
-  profileActions: {
-    mt: "2px",
-    pb: "22px",
-  },
 } as const;
 
 export function DiscoveryRoute({
@@ -68,12 +64,9 @@ export function DiscoveryRoute({
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null,
   );
-  const {
-    isLoadingMatches,
-    loadMatches,
-    markMatchesSeen,
-    matches,
-  } = useDiscoveryMatches();
+  const previousPersonPreviewIdRef = useRef<string | null>(null);
+  const { isLoadingMatches, loadMatches, markMatchesSeen, matches } =
+    useDiscoveryMatches();
   const previewPhotos = useMemo(() => {
     if (!personPreview) {
       return [];
@@ -88,16 +81,27 @@ export function DiscoveryRoute({
       src,
     }));
   }, [personPreview]);
-  const openPreviewPhoto = useCallback((photoSrc: string) => {
-    const photoIndex = previewPhotos.findIndex((photo) => photo.src === photoSrc);
-    setSelectedPhotoIndex(photoIndex >= 0 ? photoIndex : 0);
-  }, [previewPhotos]);
-  const handleActionStart = useCallback((action: ActivePersonPreviewAction) => {
-    onActionStart(action, loadMatches);
-  }, [loadMatches, onActionStart]);
-  const handleMatchClick = useCallback((matchId: string) => {
-    navigate(`/messages/${matchId}`);
-  }, [navigate]);
+  const openPreviewPhoto = useCallback(
+    (photoSrc: string) => {
+      const photoIndex = previewPhotos.findIndex(
+        (photo) => photo.src === photoSrc,
+      );
+      setSelectedPhotoIndex(photoIndex >= 0 ? photoIndex : 0);
+    },
+    [previewPhotos],
+  );
+  const handleActionStart = useCallback(
+    (action: ActivePersonPreviewAction) => {
+      onActionStart(action, loadMatches);
+    },
+    [loadMatches, onActionStart],
+  );
+  const handleMatchClick = useCallback(
+    (matchId: string) => {
+      navigate(`/messages/${matchId}`);
+    },
+    [navigate],
+  );
   const closePhotoViewer = useCallback(() => {
     setSelectedPhotoIndex(null);
   }, []);
@@ -113,6 +117,29 @@ export function DiscoveryRoute({
 
     return () => window.clearTimeout(timeoutId);
   }, [error, isLoadingPersonPreview, onPersonPreviewLoad, personPreview]);
+
+  useEffect(() => {
+    if (!personPreview) {
+      previousPersonPreviewIdRef.current = null;
+      return;
+    }
+
+    const previousPersonPreviewId = previousPersonPreviewIdRef.current;
+    previousPersonPreviewIdRef.current = personPreview.id;
+
+    if (
+      !previousPersonPreviewId ||
+      previousPersonPreviewId === personPreview.id
+    ) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ left: 0, top: 0, behavior: "auto" });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    });
+  }, [personPreview]);
 
   const discoveryTopPanel = (
     <Box {...styles.stickyHeader}>
@@ -167,14 +194,12 @@ export function DiscoveryRoute({
             onPhotoClick={openPreviewPhoto}
             person={personPreview}
           />
-          <Box {...styles.profileActions}>
-            <PersonPreviewActionButtons
-              activeAction={activeAction}
-              isSubmitting={isSubmittingPersonPreviewAction}
-              onActionEnd={onActionEnd}
-              onActionStart={handleActionStart}
-            />
-          </Box>
+          <PersonPreviewActionSection
+            activeAction={activeAction}
+            isSubmitting={isSubmittingPersonPreviewAction}
+            onActionEnd={onActionEnd}
+            onActionStart={handleActionStart}
+          />
           <PhotoViewer
             initialIndex={selectedPhotoIndex}
             isOpen={selectedPhotoIndex !== null}

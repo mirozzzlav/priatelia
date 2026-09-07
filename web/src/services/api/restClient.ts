@@ -8,8 +8,10 @@ import {
 
 type ProfileApiData = Omit<
   EditableProfileData,
-  "password" | "passwordConfirmation"
->;
+  "lookingFor" | "password" | "passwordConfirmation"
+> & {
+  lookingFor?: string | null;
+};
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
@@ -66,7 +68,9 @@ async function request<TResponse>(
     return undefined as TResponse;
   }
 
-  const data = response.headers.get("content-type")?.includes("application/json")
+  const data = response.headers
+    .get("content-type")
+    ?.includes("application/json")
     ? ((await response.json()) as unknown)
     : null;
 
@@ -172,6 +176,7 @@ export const restClient: ApiClient = {
 
     return {
       ...profile,
+      lookingFor: profile.lookingFor ?? "",
       password: "",
       passwordConfirmation: "",
     };

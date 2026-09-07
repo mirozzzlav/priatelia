@@ -25,6 +25,7 @@ class ProfileUpdateRequest(BaseModel):
     birthDate: str
     gender: Gender
     interests: list[InterestTag]
+    lookingFor: str = ""
     location: str
     locationLatitude: float | None = None
     locationLongitude: float | None = None
@@ -48,6 +49,7 @@ class ProfileRecord:
     latitude: float | None
     longitude: float | None
     bio: str
+    looking_for: str | None
 
 
 @dataclass(frozen=True)

@@ -55,7 +55,13 @@ export function PersonPreviewDetail({
         <Text {...styles.bio}>{person.bio}</Text>
       </DetailSection>
 
-      <DetailSection title="Čo mám rád">
+      {person.lookingFor?.trim() && (
+        <DetailSection title="Čo hľadám">
+          <Text {...styles.bio}>{person.lookingFor}</Text>
+        </DetailSection>
+      )}
+
+      <DetailSection title="Čo ma zaujíma">
         <InterestTagList tags={person.tags} />
       </DetailSection>
 

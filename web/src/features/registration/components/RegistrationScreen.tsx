@@ -10,6 +10,7 @@ import {
   FormLinkButton,
   FormSubmitButton,
   FormTextarea,
+  OptionalFieldLabel,
   RequiredFieldLabel,
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
@@ -45,6 +46,7 @@ const initialFormData: RegistrationFormData = {
   email: "",
   gender: "unspecified",
   interests: [],
+  lookingFor: "",
   location: "",
   locationLatitude: null,
   locationLongitude: null,
@@ -78,32 +80,21 @@ export function RegistrationScreen({
     setWasSubmitted(false);
   };
 
-  const {
-    handlePhotoUpload,
-    removePhoto,
-    setPrimaryPhoto,
-  } = usePhotoGalleryState({
-    resetFeedback,
-    setFormData,
-  });
+  const { handlePhotoUpload, removePhoto, setPrimaryPhoto } =
+    usePhotoGalleryState({
+      resetFeedback,
+      setFormData,
+    });
 
   const updateField =
     (field: keyof Omit<RegistrationFormData, "interests" | "photos">) =>
-    (event: ChangeEvent<HTMLInputElement>) => {
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       resetFeedback();
       setFormData((current) => ({
         ...current,
         [field]: event.target.value,
       }));
     };
-
-  const handleBioChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    resetFeedback();
-    setFormData((current) => ({
-      ...current,
-      bio: event.target.value,
-    }));
-  };
 
   const handleLocationChange = (nextLocation: {
     latitude: number | null;
@@ -253,11 +244,25 @@ export function RegistrationScreen({
           <RequiredFieldLabel>Krátke bio</RequiredFieldLabel>
           <FormTextarea
             value={formData.bio}
-            onChange={handleBioChange}
+            onChange={updateField("bio")}
             placeholder="Čo rád/rada robíš a akých priateľov hľadáš?"
           />
           <FormErrorMessage color="app.error">
             {fieldErrors.bio}
+          </FormErrorMessage>
+        </FormControl>
+
+        <FormControl
+          isInvalid={wasSubmitted && Boolean(fieldErrors.lookingFor)}
+        >
+          <OptionalFieldLabel>Čo hľadám</OptionalFieldLabel>
+          <FormTextarea
+            value={formData.lookingFor}
+            onChange={updateField("lookingFor")}
+            placeholder="Aký typ priateľstva, aktivít alebo ľudí by ti sadol?"
+          />
+          <FormErrorMessage color="app.error">
+            {fieldErrors.lookingFor}
           </FormErrorMessage>
         </FormControl>
 

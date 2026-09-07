@@ -105,6 +105,8 @@ let currentProfile: EditableProfileData = {
     { id: "kava", name: "Káva" },
     { id: "turistika", name: "Turistika" },
   ],
+  lookingFor:
+    "Hľadám ľudí na nenútené stretnutia, výlety a pravidelné aktivity.",
   location: "Bratislava",
   locationLatitude: 48.1486,
   locationLongitude: 17.1077,
@@ -540,6 +542,7 @@ export const mockClient: ApiClient = {
 
     currentProfile = {
       ...data,
+      lookingFor: data.lookingFor.trim(),
       nickname: data.nickname.trim(),
       password: "",
       passwordConfirmation: "",

@@ -7,6 +7,7 @@ export type EditableProfileData = {
   birthDate: string;
   gender: Gender;
   interests: InterestTag[];
+  lookingFor: string;
   location: string;
   locationLatitude?: number | null;
   locationLongitude?: number | null;

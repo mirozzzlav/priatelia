@@ -34,6 +34,7 @@ class PersonPreview(BaseModel):
     id: str
     age: str
     bio: str
+    lookingFor: str = ""
     meta: list[str]
     name: str
     photo: str

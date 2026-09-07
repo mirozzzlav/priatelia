@@ -15,6 +15,7 @@ export type RegistrationFormData = {
   email: string;
   gender: Gender;
   interests: InterestTag[];
+  lookingFor: string;
   location: string;
   locationLatitude?: number | null;
   locationLongitude?: number | null;

@@ -23,6 +23,7 @@ class SeedProfile:
     bio: str
     photos: list[str]
     interests: list[str]
+    looking_for: str | None = None
 
 
 MIRKO = SeedProfile(
@@ -42,6 +43,10 @@ MIRKO = SeedProfile(
         "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=85",
     ],
     interests=["turistika", "kava", "varenie", "vylety"],
+    looking_for=(
+        "Hľadám ľudí na pokojné rozhovory, dobré jedlo a výlety bez zbytočného "
+        "tlaku."
+    ),
 )
 
 
@@ -65,6 +70,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["knihy", "varenie", "kava", "vylety"],
+        looking_for="Niekoho na pokojné stretnutia, varenie a spontánne malé plány.",
     ),
     SeedProfile(
         nickname="Peter",
@@ -85,6 +91,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["bicykel", "varenie", "vylety", "kino"],
+        looking_for="Parťáka na bicykel, jednoduché výlety a večery pri filme.",
     ),
     SeedProfile(
         nickname="Veronika",
@@ -105,6 +112,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["plavanie", "cestovanie", "bistra", "vylety"],
+        looking_for="Spoľahlivých ľudí na vodu, výlety a objavovanie malých podnikov.",
     ),
     SeedProfile(
         nickname="Adam",
@@ -125,6 +133,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["koncerty", "beh", "jedlo", "vylety"],
+        looking_for="Niekoho na koncerty, beh alebo spoločné večere po práci.",
     ),
     SeedProfile(
         nickname="Michaela",
@@ -145,6 +154,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["turistika", "kava", "vystavy", "fotografia"],
+        looking_for="Ľudí na tvorivé popoludnia, kávu a nenáročné túry.",
     ),
     SeedProfile(
         nickname="Ján",
@@ -165,6 +175,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["kino", "jedlo", "knihy", "kava"],
+        looking_for="Spoločnosť na kino, kvízy a rozhovory bez ponáhľania.",
     ),
     SeedProfile(
         nickname="Zuzana",
@@ -185,6 +196,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["podcasty", "beh", "varenie", "kava"],
+        looking_for="Partiu na výlety, šport a pokojné kávy mimo obrazoviek.",
     ),
     SeedProfile(
         nickname="Róbert",
@@ -205,6 +217,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["fotografia", "turistika", "vylety", "knihy"],
+        looking_for="Niekoho na fotenie, hory a priame, nenútené rozhovory.",
     ),
     SeedProfile(
         nickname="Katarína",
@@ -225,6 +238,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["caj", "knihy", "vystavy", "vylety"],
+        looking_for="Ľudí na kultúru, prechádzky a tiché miesta na dobrý rozhovor.",
     ),
     SeedProfile(
         nickname="Daniel",
@@ -245,6 +259,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["lezenie", "kava", "cestovanie", "varenie"],
+        looking_for="Parťáka na šport, vlakové výlety a spoločné varenie.",
     ),
     SeedProfile(
         nickname="Emília",
@@ -265,6 +280,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["dizajn", "vystavy", "bistra", "kava"],
+        looking_for="Niekoho na galérie, malé podniky a tvorivé rozhovory.",
     ),
     SeedProfile(
         nickname="Martin",
@@ -285,6 +301,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["varenie", "vylety", "plavanie", "turistika"],
+        looking_for="Ľudí na vodu, varenie a jednoduché víkendové výlety.",
     ),
     SeedProfile(
         nickname="Terézia",
@@ -305,6 +322,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["cestovanie", "varenie", "kava", "koncerty"],
+        looking_for="Nové kontakty na kultúru, cestovanie a pohodové kávové plány.",
     ),
     SeedProfile(
         nickname="Ivana",
@@ -325,6 +343,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["knihy", "plavanie", "kava", "vylety"],
+        looking_for="Niekoho na kultúru, plávanie a pokojné stretnutia v meste.",
     ),
     SeedProfile(
         nickname="Matej",
@@ -345,6 +364,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["lezenie", "kino", "kava", "vylety"],
+        looking_for="Ľudí na aktívny oddych, kino a nekomplikované dohody.",
     ),
     SeedProfile(
         nickname="Lenka",
@@ -365,6 +385,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["turistika", "bistra", "kava", "vylety"],
+        looking_for="Spoločnosť na trhy, krátke túry a bežné stretnutia pri káve.",
     ),
     SeedProfile(
         nickname="Štefan",
@@ -385,6 +406,7 @@ CONNECTIONS = [
             "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=900&q=85",
         ],
         interests=["bicykel", "varenie", "vylety", "jedlo"],
+        looking_for="Parťákov na bicykel, výlety a stretnutia bez veľkého tlaku.",
     ),
 ]
 
@@ -454,8 +476,17 @@ def upsert_user(cursor: psycopg.Cursor, profile: SeedProfile) -> str:
     cursor.execute(
         """
         INSERT INTO profiles
-            (user_id, birth_date, gender, location, latitude, longitude, bio)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+            (
+                user_id,
+                birth_date,
+                gender,
+                location,
+                latitude,
+                longitude,
+                bio,
+                looking_for
+            )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (user_id) DO UPDATE
         SET birth_date = EXCLUDED.birth_date,
             gender = EXCLUDED.gender,
@@ -463,6 +494,7 @@ def upsert_user(cursor: psycopg.Cursor, profile: SeedProfile) -> str:
             latitude = EXCLUDED.latitude,
             longitude = EXCLUDED.longitude,
             bio = EXCLUDED.bio,
+            looking_for = EXCLUDED.looking_for,
             updated_at = now()
         """,
         (
@@ -473,6 +505,7 @@ def upsert_user(cursor: psycopg.Cursor, profile: SeedProfile) -> str:
             profile.latitude,
             profile.longitude,
             profile.bio,
+            profile.looking_for,
         ),
     )
 

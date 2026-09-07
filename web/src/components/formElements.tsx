@@ -185,12 +185,7 @@ export function BackIcon() {
 
 export function SendIcon() {
   return (
-    <Box
-      aria-hidden="true"
-      as="svg"
-      viewBox="0 0 24 24"
-      {...sendIconStyles}
-    >
+    <Box aria-hidden="true" as="svg" viewBox="0 0 24 24" {...sendIconStyles}>
       <path
         d="M4 5 21 12 4 19l4.2-7L4 5Z"
         fill="none"
@@ -218,6 +213,10 @@ export function RequiredFieldLabel({ children }: RequiredFieldLabelProps) {
       </Text>
     </FormLabel>
   );
+}
+
+export function OptionalFieldLabel({ children }: RequiredFieldLabelProps) {
+  return <FormLabel {...fieldLabelStyles}>{children}</FormLabel>;
 }
 
 export function FormInput(props: InputProps) {

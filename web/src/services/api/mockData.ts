@@ -10,6 +10,7 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=85",
     bio: "Rada objavujem malé podniky, chodím na koncerty a cez víkendy miznem do prírody. Hľadám niekoho, kto vie plánovať aj spontánne meniť plán. Najlepšie si oddýchnem pri dlhej prechádzke, dobrom jedle a rozhovore, ktorý nikam netlačí. Mám rada ľudí, ktorí sú zvedaví, vedia sa smiať aj z bežných vecí a neboja sa skúsiť niečo nové.",
+    lookingFor: "Niekoho na výlety, kávu a rozhovory, ktoré prirodzene plynú.",
     photos: [
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=900&q=85",
@@ -31,6 +32,7 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=85",
     bio: "Po práci najradšej leziem, varím jednoduché jedlá a hľadám nové miesta na kávu. Baví ma dobrý film, krátky výlet vlakom a rozhovor bez mobilu na stole. Hľadám niekoho, kto má rád aktívny oddych aj pokojné večery.",
+    lookingFor: "Partiu alebo jednotlivca na lezenie, kino a víkendové plány.",
     photos: [
       "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=85",
@@ -52,6 +54,8 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85",
     bio: "Ráno behám, večer kreslím a cez víkend rada objavujem výstavy alebo malé bistrá. Som skôr pokojná, ale rada sa nechám nahovoriť na spontánny plán. Najviac mi sadnú ľudia, ktorí sa vedia pýtať a počúvať.",
+    lookingFor:
+      "Niekoho otvoreného na výstavy, beh alebo pokojné stretnutie v meste.",
     photos: [
       "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=900&q=85",
@@ -73,6 +77,7 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=85",
     bio: "Hrám na gitare, občas organizujem večery s doskovkami a rád chodím na menšie koncerty. Cez týždeň preferujem pokoj, cez víkend výlet alebo dobré jedlo. Hľadám partiu aj jednotlivcov na pravidelné stretká.",
+    lookingFor: "Partiu na doskovky, menšie koncerty a pravidelné stretká.",
     photos: [
       "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=85",
@@ -94,6 +99,7 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1200&q=85",
     bio: "Rada čítam, chodím plávať a cez víkendy si plánujem menšie výlety mimo mesta. Mám rada pokojné tempo, úprimnosť a humor bez snahy niečo dokazovať. Chcela by som spoznať ľudí na pravidelné aktivity aj obyčajné rozhovory.",
+    lookingFor: "Pokojných ľudí na knihy, plávanie a pravidelné stretnutia.",
     photos: [
       "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?auto=format&fit=crop&w=900&q=85",
@@ -115,6 +121,7 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=1200&q=85",
     bio: "Pracujem v menšom tíme a po práci rada vypínam pri joge, knihách alebo dlhej prechádzke pri Dunaji. Baví ma spoznávať ľudí, ktorí majú pokojné tempo a vedia sa rozprávať aj o obyčajných veciach. Rada varím pre kamarátov a hľadám nové miesta, kam sa dá ísť bez veľkého plánovania.",
+    lookingFor: "Niekoho na prechádzky, kávu a nenútené večere s kamarátmi.",
     photos: [
       "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=900&q=85",
@@ -136,6 +143,7 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=85",
     bio: "Cez týždeň veľa sedím pri počítači, takže voľný čas najradšej trávim vonku na bicykli alebo v kuchyni. Mám rád výlety do Malých Karpát, dobré jedlo a rozhovory bez potreby stále niečo dokazovať. Hľadám ľudí na spoločné aktivity aj pokojné večery pri filme.",
+    lookingFor: "Parťáka na bicykel, Malé Karpaty a dobrý film po práci.",
     photos: [
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=85",
@@ -157,6 +165,8 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=85",
     bio: "Najlepšie sa cítim pri vode, či už ide o plávanie, paddleboard alebo len pokojné sedenie pri jazere. Rada cestujem ľahko, bez presného programu, a skúšam malé lokálne podniky. Teší ma, keď stretnem človeka, ktorý vie byť spontánny, ale zároveň spoľahlivý.",
+    lookingFor:
+      "Spoľahlivého človeka na vodu, cestovanie a malé lokálne podniky.",
     photos: [
       "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=900&q=85",
@@ -178,6 +188,7 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=1200&q=85",
     bio: "Veľa energie mi dáva hudba, beh a ľudia, ktorí sa vedia zasmiať aj po náročnom dni. Chodím na menšie koncerty, rád skúšam nové trasy v meste a občas organizujem spoločné večere. Hľadám niekoho, kto má chuť niekam vyraziť, ale ocení aj pokojný večer doma.",
+    lookingFor: "Niekoho na koncerty, beh a občasné spoločné večere.",
     photos: [
       "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=85",
@@ -199,6 +210,7 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?auto=format&fit=crop&w=1200&q=85",
     bio: "Vo voľnom čase chodím do keramického ateliéru, na trhy a na nenáročné túry. Mám rada miesta, kde sa dá rozprávať bez hluku a bez ponáhľania. Hľadám nových ľudí, s ktorými sa dá naplánovať výlet, káva alebo spoločné tvorivé popoludnie.",
+    lookingFor: "Ľudí na tvorivé popoludnia, kávu a nenáročné túry.",
     photos: [
       "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=900&q=85",
@@ -220,6 +232,7 @@ export const mockPersonPreviews: PersonPreview[] = [
     photo:
       "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=1200&q=85",
     bio: "Rád chodím do kina, na vedomostné kvízy a na večere s priateľmi. Som skôr pokojný typ, ale baví ma spoznávať ľudí cez spoločné zážitky a dobrý humor. Najviac si rozumiem s ľuďmi, ktorí sú zvedaví a vedia počúvať.",
+    lookingFor: "Spoločnosť na kino, kvízy a večere bez uponáhľaného tempa.",
     photos: [
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=85",
