@@ -15,26 +15,27 @@ import type {
 const styles = {
   grid: {
     w: "100%",
-    gap: 0,
+    gap: "12px",
   },
   button: {
     flex: "1 1 50%",
     h: { base: "58px", sm: "60px" },
     minW: 0,
     p: 0,
-    border: 0,
-    borderTop: "1px solid",
-    borderColor: "rgba(255, 255, 255, 0.38)",
-    borderRadius: 0,
-    bg: "rgba(255, 255, 255, 0.62)",
-    backdropFilter: "blur(14px)",
-    transition: "background 140ms ease, border-color 140ms ease",
+    border: "1px solid",
+    borderColor: "rgba(53, 87, 45, 0.14)",
+    borderRadius: "18px",
+    bg: "app.white",
+    boxShadow: "0 12px 28px rgba(53, 87, 45, 0.12)",
+    transition: "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
     _hover: {
-      bg: "rgba(255, 255, 255, 0.78)",
-      borderColor: "rgba(255, 255, 255, 0.6)",
+      bg: "rgba(255, 255, 255, 0.92)",
+      borderColor: "rgba(53, 87, 45, 0.22)",
+      boxShadow: "0 14px 32px rgba(53, 87, 45, 0.16)",
     },
     _active: {
-      bg: "rgba(255, 255, 255, 0.84)",
+      bg: "rgba(255, 255, 255, 0.96)",
+      borderColor: "rgba(53, 87, 45, 0.26)",
     },
     sx: {
       "&:hover [data-outline-icon], &:active [data-outline-icon], &[data-active='true'] [data-outline-icon]":
@@ -95,16 +96,14 @@ const styles = {
     opacity: 0,
   },
   likeButton: {
-    borderRight: "1px solid",
-    borderRightColor: "rgba(53, 87, 45, 0.18)",
     _hover: {
-      bg: "rgba(255, 255, 255, 0.78)",
-      borderColor: "rgba(255, 255, 255, 0.6)",
-      borderRightColor: "rgba(53, 87, 45, 0.18)",
+      bg: "rgba(255, 255, 255, 0.92)",
+      borderColor: "rgba(53, 87, 45, 0.22)",
+      boxShadow: "0 14px 32px rgba(53, 87, 45, 0.16)",
     },
     _active: {
-      bg: "rgba(255, 255, 255, 0.84)",
-      borderRightColor: "rgba(53, 87, 45, 0.18)",
+      bg: "rgba(255, 255, 255, 0.96)",
+      borderColor: "rgba(53, 87, 45, 0.26)",
     },
   },
   nopeButton: {},

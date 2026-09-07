@@ -8,23 +8,14 @@ import { getSlovakCountWord } from "src/utils/formatSlovakCount";
 const styles = {
   root: {
     position: "relative",
-    px: { base: "18px", sm: "22px" },
-    pt: { base: "16px", sm: "19px" },
-    pb: { base: "14px", sm: "16px" },
+    mx: { base: "-12px", sm: "-16px" },
+    px: { base: "26px", sm: "30px" },
+    py: "17px",
     color: "app.text",
-    bg: "linear-gradient(180deg, #ffffff 0%, #fbfcff 100%)",
-    borderBottom: "1px solid",
+    borderTop: "1px solid",
     borderColor: "rgba(53, 87, 45, 0.08)",
-    boxShadow: "inset 0 -1px 0 rgba(255, 255, 255, 0.7)",
-    _before: {
-      position: "absolute",
-      top: 0,
-      right: "22px",
-      left: "22px",
-      h: "1px",
-      bg: "rgba(255, 255, 255, 0.95)",
-      content: '""',
-    },
+    bgGradient:
+      "linear(to-b, rgba(241, 243, 246, 0.55), rgba(255, 255, 255, 0) 58%)",
   },
   identityRow: {
     align: "center",

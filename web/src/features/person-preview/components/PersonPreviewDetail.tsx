@@ -39,34 +39,38 @@ export function PersonPreviewDetail({
   onPhotoClick,
   person,
 }: PersonPreviewDetailProps) {
-  const additionalPhotos = person.photos
-    .map((src, index) => ({ index, src }))
-    .filter((photo) => photo.src !== person.photo);
+  const galleryPhotos = [
+    { alt: `${person.name}, hlavná profilová fotka`, src: person.photo },
+    ...person.photos
+      .map((src, index) => ({
+        alt: `${person.name}, fotka ${index + 1}`,
+        src,
+      }))
+      .filter((photo) => photo.src !== person.photo),
+  ];
 
   return (
     <Box {...styles.root}>
-      <DetailSection title="Bio">
+      <DetailSection title="Kto som">
         <Text {...styles.bio}>{person.bio}</Text>
       </DetailSection>
 
-      {additionalPhotos.length > 0 && (
-        <DetailSection title="Ďalšie fotky">
-          <SimpleGrid {...styles.photoGrid}>
-            {additionalPhotos.map((photo, gridIndex) => (
-              <Image
-                key={photo.src}
-                src={photo.src}
-                alt={`${person.name}, fotka ${photo.index + 1}`}
-                onClick={() => onPhotoClick(photo.src)}
-                {...styles.photo(gridIndex)}
-              />
-            ))}
-          </SimpleGrid>
-        </DetailSection>
-      )}
-
-      <DetailSection title="Záujmy">
+      <DetailSection title="Čo mám rád">
         <InterestTagList tags={person.tags} />
+      </DetailSection>
+
+      <DetailSection title="Moje fotky">
+        <SimpleGrid {...styles.photoGrid}>
+          {galleryPhotos.map((photo, gridIndex) => (
+            <Image
+              key={photo.src}
+              src={photo.src}
+              alt={photo.alt}
+              onClick={() => onPhotoClick(photo.src)}
+              {...styles.photo(gridIndex)}
+            />
+          ))}
+        </SimpleGrid>
       </DetailSection>
     </Box>
   );

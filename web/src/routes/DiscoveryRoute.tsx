@@ -5,12 +5,12 @@ import { Box } from "@chakra-ui/react";
 import { CenteredStatusLayout } from "src/components/layouts";
 import { LoadingPill } from "src/components/LoadingPill";
 import { PhotoViewer } from "src/components/PhotoViewer";
-import { ScrollCue } from "src/components/ScrollCue";
 import { DiscoveryTopPanel } from "src/features/discovery";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import { InfoScreen } from "src/features/info";
 import {
   type ActivePersonPreviewAction,
+  PersonPreviewActionButtons,
   PersonPreviewDetail,
   PersonPreviewPhoto,
   type PersonPreview,
@@ -44,6 +44,10 @@ const styles = {
     position: "sticky",
     top: "64px",
     zIndex: 20,
+  },
+  profileActions: {
+    mt: "2px",
+    pb: "22px",
   },
 } as const;
 
@@ -94,9 +98,6 @@ export function DiscoveryRoute({
   const handleMatchClick = useCallback((matchId: string) => {
     navigate(`/messages/${matchId}`);
   }, [navigate]);
-  const openFirstPreviewPhoto = useCallback(() => {
-    setSelectedPhotoIndex(0);
-  }, []);
   const closePhotoViewer = useCallback(() => {
     setSelectedPhotoIndex(null);
   }, []);
@@ -160,17 +161,20 @@ export function DiscoveryRoute({
           <PersonPreviewPhoto
             activeAction={activeAction}
             isLoadingNextPerson={isSubmittingPersonPreviewAction}
-            isSubmitting={isSubmittingPersonPreviewAction}
-            onActionEnd={onActionEnd}
-            onActionStart={handleActionStart}
-            onPhotoClick={openFirstPreviewPhoto}
             person={personPreview}
           />
-          <ScrollCue />
           <PersonPreviewDetail
             onPhotoClick={openPreviewPhoto}
             person={personPreview}
           />
+          <Box {...styles.profileActions}>
+            <PersonPreviewActionButtons
+              activeAction={activeAction}
+              isSubmitting={isSubmittingPersonPreviewAction}
+              onActionEnd={onActionEnd}
+              onActionStart={handleActionStart}
+            />
+          </Box>
           <PhotoViewer
             initialIndex={selectedPhotoIndex}
             isOpen={selectedPhotoIndex !== null}
