@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react";
 
 import {
+  BackIcon,
   FormActions,
   FormInput,
   FormSecondaryButton,
@@ -221,7 +222,9 @@ export function DiscoverySettingsScreen({
           >
             Uložiť kritériá
           </FormSubmitButton>
-          <FormSecondaryButton onClick={onBack}>Späť</FormSecondaryButton>
+          <FormSecondaryButton leftIcon={<BackIcon />} onClick={onBack}>
+            Späť
+          </FormSecondaryButton>
         </FormActions>
       </Box>
     </ScreenLayout>

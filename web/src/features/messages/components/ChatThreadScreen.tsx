@@ -1,11 +1,20 @@
-import { useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
 import { Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
 
 import {
-  FormInput,
+  BackIcon,
   FormSubmitButton,
+  FormTextarea,
   SecondaryButton,
+  SendIcon,
 } from "src/components/formElements";
+import { HeaderSurface } from "src/components/HeaderSurface";
 import { LoadingPill } from "src/components/LoadingPill";
 import type { ChatMessage, ChatThread } from "src/services/api";
 
@@ -30,21 +39,26 @@ const styles = {
     pb: "18px",
   },
   header: {
-    display: "flex",
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr) auto",
     alignItems: "center",
     gap: "12px",
-    pt: "16px",
-    pb: "14px",
     flexShrink: 0,
-    borderBottom: "1px solid",
-    borderColor: "app.bgAux",
   },
   backButton: {
-    alignSelf: "flex-start",
+    alignSelf: "start",
     flexShrink: 0,
-    mt: "12px",
-    h: "42px",
-    px: "12px",
+    justifySelf: "end",
+    h: "34px",
+    minW: "0",
+    px: "10px",
+    fontSize: "xs",
+    iconSpacing: "5px",
+  },
+  profileHeader: {
+    alignItems: "center",
+    gap: "12px",
+    minW: 0,
   },
   photo: {
     boxSize: "46px",
@@ -68,18 +82,23 @@ const styles = {
     fontWeight: "bold",
   },
   messages: {
-    display: "grid",
-    alignContent: "end",
-    gap: "10px",
     flex: "1 1 0",
     minH: 0,
     overflowY: "auto",
-    py: "16px",
+    pt: { base: "22px", sm: "28px" },
+    pr: "10px",
+    pb: "16px",
+  },
+  messagesContent: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    gap: "10px",
+    minH: "100%",
   },
   bubble: (sender: ChatMessage["sender"]) =>
     ({
       maxW: "82%",
-      justifySelf: sender === "current-user" ? "end" : "start",
       px: "13px",
       py: "10px",
       borderRadius: "14px",
@@ -87,7 +106,23 @@ const styles = {
       color: sender === "current-user" ? "app.white" : "app.text",
       fontSize: "sm",
       lineHeight: 1.4,
+      whiteSpace: "pre-wrap",
     }) as const,
+  messageWrap: (sender: ChatMessage["sender"]) =>
+    ({
+      display: "grid",
+      flexShrink: 0,
+      justifyItems: sender === "current-user" ? "end" : "start",
+      w: "100%",
+    }) as const,
+  deliveryStatus: {
+    mt: "4px",
+    pr: "4px",
+    color: "rgba(53, 87, 45, 0.62)",
+    fontSize: "11px",
+    fontWeight: "bold",
+    lineHeight: 1,
+  },
   status: {
     py: "34px",
     color: "app.text",
@@ -101,19 +136,46 @@ const styles = {
   },
   composer: {
     display: "grid",
+    alignItems: "end",
     flexShrink: 0,
     gridTemplateColumns: "1fr auto",
     gap: "8px",
-    pt: "10px",
-    bg: "app.white",
-    borderTop: "1px solid",
-    borderColor: "app.bgAux",
+  },
+  messageInput: {
+    h: "48px",
+    minH: "48px",
+    maxH: "118px",
+    py: "12px",
+    resize: "none",
+    overflowY: "auto",
   },
   sendButton: {
     h: "48px",
     px: "16px",
   },
 } as const;
+
+function getDeliveryStatusLabel(status: ChatMessage["deliveryStatus"]) {
+  if (status === "seen") {
+    return "Videné";
+  }
+
+  if (status === "delivered") {
+    return "Doručené";
+  }
+
+  return "Odoslané";
+}
+
+function getLastOutgoingMessageId(messages: ChatMessage[]) {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    if (messages[index].sender === "current-user") {
+      return messages[index].id;
+    }
+  }
+
+  return undefined;
+}
 
 export function ChatThreadScreen({
   error,
@@ -124,10 +186,23 @@ export function ChatThreadScreen({
   thread,
 }: ChatThreadScreenProps) {
   const [messageText, setMessageText] = useState("");
+  const messagesRef = useRef<HTMLDivElement | null>(null);
+  const messageCount = thread?.messages.length ?? 0;
+  const lastOutgoingMessageId = thread
+    ? getLastOutgoingMessageId(thread.messages)
+    : undefined;
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  useEffect(() => {
+    const messagesElement = messagesRef.current;
 
+    if (!messagesElement) {
+      return;
+    }
+
+    messagesElement.scrollTop = messagesElement.scrollHeight;
+  }, [messageCount]);
+
+  const sendMessage = async () => {
     const trimmedText = messageText.trim();
 
     if (trimmedText.length === 0 || isSending) {
@@ -138,11 +213,25 @@ export function ChatThreadScreen({
     setMessageText("");
   };
 
+  const handleSubmit = async (event: FormEvent<HTMLElement>) => {
+    event.preventDefault();
+    await sendMessage();
+  };
+
+  const handleMessageKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {
+      return;
+    }
+
+    event.preventDefault();
+    void sendMessage();
+  };
+
   return (
     <Box {...styles.root}>
-      <Flex {...styles.header}>
+      <HeaderSurface {...styles.header}>
         {thread && (
-          <>
+          <Flex {...styles.profileHeader}>
             <Image
               src={thread.match.photo}
               alt={thread.match.name}
@@ -156,15 +245,16 @@ export function ChatThreadScreen({
                 {thread.match.age} · {thread.match.location}
               </Text>
             </Box>
-          </>
+          </Flex>
         )}
-      </Flex>
-
-      {!isLoading && !error && thread && (
-        <SecondaryButton onClick={onBack} {...styles.backButton}>
+        <SecondaryButton
+          leftIcon={<BackIcon />}
+          onClick={onBack}
+          {...styles.backButton}
+        >
           Späť
         </SecondaryButton>
-      )}
+      </HeaderSurface>
 
       {isLoading && (
         <Flex {...styles.loadingStatus}>
@@ -175,37 +265,56 @@ export function ChatThreadScreen({
 
       {!isLoading && !error && thread && (
         <>
-          <Box {...styles.messages}>
-            {thread.messages.length === 0 && (
-              <Text {...styles.status}>Zatiaľ tu nie sú žiadne správy.</Text>
-            )}
-            {thread.messages.map((message) => (
-              <Text key={message.id} {...styles.bubble(message.sender)}>
-                {message.text}
-              </Text>
-            ))}
+          <Box ref={messagesRef} {...styles.messages}>
+            <Box {...styles.messagesContent}>
+              {thread.messages.length === 0 && (
+                <Text {...styles.status}>Zatiaľ tu nie sú žiadne správy.</Text>
+              )}
+              {thread.messages.map((message) => {
+                const shouldShowDeliveryStatus =
+                  message.sender === "current-user" &&
+                  message.id === lastOutgoingMessageId;
+
+                return (
+                  <Box key={message.id} {...styles.messageWrap(message.sender)}>
+                    <Text {...styles.bubble(message.sender)}>
+                      {message.text}
+                    </Text>
+                    {shouldShowDeliveryStatus && (
+                      <Text {...styles.deliveryStatus}>
+                        {getDeliveryStatusLabel(message.deliveryStatus)}
+                      </Text>
+                    )}
+                  </Box>
+                );
+              })}
+            </Box>
           </Box>
 
-          <Box
+          <HeaderSurface
             as="form"
             noValidate
             onSubmit={handleSubmit}
             {...styles.composer}
           >
-            <FormInput
+            <FormTextarea
               value={messageText}
               onChange={(event) => setMessageText(event.target.value)}
+              onKeyDown={handleMessageKeyDown}
               placeholder="Napíš správu"
+              rows={1}
+              {...styles.messageInput}
             />
             <FormSubmitButton
               isDisabled={messageText.trim().length === 0 || isSending}
               isLoading={isSending}
               loadingText=""
+              rightIcon={<SendIcon />}
               {...styles.sendButton}
             >
               Poslať
             </FormSubmitButton>
-          </Box>
+          </HeaderSurface>
         </>
       )}
     </Box>

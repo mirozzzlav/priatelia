@@ -3,6 +3,7 @@ import { Box, FormControl, FormErrorMessage } from "@chakra-ui/react";
 
 import { PasswordConfirmationFields } from "src/components/PasswordConfirmationFields";
 import {
+  BackIcon,
   FormActions,
   FormPasswordInput,
   FormSecondaryButton,
@@ -157,7 +158,7 @@ export function PasswordSettingsScreen({
           >
             Uložiť heslo
           </FormSubmitButton>
-          <FormSecondaryButton onClick={onBack}>
+          <FormSecondaryButton leftIcon={<BackIcon />} onClick={onBack}>
             Späť na profil
           </FormSecondaryButton>
         </FormActions>

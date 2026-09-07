@@ -127,12 +127,12 @@ const primaryButtonStyles = {
   _hover: { bg: "app.baseDark", borderColor: "transparent" },
   _active: { bg: "app.baseDark", borderColor: "transparent" },
   _disabled: {
-    bg: "app.bgAux",
-    borderColor: "app.text",
-    color: "app.text",
+    bg: "transparent",
+    borderColor: "app.base",
+    color: "app.base",
     cursor: "not-allowed",
     opacity: 1,
-    _hover: { bg: "app.bgAux" },
+    _hover: { bg: "transparent", borderColor: "app.base" },
   },
 } as const;
 
@@ -161,9 +161,53 @@ const formActionsStyles = {
   gap: "10px",
 } as const;
 
+const backIconStyles = {
+  display: "block",
+  boxSize: "8px",
+  borderLeft: "2px solid",
+  borderBottom: "2px solid",
+  borderColor: "currentColor",
+  transform: "rotate(45deg)",
+} as const;
+
+const sendIconStyles = {
+  boxSize: "22px",
+  transform: "translateY(1px)",
+} as const;
+
 type RequiredFieldLabelProps = {
   children: ReactNode;
 };
+
+export function BackIcon() {
+  return <Box aria-hidden="true" {...backIconStyles} />;
+}
+
+export function SendIcon() {
+  return (
+    <Box
+      aria-hidden="true"
+      as="svg"
+      viewBox="0 0 24 24"
+      {...sendIconStyles}
+    >
+      <path
+        d="M4 5 21 12 4 19l4.2-7L4 5Z"
+        fill="none"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="2.2"
+      />
+      <path
+        d="M8.3 12H15"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.8"
+      />
+    </Box>
+  );
+}
 
 export function RequiredFieldLabel({ children }: RequiredFieldLabelProps) {
   return (

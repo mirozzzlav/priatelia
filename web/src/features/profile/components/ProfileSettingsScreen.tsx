@@ -5,6 +5,7 @@ import { GenderField } from "src/components/GenderField";
 import { InterestSelectField } from "src/components/InterestSelectField";
 import { PhotoGalleryField } from "src/components/PhotoGalleryField";
 import {
+  BackIcon,
   FormActions,
   FormInput,
   FormLinkButton,
@@ -315,7 +316,9 @@ export function ProfileSettingsScreen({
           >
             Uložiť profil
           </FormSubmitButton>
-          <FormSecondaryButton onClick={onBack}>Späť</FormSecondaryButton>
+          <FormSecondaryButton leftIcon={<BackIcon />} onClick={onBack}>
+            Späť
+          </FormSecondaryButton>
         </FormActions>
       </Box>
     </ScreenLayout>

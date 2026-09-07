@@ -37,6 +37,7 @@ import {
   discoveryMatchesSummaryEvent,
   toggleDiscoveryMatchesEvent,
 } from "src/components/TopBar";
+import { HeaderSurface } from "src/components/HeaderSurface";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import { InfoScreen } from "src/features/info";
 import { ChatMatchList } from "src/features/messages";
@@ -90,19 +91,8 @@ const styles = {
       top: isExpanded ? `${expandedTop ?? topOffset}px` : undefined,
       left: isExpanded ? "50%" : undefined,
       zIndex: isExpanded ? 30 : 1,
-      w: isExpanded
-        ? "min(100%, 460px)"
-        : { base: "calc(100% + 24px)", sm: "calc(100% + 32px)" },
+      w: isExpanded ? "min(100%, 460px)" : undefined,
       h: isExpanded ? `calc(100dvh - ${expandedTop ?? topOffset}px)` : "96px",
-      mx: isExpanded ? undefined : { base: "-12px", sm: "-16px" },
-      bg: "linear-gradient(180deg, #ffffff 0%, #fbfcff 100%)",
-      borderTop: "1px solid",
-      borderBottom: "1px solid",
-      borderColor: "rgba(53, 87, 45, 0.14)",
-      boxShadow: isExpanded
-        ? "0 18px 42px rgba(53, 87, 45, 0.18)"
-        : "0 18px 42px rgba(53, 87, 45, 0.12)",
-      color: "app.text",
       overflow: isExpanded ? "hidden" : "visible",
       transform: isExpanded ? "translateX(-50%)" : undefined,
       transition:
@@ -113,10 +103,7 @@ const styles = {
     direction: "column",
     justify: "center",
     w: "100%",
-    h: "96px",
-    px: "12px",
-    pt: "10px",
-    pb: "14px",
+    h: "100%",
     gap: "8px",
   },
   filterLabel: {
@@ -909,8 +896,9 @@ function DiscoveryHeader({
   };
 
   return (
-    <Box
+    <HeaderSurface
       ref={rootRef}
+      isExpanded={isExpanded}
       {...styles.headerRoot(isExpanded, expandedTop, 64)}
       aria-live="polite"
     >
@@ -971,7 +959,7 @@ function DiscoveryHeader({
           />
         </Box>
       )}
-    </Box>
+    </HeaderSurface>
   );
 }
 
