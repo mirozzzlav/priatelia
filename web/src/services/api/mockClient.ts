@@ -501,6 +501,10 @@ export const mockClient: ApiClient = {
     });
   },
 
+  async markChatThreadRead() {
+    await delay();
+  },
+
   async login(data) {
     await delay();
 

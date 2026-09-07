@@ -4,6 +4,8 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+ChatMessageDeliveryStatus = str
+
 
 class SendChatMessageRequest(BaseModel):
     text: str
@@ -26,6 +28,7 @@ class ChatMatch(BaseModel):
 
 
 class ChatMessage(BaseModel):
+    deliveryStatus: ChatMessageDeliveryStatus | None = None
     id: str
     matchId: str
     sender: str
@@ -45,3 +48,9 @@ class ChatMessageRecord:
     sender_user_id: UUID
     text: str
     sent_at: datetime
+
+
+@dataclass(frozen=True)
+class ChatThreadReceiptRecord:
+    delivered_at: datetime | None
+    last_read_at: datetime | None

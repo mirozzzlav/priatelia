@@ -1,10 +1,30 @@
 from uuid import UUID
 
 from app.modules.chats.repository import ChatRepository
-from app.modules.chats.schemas import ChatMatch, ChatMessage, ChatThread
+from app.modules.chats.schemas import (
+    ChatMatch,
+    ChatMessage,
+    ChatMessageRecord,
+    ChatThread,
+    ChatThreadReceiptRecord,
+)
 from app.modules.matching.repository import MatchingRepository
 from app.modules.profiles.repository import ProfileRepository
 from app.shared.events.repository import EventRepository
+
+
+def _get_delivery_status(
+    message: ChatMessageRecord,
+    receipt_delivered_at,
+    receipt_last_read_at,
+) -> str:
+    if receipt_last_read_at is not None and receipt_last_read_at >= message.sent_at:
+        return "seen"
+
+    if receipt_delivered_at is not None and receipt_delivered_at >= message.sent_at:
+        return "delivered"
+
+    return "sent"
 
 
 class ChatService:
@@ -61,17 +81,50 @@ class ChatService:
     async def mark_matches_seen(self, user_id: UUID, match_ids: list[UUID]) -> None:
         await self.chats.mark_matches_seen(match_ids, user_id)
 
+    async def mark_thread_read(
+        self,
+        user_id: UUID,
+        match_id: UUID,
+    ) -> ChatThreadReceiptRecord | None:
+        if not await self.matching.user_can_access_match(user_id, match_id):
+            return None
+
+        return await self.chats.mark_thread_read(match_id, user_id)
+
+    async def mark_thread_delivered(
+        self,
+        user_id: UUID,
+        match_id: UUID,
+    ) -> ChatThreadReceiptRecord | None:
+        if not await self.matching.user_can_access_match(user_id, match_id):
+            return None
+
+        return await self.chats.mark_thread_delivered(match_id, user_id)
+
     async def get_thread(self, user_id: UUID, match_id: UUID) -> ChatThread | None:
         if not await self.matching.user_can_access_match(user_id, match_id):
             return None
 
-        await self.chats.mark_thread_read(match_id, user_id)
+        match_records = await self.matching.list_matches(user_id)
+        other_user_id = next(
+            (
+                match_record.other_user_id
+                for match_record in match_records
+                if match_record.id == match_id
+            ),
+            None,
+        )
 
         matches = await self.list_chat_matches(user_id)
         match = next((item for item in matches if item.id == str(match_id)), None)
         if match is None:
             return None
 
+        other_user_receipt = (
+            await self.chats.get_thread_receipt(match_id, other_user_id)
+            if other_user_id
+            else None
+        )
         messages = await self.chats.list_messages(match_id)
         return ChatThread(
             match=match,
@@ -82,6 +135,17 @@ class ChatService:
                     sender="current-user"
                     if message.sender_user_id == user_id
                     else "match",
+                    deliveryStatus=_get_delivery_status(
+                        message,
+                        other_user_receipt.delivered_at
+                        if other_user_receipt
+                        else None,
+                        other_user_receipt.last_read_at
+                        if other_user_receipt
+                        else None,
+                    )
+                    if message.sender_user_id == user_id
+                    else None,
                     sentAt=message.sent_at.isoformat(),
                     text=message.text,
                 )
@@ -108,6 +172,7 @@ class ChatService:
             },
         )
         return ChatMessage(
+            deliveryStatus="sent",
             id=str(message.id),
             matchId=str(message.match_id),
             sender="current-user",

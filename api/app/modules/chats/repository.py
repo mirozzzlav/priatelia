@@ -2,7 +2,7 @@ from uuid import UUID
 
 from psycopg import AsyncConnection
 
-from app.modules.chats.schemas import ChatMessageRecord
+from app.modules.chats.schemas import ChatMessageRecord, ChatThreadReceiptRecord
 
 
 class ChatRepository:
@@ -69,18 +69,91 @@ class ChatRepository:
         rows = await cursor.fetchall()
         return [ChatMessageRecord(**row) for row in rows]
 
-    async def mark_thread_read(self, match_id: UUID, user_id: UUID) -> None:
-        await self.connection.execute(
+    async def mark_thread_read(
+        self,
+        match_id: UUID,
+        user_id: UUID,
+    ) -> ChatThreadReceiptRecord:
+        cursor = await self.connection.execute(
             """
-            INSERT INTO message_reads (thread_id, user_id, last_read_at)
+            INSERT INTO chat_thread_receipts (
+                thread_id,
+                user_id,
+                delivered_at,
+                last_read_at
+            )
+            SELECT id, %s, now(), now()
+            FROM chat_threads
+            WHERE match_id = %s
+            ON CONFLICT (thread_id, user_id) DO UPDATE
+            SET delivered_at = GREATEST(
+                    COALESCE(
+                        chat_thread_receipts.delivered_at,
+                        '-infinity'::timestamptz
+                    ),
+                    EXCLUDED.delivered_at
+                ),
+                last_read_at = GREATEST(
+                    COALESCE(
+                        chat_thread_receipts.last_read_at,
+                        '-infinity'::timestamptz
+                    ),
+                    EXCLUDED.last_read_at
+                )
+            RETURNING delivered_at, last_read_at
+            """,
+            (user_id, match_id),
+        )
+        row = await cursor.fetchone()
+        if row is None:
+            raise RuntimeError("Chat thread receipt was not updated")
+        return ChatThreadReceiptRecord(**row)
+
+    async def mark_thread_delivered(
+        self,
+        match_id: UUID,
+        user_id: UUID,
+    ) -> ChatThreadReceiptRecord:
+        cursor = await self.connection.execute(
+            """
+            INSERT INTO chat_thread_receipts (thread_id, user_id, delivered_at)
             SELECT id, %s, now()
             FROM chat_threads
             WHERE match_id = %s
             ON CONFLICT (thread_id, user_id) DO UPDATE
-            SET last_read_at = EXCLUDED.last_read_at
+            SET delivered_at = GREATEST(
+                COALESCE(
+                    chat_thread_receipts.delivered_at,
+                    '-infinity'::timestamptz
+                ),
+                EXCLUDED.delivered_at
+            )
+            RETURNING delivered_at, last_read_at
             """,
             (user_id, match_id),
         )
+        row = await cursor.fetchone()
+        if row is None:
+            raise RuntimeError("Chat thread receipt was not updated")
+        return ChatThreadReceiptRecord(**row)
+
+    async def get_thread_receipt(
+        self,
+        match_id: UUID,
+        user_id: UUID,
+    ) -> ChatThreadReceiptRecord | None:
+        cursor = await self.connection.execute(
+            """
+            SELECT ctr.delivered_at, ctr.last_read_at
+            FROM chat_thread_receipts ctr
+            JOIN chat_threads ct ON ct.id = ctr.thread_id
+            WHERE ct.match_id = %s
+              AND ctr.user_id = %s
+            """,
+            (match_id, user_id),
+        )
+        row = await cursor.fetchone()
+        return ChatThreadReceiptRecord(**row) if row else None
 
     async def mark_matches_seen(self, match_ids: list[UUID], user_id: UUID) -> None:
         if not match_ids:
@@ -159,12 +232,12 @@ class ChatRepository:
                 count(cm.id)::int AS unread_count
             FROM chat_threads ct
             JOIN chat_messages cm ON cm.thread_id = ct.id
-            LEFT JOIN message_reads mr
-                ON mr.thread_id = ct.id
-               AND mr.user_id = %s
+            LEFT JOIN chat_thread_receipts ctr
+                ON ctr.thread_id = ct.id
+               AND ctr.user_id = %s
             WHERE ct.match_id = ANY(%s)
               AND cm.sender_user_id <> %s
-              AND (mr.last_read_at IS NULL OR cm.sent_at > mr.last_read_at)
+              AND (ctr.last_read_at IS NULL OR cm.sent_at > ctr.last_read_at)
             GROUP BY ct.match_id
             """,
             (user_id, match_ids, user_id),

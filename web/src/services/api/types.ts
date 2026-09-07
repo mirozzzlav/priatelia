@@ -54,6 +54,7 @@ export type ChatMatch = {
 };
 
 export type ChatMessage = {
+  deliveryStatus?: "sent" | "delivered" | "seen" | null;
   id: string;
   matchId: string;
   sender: "current-user" | "match";
@@ -142,6 +143,7 @@ export type ApiClient = {
   getChatMatches: () => Promise<ChatMatch[]>;
   getChatThread: (matchId: string) => Promise<ChatThread>;
   markChatMatchesSeen: (matchIds: string[]) => Promise<void>;
+  markChatThreadRead: (matchId: string) => Promise<void>;
   getDiscoverySettings: () => Promise<DiscoverySettingsData>;
   getPersonPreview: () => Promise<PersonPreview>;
   getProfile: () => Promise<EditableProfileData>;

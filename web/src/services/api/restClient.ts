@@ -202,6 +202,12 @@ export const restClient: ApiClient = {
     });
   },
 
+  async markChatThreadRead(matchId) {
+    await request(`/chats/matches/${matchId}/read`, {
+      method: "POST",
+    });
+  },
+
   login(data) {
     return request("/auth/login", {
       body: JSON.stringify(data),

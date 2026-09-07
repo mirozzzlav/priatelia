@@ -87,10 +87,11 @@ def upgrade() -> None:
             sent_at TIMESTAMPTZ NOT NULL DEFAULT now()
         );
 
-        CREATE TABLE message_reads (
+        CREATE TABLE chat_thread_receipts (
             thread_id UUID NOT NULL REFERENCES chat_threads(id) ON DELETE CASCADE,
             user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-            last_read_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+            delivered_at TIMESTAMPTZ,
+            last_read_at TIMESTAMPTZ,
             PRIMARY KEY (thread_id, user_id)
         );
 
@@ -128,7 +129,7 @@ def downgrade() -> None:
         """
         DROP TABLE IF EXISTS outbox_events;
         DROP TABLE IF EXISTS notification_jobs;
-        DROP TABLE IF EXISTS message_reads;
+        DROP TABLE IF EXISTS chat_thread_receipts;
         DROP TABLE IF EXISTS chat_messages;
         DROP TABLE IF EXISTS chat_threads;
         DROP TABLE IF EXISTS matches;

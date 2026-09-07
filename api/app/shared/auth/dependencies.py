@@ -18,17 +18,9 @@ class CurrentUser:
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
-async def get_current_user(
-    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
-) -> CurrentUser:
-    if credentials is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing bearer token",
-        )
-
+async def get_current_user_from_token(token: str) -> CurrentUser:
     try:
-        payload = decode_access_token(credentials.credentials)
+        payload = decode_access_token(token)
     except InvalidTokenError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -65,3 +57,15 @@ async def get_current_user(
         id=user_id,
         nickname=user["nickname"],
     )
+
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
+) -> CurrentUser:
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing bearer token",
+        )
+
+    return await get_current_user_from_token(credentials.credentials)

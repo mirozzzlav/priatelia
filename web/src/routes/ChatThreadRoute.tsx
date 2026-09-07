@@ -2,7 +2,32 @@ import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { ChatThreadScreen } from "src/features/messages";
-import { apiClient, type ChatThread } from "src/services/api";
+import { apiClient, type ChatMessage, type ChatThread } from "src/services/api";
+import {
+  connectChatThreadSocket,
+  type ChatReceiptUpdate,
+} from "src/services/api/chatSocket";
+
+function getReceiptStatus(
+  message: ChatMessage,
+  receipt: ChatReceiptUpdate,
+): ChatMessage["deliveryStatus"] {
+  const sentAt = Date.parse(message.sentAt);
+  const lastReadAt = receipt.lastReadAt ? Date.parse(receipt.lastReadAt) : null;
+  const deliveredAt = receipt.deliveredAt
+    ? Date.parse(receipt.deliveredAt)
+    : null;
+
+  if (lastReadAt !== null && lastReadAt >= sentAt) {
+    return "seen";
+  }
+
+  if (deliveredAt !== null && deliveredAt >= sentAt) {
+    return "delivered";
+  }
+
+  return message.deliveryStatus ?? "sent";
+}
 
 export function ChatThreadRoute() {
   const navigate = useNavigate();
@@ -46,6 +71,57 @@ export function ChatThreadRoute() {
       isMounted = false;
     };
   }, [matchId]);
+
+  useEffect(() => {
+    if (!matchId || thread?.match.id !== matchId) {
+      return;
+    }
+
+    const socket = connectChatThreadSocket({
+      matchId,
+      onMessage: (message) => {
+        setThread((currentThread) => {
+          if (
+            !currentThread ||
+            currentThread.messages.some(
+              (currentMessage) => currentMessage.id === message.id,
+            )
+          ) {
+            return currentThread;
+          }
+
+          return {
+            ...currentThread,
+            messages: [...currentThread.messages, message],
+          };
+        });
+        apiClient.markChatThreadRead(matchId).catch(() => {});
+      },
+      onReceiptUpdate: (receipt) => {
+        setThread((currentThread) => {
+          if (!currentThread || receipt.matchId !== currentThread.match.id) {
+            return currentThread;
+          }
+
+          return {
+            ...currentThread,
+            messages: currentThread.messages.map((message) =>
+              message.sender === "current-user"
+                ? {
+                    ...message,
+                    deliveryStatus: getReceiptStatus(message, receipt),
+                  }
+                : message,
+            ),
+          };
+        });
+      },
+    });
+
+    return () => {
+      socket?.close();
+    };
+  }, [matchId, thread?.match.id]);
 
   if (!matchId) {
     return <Navigate to="/messages" replace />;
