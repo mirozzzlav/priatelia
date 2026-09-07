@@ -19,25 +19,24 @@ const styles = {
   },
   button: {
     flex: "1 1 50%",
-    h: { base: "58px", sm: "60px" },
+    h: { base: "52px", sm: "54px" },
     minW: 0,
     px: { base: "14px", sm: "18px" },
     py: 0,
     border: "1px solid",
-    borderColor: "rgba(53, 87, 45, 0.14)",
-    borderRadius: "18px",
+    borderColor: "app.text",
+    borderRadius: "999px",
     bg: "app.white",
-    boxShadow: "0 12px 28px rgba(53, 87, 45, 0.12)",
-    transition:
-      "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
+    color: "app.text",
+    boxShadow: "none",
+    transition: "background 140ms ease, border-color 140ms ease",
     _hover: {
-      bg: "rgba(255, 255, 255, 0.92)",
-      borderColor: "rgba(53, 87, 45, 0.22)",
-      boxShadow: "0 14px 32px rgba(53, 87, 45, 0.16)",
+      bg: "rgba(79, 131, 68, 0.1)",
+      borderColor: "app.text",
     },
     _active: {
-      bg: "rgba(255, 255, 255, 0.96)",
-      borderColor: "rgba(53, 87, 45, 0.26)",
+      bg: "rgba(79, 131, 68, 0.14)",
+      borderColor: "app.text",
     },
     sx: {
       "&:hover [data-outline-icon], &:active [data-outline-icon], &[data-active='true'] [data-outline-icon]":
@@ -85,7 +84,7 @@ const styles = {
   iconWrap: {
     position: "relative",
     flexShrink: 0,
-    boxSize: { base: "28px", sm: "30px" },
+    boxSize: { base: "25px", sm: "26px" },
   },
   icon: {
     position: "absolute",
@@ -101,11 +100,11 @@ const styles = {
   buttonContent: {
     align: "center",
     justify: "center",
-    gap: { base: "8px", sm: "10px" },
+    gap: { base: "7px", sm: "8px" },
     minW: 0,
   },
   label: {
-    color: "app.text",
+    color: "inherit",
     fontSize: "sm",
     fontWeight: "extrabold",
     lineHeight: 1,
@@ -113,13 +112,12 @@ const styles = {
   },
   likeButton: {
     _hover: {
-      bg: "rgba(255, 255, 255, 0.92)",
-      borderColor: "rgba(53, 87, 45, 0.22)",
-      boxShadow: "0 14px 32px rgba(53, 87, 45, 0.16)",
+      bg: "rgba(79, 131, 68, 0.1)",
+      borderColor: "app.text",
     },
     _active: {
-      bg: "rgba(255, 255, 255, 0.96)",
-      borderColor: "rgba(53, 87, 45, 0.26)",
+      bg: "rgba(79, 131, 68, 0.14)",
+      borderColor: "app.text",
     },
   },
   nopeButton: {},
