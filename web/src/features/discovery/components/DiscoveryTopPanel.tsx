@@ -29,14 +29,14 @@ const styles = {
       left: isExpanded ? "50%" : undefined,
       zIndex: isExpanded ? 30 : 1,
       w: isExpanded ? "min(100%, 460px)" : undefined,
-      h: isExpanded ? `calc(100dvh - ${expandedTop ?? topOffset}px)` : "96px",
+      h: isExpanded ? `calc(100dvh - ${expandedTop ?? topOffset}px)` : "112px",
       overflow: isExpanded ? "hidden" : "visible",
       transform: isExpanded ? "translateX(-50%)" : undefined,
       transition:
         "height 220ms ease, box-shadow 220ms ease, background 220ms ease",
     }) as const,
   topPanelContent: {
-    h: "calc(100% - 96px)",
+    h: "calc(100% - 112px)",
     overflowY: "auto",
     px: "18px",
     pt: "22px",

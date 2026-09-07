@@ -9,10 +9,11 @@ export const discoveryFilterStyles = {
   },
   filterSegment: {
     display: "grid",
-    gap: "2px",
+    gap: "5px",
     minW: 0,
     overflow: "hidden",
-    px: "3px",
+    px: { base: "4px", sm: "6px" },
+    py: "6px",
     color: "app.text",
     fontSize: "sm",
     fontWeight: "semibold",
@@ -41,7 +42,7 @@ export const discoveryFilterStyles = {
   filterDivider: {
     justifySelf: "center",
     w: "1px",
-    h: "34px",
+    h: "40px",
     bg: "rgba(53, 87, 45, 0.24)",
   },
   filterEditorWrap: {
@@ -52,24 +53,24 @@ export const discoveryFilterStyles = {
   filterEditorGrid: {
     display: "grid",
     alignItems: "center",
-    gridTemplateColumns: "38px minmax(0, 1fr) 38px",
-    gap: "6px",
+    gridTemplateColumns: "42px minmax(0, 1fr) 42px",
+    gap: "8px",
   },
   filterAgeEditorGrid: {
     display: "grid",
     alignItems: "center",
-    gridTemplateColumns: "28px minmax(0, 1fr) minmax(0, 1fr) 38px",
-    gap: "6px",
+    gridTemplateColumns: "32px minmax(0, 1fr) minmax(0, 1fr) 42px",
+    gap: "8px",
   },
   filterGenderEditor: {
     align: "center",
     display: "grid",
-    gridTemplateColumns: "minmax(0, 1fr) 38px",
-    gap: "6px",
+    gridTemplateColumns: "minmax(0, 1fr) 42px",
+    gap: "8px",
   },
   inlineGenderOptions: {
     flexWrap: "wrap",
-    gap: "7px",
+    gap: "8px",
   },
   filterEditorLabel: {
     color: "rgba(53, 87, 45, 0.62)",
@@ -79,16 +80,16 @@ export const discoveryFilterStyles = {
     textTransform: "uppercase",
   },
   inlineInput: {
-    h: "38px",
-    px: "10px",
+    h: "42px",
+    px: "12px",
     borderRadius: "999px",
     fontSize: "sm",
   },
   confirmButton: {
     display: "grid",
     placeItems: "center",
-    boxSize: "38px",
-    minW: "38px",
+    boxSize: "42px",
+    minW: "42px",
     border: "1px solid",
     borderColor: "rgba(53, 87, 45, 0.18)",
     borderRadius: "999px",
@@ -133,8 +134,8 @@ export const discoveryFilterStyles = {
     },
   },
   inlineLoaderWrap: {
-    h: "38px",
-    w: "38px",
+    h: "42px",
+    w: "42px",
   },
   inlineLoader: {
     color: "app.base",
