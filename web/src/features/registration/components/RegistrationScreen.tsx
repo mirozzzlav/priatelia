@@ -17,12 +17,9 @@ import { FormStatusMessage } from "src/components/FormStatusMessage";
 import type { InterestTag } from "src/features/interests/types";
 import type { Gender } from "src/constants/gender";
 import { LocationSearchField } from "src/components/LocationSearchField";
-import type {
-  RegistrationFormData,
-  RegistrationPhoto,
-} from "src/features/registration/types";
+import type { RegistrationFormData } from "src/features/registration/types";
+import { usePhotoGalleryState } from "src/hooks/usePhotoGalleryState";
 import type { RegistrationFieldErrors } from "src/services/api";
-import { createId } from "src/utils/createId";
 import { getPasswordConfirmationError } from "src/utils/passwordValidation";
 
 type RegistrationScreenProps = {
@@ -57,16 +54,6 @@ const initialFormData: RegistrationFormData = {
   photos: [],
 };
 
-function createPhoto(file: File, shouldBePrimary: boolean): RegistrationPhoto {
-  return {
-    id: `${file.name}-${file.lastModified}-${createId("photo")}`,
-    file,
-    isPrimary: shouldBePrimary,
-    name: file.name,
-    url: URL.createObjectURL(file),
-  };
-}
-
 export function RegistrationScreen({
   onLoginClick,
   onRegister,
@@ -85,12 +72,25 @@ export function RegistrationScreen({
     formData.passwordConfirmation,
   );
 
+  const resetFeedback = () => {
+    setServerFieldErrors({});
+    setSubmitError(null);
+    setWasSubmitted(false);
+  };
+
+  const {
+    handlePhotoUpload,
+    removePhoto,
+    setPrimaryPhoto,
+  } = usePhotoGalleryState({
+    resetFeedback,
+    setFormData,
+  });
+
   const updateField =
     (field: keyof Omit<RegistrationFormData, "interests" | "photos">) =>
     (event: ChangeEvent<HTMLInputElement>) => {
-      setServerFieldErrors({});
-      setSubmitError(null);
-      setWasSubmitted(false);
+      resetFeedback();
       setFormData((current) => ({
         ...current,
         [field]: event.target.value,
@@ -98,9 +98,7 @@ export function RegistrationScreen({
     };
 
   const handleBioChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setServerFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
+    resetFeedback();
     setFormData((current) => ({
       ...current,
       bio: event.target.value,
@@ -112,9 +110,7 @@ export function RegistrationScreen({
     location: string;
     longitude: number | null;
   }) => {
-    setServerFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
+    resetFeedback();
     setFormData((current) => ({
       ...current,
       location: nextLocation.location,
@@ -124,9 +120,7 @@ export function RegistrationScreen({
   };
 
   const handleGenderChange = (gender: Gender) => {
-    setServerFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
+    resetFeedback();
     setFormData((current) => ({
       ...current,
       gender,
@@ -134,76 +128,11 @@ export function RegistrationScreen({
   };
 
   const handleInterestsChange = (interests: InterestTag[]) => {
-    setServerFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
+    resetFeedback();
     setFormData((current) => ({
       ...current,
       interests,
     }));
-  };
-
-  const handlePhotoUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files ?? []);
-
-    if (files.length === 0) {
-      return;
-    }
-
-    setServerFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
-    setFormData((current) => {
-      const newPhotos = files.map((file, index) =>
-        createPhoto(file, current.photos.length === 0 && index === 0),
-      );
-
-      return {
-        ...current,
-        photos: [...current.photos, ...newPhotos],
-      };
-    });
-
-    event.target.value = "";
-  };
-
-  const setPrimaryPhoto = (photoId: string) => {
-    setServerFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
-    setFormData((current) => ({
-      ...current,
-      photos: current.photos.map((photo) => ({
-        ...photo,
-        isPrimary: photo.id === photoId,
-      })),
-    }));
-  };
-
-  const removePhoto = (photoId: string) => {
-    setServerFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
-    setFormData((current) => {
-      const removedPhoto = current.photos.find((photo) => photo.id === photoId);
-      const remainingPhotos = current.photos.filter(
-        (photo) => photo.id !== photoId,
-      );
-      const needsPrimary =
-        removedPhoto?.isPrimary && remainingPhotos.length > 0;
-
-      if (removedPhoto) {
-        URL.revokeObjectURL(removedPhoto.url);
-      }
-
-      return {
-        ...current,
-        photos: remainingPhotos.map((photo, index) => ({
-          ...photo,
-          isPrimary: needsPrimary ? index === 0 : photo.isPrimary,
-        })),
-      };
-    });
   };
 
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {

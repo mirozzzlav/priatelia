@@ -283,12 +283,16 @@ export function SecondaryButton(props: ButtonProps) {
   );
 }
 
-export function FormSubmitButton(props: ButtonProps) {
-  return <PrimaryButton type="submit" {...props} />;
+export function BackButton({ children = "Späť", ...props }: ButtonProps) {
+  return (
+    <SecondaryButton leftIcon={<BackIcon />} {...props}>
+      {children}
+    </SecondaryButton>
+  );
 }
 
-export function FormSecondaryButton(props: ButtonProps) {
-  return <SecondaryButton {...props} />;
+export function FormSubmitButton(props: ButtonProps) {
+  return <PrimaryButton type="submit" {...props} />;
 }
 
 export function FormLinkButton(props: ButtonProps) {

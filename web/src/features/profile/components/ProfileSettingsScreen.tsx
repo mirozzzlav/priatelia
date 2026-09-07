@@ -5,11 +5,10 @@ import { GenderField } from "src/components/GenderField";
 import { InterestSelectField } from "src/components/InterestSelectField";
 import { PhotoGalleryField } from "src/components/PhotoGalleryField";
 import {
-  BackIcon,
+  BackButton,
   FormActions,
   FormInput,
   FormLinkButton,
-  FormSecondaryButton,
   FormSubmitButton,
   FormTextarea,
   RequiredFieldLabel,
@@ -20,9 +19,8 @@ import { LocationSearchField } from "src/components/LocationSearchField";
 import type { Gender } from "src/constants/gender";
 import type { InterestTag } from "src/features/interests/types";
 import type { EditableProfileData } from "src/features/profile/types";
-import type { RegistrationPhoto } from "src/features/registration";
+import { usePhotoGalleryState } from "src/hooks/usePhotoGalleryState";
 import type { ProfileFieldErrors } from "src/services/api";
-import { createId } from "src/utils/createId";
 
 type ProfileSettingsScreenProps = {
   initialProfile: EditableProfileData;
@@ -41,16 +39,6 @@ const styles = {
   },
 } as const;
 
-function createPhoto(file: File, shouldBePrimary: boolean): RegistrationPhoto {
-  return {
-    id: `${file.name}-${file.lastModified}-${createId("photo")}`,
-    file,
-    isPrimary: shouldBePrimary,
-    name: file.name,
-    url: URL.createObjectURL(file),
-  };
-}
-
 export function ProfileSettingsScreen({
   initialProfile,
   onBack,
@@ -64,49 +52,34 @@ export function ProfileSettingsScreen({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [wasSubmitted, setWasSubmitted] = useState(false);
 
+  const resetFeedback = () => {
+    setFieldErrors({});
+    setSubmitError(null);
+    setWasSubmitted(false);
+    setIsSuccess(false);
+  };
+
+  const {
+    handlePhotoUpload,
+    removePhoto,
+    setPrimaryPhoto,
+  } = usePhotoGalleryState({
+    resetFeedback,
+    setFormData,
+  });
+
   const updateField =
     (field: keyof Omit<EditableProfileData, "interests" | "photos">) =>
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setFieldErrors({});
-      setSubmitError(null);
-      setWasSubmitted(false);
-      setIsSuccess(false);
+      resetFeedback();
       setFormData((current) => ({
         ...current,
         [field]: event.target.value,
       }));
     };
 
-  const handlePhotoUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files ?? []);
-
-    if (files.length === 0) {
-      return;
-    }
-
-    setFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
-    setIsSuccess(false);
-    setFormData((current) => {
-      const newPhotos = files.map((file, index) =>
-        createPhoto(file, current.photos.length === 0 && index === 0),
-      );
-
-      return {
-        ...current,
-        photos: [...current.photos, ...newPhotos],
-      };
-    });
-
-    event.target.value = "";
-  };
-
   const handleInterestsChange = (interests: InterestTag[]) => {
-    setFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
-    setIsSuccess(false);
+    resetFeedback();
     setFormData((current) => ({
       ...current,
       interests,
@@ -118,10 +91,7 @@ export function ProfileSettingsScreen({
     location: string;
     longitude: number | null;
   }) => {
-    setFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
-    setIsSuccess(false);
+    resetFeedback();
     setFormData((current) => ({
       ...current,
       location: nextLocation.location,
@@ -131,55 +101,11 @@ export function ProfileSettingsScreen({
   };
 
   const handleGenderChange = (gender: Gender) => {
-    setFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
-    setIsSuccess(false);
+    resetFeedback();
     setFormData((current) => ({
       ...current,
       gender,
     }));
-  };
-
-  const setPrimaryPhoto = (photoId: string) => {
-    setFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
-    setIsSuccess(false);
-    setFormData((current) => ({
-      ...current,
-      photos: current.photos.map((photo) => ({
-        ...photo,
-        isPrimary: photo.id === photoId,
-      })),
-    }));
-  };
-
-  const removePhoto = (photoId: string) => {
-    setFieldErrors({});
-    setSubmitError(null);
-    setWasSubmitted(false);
-    setIsSuccess(false);
-    setFormData((current) => {
-      const removedPhoto = current.photos.find((photo) => photo.id === photoId);
-      const remainingPhotos = current.photos.filter(
-        (photo) => photo.id !== photoId,
-      );
-      const needsPrimary =
-        removedPhoto?.isPrimary && remainingPhotos.length > 0;
-
-      if (removedPhoto?.url.startsWith("blob:")) {
-        URL.revokeObjectURL(removedPhoto.url);
-      }
-
-      return {
-        ...current,
-        photos: remainingPhotos.map((photo, index) => ({
-          ...photo,
-          isPrimary: needsPrimary ? index === 0 : photo.isPrimary,
-        })),
-      };
-    });
   };
 
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
@@ -316,9 +242,7 @@ export function ProfileSettingsScreen({
           >
             Uložiť profil
           </FormSubmitButton>
-          <FormSecondaryButton leftIcon={<BackIcon />} onClick={onBack}>
-            Späť
-          </FormSecondaryButton>
+          <BackButton onClick={onBack} />
         </FormActions>
       </Box>
     </ScreenLayout>

@@ -1,8 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 
-import { HeaderSurface } from "src/components/HeaderSurface";
-import { PanelHeading } from "src/components/PanelHeading";
-import { BackIcon, SecondaryButton } from "src/components/formElements";
+import { PageHeader } from "src/components/PageHeader";
+import { BackButton } from "src/components/formElements";
 import { LoadingPill } from "src/components/LoadingPill";
 import { ChatMatchList } from "src/features/messages/components/ChatMatchList";
 import type { ChatMatch } from "src/services/api";
@@ -25,22 +24,9 @@ const styles = {
     position: "sticky",
     top: "64px",
     zIndex: 1,
-    display: "grid",
-    gridTemplateColumns: "minmax(0, 1fr) auto",
-    alignItems: "start",
-    gap: "12px",
-  },
-  titleWrap: {
-    minW: 0,
   },
   content: {
     pt: { base: "22px", sm: "28px" },
-  },
-  intro: {
-    mt: "6px",
-    color: "app.text",
-    fontSize: "sm",
-    lineHeight: 1.35,
   },
   status: {
     py: "34px",
@@ -73,23 +59,12 @@ export function MessageMatchesScreen({
 }: MessageMatchesScreenProps) {
   return (
     <Box {...styles.root}>
-      <HeaderSurface {...styles.header}>
-        <Box {...styles.titleWrap}>
-          <PanelHeading as="h1" variant="main">
-            Správy
-          </PanelHeading>
-          <Text {...styles.intro}>
-            Vyber si človeka, s ktorým ste si dali vzájomné áno.
-          </Text>
-        </Box>
-        <SecondaryButton
-          leftIcon={<BackIcon />}
-          onClick={onBack}
-          {...styles.backButton}
-        >
-          Späť
-        </SecondaryButton>
-      </HeaderSurface>
+      <PageHeader
+        title="Správy"
+        intro="Vyber si človeka, s ktorým ste si dali vzájomné áno."
+        rightAction={<BackButton onClick={onBack} {...styles.backButton} />}
+        {...styles.header}
+      />
 
       <Box {...styles.content}>
         {isLoading && (

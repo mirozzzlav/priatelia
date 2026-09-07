@@ -7,7 +7,7 @@ type HeaderSurfaceProps = BoxProps & {
   children: ReactNode;
   isExpanded?: boolean;
   noValidate?: boolean;
-  shadow?: HeaderSurfaceShadow;
+  surfaceShadow?: HeaderSurfaceShadow;
 };
 
 const shadows: Record<HeaderSurfaceShadow, string> = {
@@ -41,13 +41,13 @@ export const HeaderSurface = forwardRef<HTMLDivElement, HeaderSurfaceProps>(
     {
       children,
       isExpanded = false,
-      shadow = isExpanded ? "expanded" : "default",
+      surfaceShadow = isExpanded ? "expanded" : "default",
       ...props
     },
     ref,
   ) {
     return (
-      <Box ref={ref} {...styles.root(isExpanded, shadow)} {...props}>
+      <Box ref={ref} {...styles.root(isExpanded, surfaceShadow)} {...props}>
         {children}
       </Box>
     );

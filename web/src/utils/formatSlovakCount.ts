@@ -5,7 +5,7 @@ export function getSlovakCountWord(base: string, count: number) {
     return base;
   }
 
-  if (absoluteCount >=2 && absoluteCount <=4) {
+  if (absoluteCount >= 2 && absoluteCount <= 4) {
     return `${base}y`;
   }
 
