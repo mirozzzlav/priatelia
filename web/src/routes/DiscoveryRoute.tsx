@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 
 import { CenteredStatusLayout } from "src/components/layouts";
 import { LoadingPill } from "src/components/LoadingPill";
 import { PhotoViewer } from "src/components/PhotoViewer";
+import { useChatMatches } from "src/context/chatMatches";
 import { DiscoveryTopPanel } from "src/features/discovery";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import { InfoScreen } from "src/features/info";
@@ -15,7 +15,6 @@ import {
   PersonPreviewPhoto,
   type PersonPreview,
 } from "src/features/person-preview";
-import { useDiscoveryMatches } from "src/hooks/useDiscoveryMatches";
 
 type DiscoveryRouteProps = {
   activeAction: ActivePersonPreviewAction;
@@ -62,13 +61,11 @@ export function DiscoveryRoute({
   onPersonPreviewLoad,
   personPreview,
 }: DiscoveryRouteProps) {
-  const navigate = useNavigate();
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null,
   );
   const previousPersonPreviewIdRef = useRef<string | null>(null);
-  const { isLoadingMatches, loadMatches, markMatchesSeen, matches } =
-    useDiscoveryMatches();
+  const { reloadMatches } = useChatMatches();
   const previewPhotos = useMemo(() => {
     if (!personPreview) {
       return [];
@@ -94,15 +91,11 @@ export function DiscoveryRoute({
   );
   const handleActionStart = useCallback(
     (action: ActivePersonPreviewAction) => {
-      onActionStart(action, loadMatches);
+      onActionStart(action, async () => {
+        await reloadMatches();
+      });
     },
-    [loadMatches, onActionStart],
-  );
-  const handleMatchClick = useCallback(
-    (matchId: string) => {
-      navigate(`/messages/${matchId}`);
-    },
-    [navigate],
+    [onActionStart, reloadMatches],
   );
   const closePhotoViewer = useCallback(() => {
     setSelectedPhotoIndex(null);
@@ -147,10 +140,6 @@ export function DiscoveryRoute({
     <Box {...styles.stickyHeader}>
       <DiscoveryTopPanel
         initialDiscoverySettings={initialDiscoverySettings}
-        isLoadingMatches={isLoadingMatches}
-        matches={matches}
-        onMatchClick={handleMatchClick}
-        onNewMatchesSeen={markMatchesSeen}
         onDiscoveryReload={onDiscoveryReload}
         onDiscoverySettingsSave={onDiscoverySettingsSave}
       />

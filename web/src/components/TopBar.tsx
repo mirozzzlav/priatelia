@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
 import { Flex, IconButton } from "@chakra-ui/react";
-import { useLocation } from "react-router-dom";
 
+import { useChatMatches } from "src/context/chatMatches";
 import messageIcon from "assets/message.svg";
 import { MatchIconWithCount } from "src/components/top-bar/MatchIconWithCount";
 import { TopBarBrand } from "src/components/top-bar/TopBarBrand";
@@ -37,19 +36,11 @@ const styles = {
   },
 } as const;
 
-export const discoveryMatchesSummaryEvent =
-  "priatelia:discovery-matches-summary";
 export const toggleDiscoveryMatchesEvent =
   "priatelia:toggle-discovery-matches";
 
-type DiscoveryMatchesSummary = {
-  canUseMatches: boolean;
-  count: number;
-};
-
 type TopBarProps = {
   isAuthenticated: boolean;
-  onDiscoverClick: () => void;
   onLogout: () => void;
   onMessagesClick: () => void;
   onProfileClick: () => void;
@@ -57,41 +48,11 @@ type TopBarProps = {
 
 export function TopBar({
   isAuthenticated,
-  onDiscoverClick,
   onLogout,
   onMessagesClick,
   onProfileClick,
 }: TopBarProps) {
-  const location = useLocation();
-  const isDiscoverRoute = location.pathname === "/discover";
-  const [discoveryMatchesSummary, setDiscoveryMatchesSummary] =
-    useState<DiscoveryMatchesSummary>({
-      canUseMatches: false,
-      count: 0,
-    });
-
-  useEffect(() => {
-    const handleSummaryChange = (event: Event) => {
-      const detail = (event as CustomEvent<DiscoveryMatchesSummary>).detail;
-
-      setDiscoveryMatchesSummary({
-        canUseMatches: Boolean(detail?.canUseMatches),
-        count: detail?.count ?? 0,
-      });
-    };
-
-    window.addEventListener(
-      discoveryMatchesSummaryEvent,
-      handleSummaryChange,
-    );
-
-    return () => {
-      window.removeEventListener(
-        discoveryMatchesSummaryEvent,
-        handleSummaryChange,
-      );
-    };
-  }, []);
+  const { newDiscoveryMatchCount } = useChatMatches();
 
   return (
     <Flex as="header" {...styles.root}>
@@ -111,24 +72,16 @@ export function TopBar({
             onClick={onMessagesClick}
           />
           <IconButton
-            aria-label="Zobraziť nové prepojenia"
+            aria-label="Zobraziť prepojenia"
             icon={
               <MatchIconWithCount
-                count={discoveryMatchesSummary.count}
+                count={newDiscoveryMatchCount}
               />
             }
-            isDisabled={
-              isDiscoverRoute && !discoveryMatchesSummary.canUseMatches
-            }
             onClick={() => {
-              if (isDiscoverRoute) {
-                window.dispatchEvent(
-                  new CustomEvent(toggleDiscoveryMatchesEvent),
-                );
-                return;
-              }
-
-              onDiscoverClick();
+              window.dispatchEvent(
+                new CustomEvent(toggleDiscoveryMatchesEvent),
+              );
             }}
             {...topBarStyles.iconButton}
           />

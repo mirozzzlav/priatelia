@@ -1,137 +1,29 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import {
-  discoveryMatchesSummaryEvent,
-  toggleDiscoveryMatchesEvent,
-} from "src/components/TopBar";
 import type { Gender } from "src/constants/gender";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import type { InlineFilterField } from "src/features/discovery/types";
-import {
-  apiClient,
-  type ChatMatch,
-  type LocationOption,
-} from "src/services/api";
+import { apiClient, type LocationOption } from "src/services/api";
 
 type UseDiscoveryTopPanelStateParams = {
   initialDiscoverySettings: DiscoverySettingsData;
-  isLoadingMatches: boolean;
-  matches: ChatMatch[];
   onDiscoveryReload: () => Promise<void>;
   onDiscoverySettingsSave: (data: DiscoverySettingsData) => void;
-  onNewMatchesSeen: (matchIds: string[]) => void;
 };
-
-type ActiveTopPanel = "matches" | null;
 
 export function useDiscoveryTopPanelState({
   initialDiscoverySettings,
-  isLoadingMatches,
-  matches,
   onDiscoveryReload,
   onDiscoverySettingsSave,
-  onNewMatchesSeen,
 }: UseDiscoveryTopPanelStateParams) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const filterRef = useRef<HTMLDivElement | null>(null);
-  const [activePanel, setActivePanel] = useState<ActiveTopPanel>(null);
   const [activeInlineFilter, setActiveInlineFilter] =
     useState<InlineFilterField | null>(null);
   const [draftSettings, setDraftSettings] = useState<DiscoverySettingsData>(
     initialDiscoverySettings,
   );
-  const [expandedTop, setExpandedTop] = useState<number | null>(null);
-  const [expandedPanelMatches, setExpandedPanelMatches] = useState<ChatMatch[]>(
-    [],
-  );
   const [isSavingInlineFilter, setIsSavingInlineFilter] = useState(false);
-  const newMatches = useMemo(
-    () => matches.filter((match) => match.isNew && !match.lastMessage),
-    [matches],
-  );
-  const isExpanded = activePanel !== null;
-  const isMatchesExpanded = activePanel === "matches";
-  const canUseMatches =
-    isLoadingMatches ||
-    isMatchesExpanded ||
-    newMatches.length > 0 ||
-    expandedPanelMatches.length > 0;
-  const displayedNewMatches = useMemo(
-    () => (expandedPanelMatches.length > 0 ? expandedPanelMatches : newMatches),
-    [expandedPanelMatches, newMatches],
-  );
-
-  useEffect(() => {
-    if (!isExpanded) {
-      return;
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isExpanded]);
-
-  useEffect(() => {
-    window.dispatchEvent(
-      new CustomEvent(discoveryMatchesSummaryEvent, {
-        detail: {
-          canUseMatches,
-          count: newMatches.length,
-        },
-      }),
-    );
-  }, [canUseMatches, newMatches.length]);
-
-  const openPanel = useCallback((panel: NonNullable<ActiveTopPanel>) => {
-    setExpandedTop(rootRef.current?.getBoundingClientRect().top ?? 64);
-    setActivePanel(panel);
-  }, []);
-
-  const toggleMatchesPanel = useCallback(() => {
-    setActiveInlineFilter(null);
-
-    if (!canUseMatches) {
-      return;
-    }
-
-    if (isMatchesExpanded) {
-      setActivePanel(null);
-      return;
-    }
-
-    openPanel("matches");
-
-    if (newMatches.length === 0) {
-      return;
-    }
-
-    setExpandedPanelMatches(newMatches);
-    onNewMatchesSeen(newMatches.map((match) => match.id));
-  }, [
-    canUseMatches,
-    isMatchesExpanded,
-    newMatches,
-    onNewMatchesSeen,
-    openPanel,
-  ]);
-
-  useEffect(() => {
-    const handleToggleMatches = () => {
-      toggleMatchesPanel();
-    };
-
-    window.addEventListener(toggleDiscoveryMatchesEvent, handleToggleMatches);
-
-    return () => {
-      window.removeEventListener(
-        toggleDiscoveryMatchesEvent,
-        handleToggleMatches,
-      );
-    };
-  }, [toggleMatchesPanel]);
 
   useEffect(() => {
     if (activeInlineFilter === null) {
@@ -154,8 +46,6 @@ export function useDiscoveryTopPanelState({
   }, [activeInlineFilter]);
 
   const editInlineFilter = (field: InlineFilterField) => {
-    setActivePanel(null);
-    setExpandedPanelMatches([]);
     setDraftSettings(initialDiscoverySettings);
     setActiveInlineFilter(field);
   };
@@ -226,12 +116,8 @@ export function useDiscoveryTopPanelState({
 
   return {
     activeInlineFilter,
-    displayedNewMatches,
     draftSettings,
-    expandedTop,
     filterRef,
-    isExpanded,
-    isMatchesExpanded,
     isSavingInlineFilter,
     rootRef,
     saveCurrentInlineFilter,

@@ -7,6 +7,7 @@ import type { ChatMatch } from "src/services/api";
 type DiscoveryMatchesPanelProps = {
   isLoading: boolean;
   matches: ChatMatch[];
+  title?: string;
   onMatchClick: (matchId: string) => void;
 };
 
@@ -25,6 +26,7 @@ const styles = {
 export function DiscoveryMatchesPanel({
   isLoading,
   matches,
+  title = "Nové prepojenia",
   onMatchClick,
 }: DiscoveryMatchesPanelProps) {
   if (isLoading) {
@@ -32,14 +34,12 @@ export function DiscoveryMatchesPanel({
   }
 
   if (matches.length === 0) {
-    return (
-      <Text {...styles.infoBody}>Zatiaľ nemáš žiadne nové prepojenia.</Text>
-    );
+    return <Text {...styles.infoBody}>Zatiaľ nemáš žiadne prepojenia.</Text>;
   }
 
   return (
     <VStack {...styles.infoContent}>
-      <PanelHeading>Nové prepojenia</PanelHeading>
+      <PanelHeading>{title}</PanelHeading>
       <ChatMatchList matches={matches} onMatchClick={onMatchClick} />
     </VStack>
   );
