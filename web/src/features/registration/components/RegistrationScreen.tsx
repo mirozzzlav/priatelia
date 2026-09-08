@@ -82,6 +82,11 @@ export function RegistrationScreen({
 
   const { handlePhotoUpload, removePhoto, setPrimaryPhoto } =
     usePhotoGalleryState({
+      onValidationError: (message) => {
+        setServerFieldErrors({ photos: message });
+        setWasSubmitted(true);
+      },
+      photoCount: formData.photos.length,
       resetFeedback,
       setFormData,
     });

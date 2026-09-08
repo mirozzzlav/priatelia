@@ -62,6 +62,11 @@ export function ProfileSettingsScreen({
 
   const { handlePhotoUpload, removePhoto, setPrimaryPhoto } =
     usePhotoGalleryState({
+      onValidationError: (message) => {
+        setFieldErrors({ photos: message });
+        setWasSubmitted(true);
+      },
+      photoCount: formData.photos.length,
       resetFeedback,
       setFormData,
     });

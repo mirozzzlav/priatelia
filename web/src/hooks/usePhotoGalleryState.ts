@@ -5,6 +5,10 @@ import type {
 } from "react";
 
 import type { RegistrationPhoto } from "src/features/registration";
+import {
+  maxProfilePhotoCount,
+  maxProfilePhotoError,
+} from "src/constants/profilePhotos";
 import { createId } from "src/utils/createId";
 
 type PhotoGalleryFormData = {
@@ -12,6 +16,8 @@ type PhotoGalleryFormData = {
 };
 
 type UsePhotoGalleryStateOptions<TFormData extends PhotoGalleryFormData> = {
+  onValidationError?: (message: string) => void;
+  photoCount: number;
   resetFeedback: () => void;
   setFormData: Dispatch<SetStateAction<TFormData>>;
 };
@@ -27,6 +33,8 @@ function createPhoto(file: File, shouldBePrimary: boolean): RegistrationPhoto {
 }
 
 export function usePhotoGalleryState<TFormData extends PhotoGalleryFormData>({
+  onValidationError,
+  photoCount,
   resetFeedback,
   setFormData,
 }: UsePhotoGalleryStateOptions<TFormData>) {
@@ -38,8 +46,20 @@ export function usePhotoGalleryState<TFormData extends PhotoGalleryFormData>({
     }
 
     resetFeedback();
+    const availableSlots = maxProfilePhotoCount - photoCount;
+
+    if (availableSlots <= 0) {
+      onValidationError?.(maxProfilePhotoError);
+      event.target.value = "";
+      return;
+    }
+
+    if (files.length > availableSlots) {
+      onValidationError?.(maxProfilePhotoError);
+    }
+
     setFormData((current) => {
-      const newPhotos = files.map((file, index) =>
+      const newPhotos = files.slice(0, availableSlots).map((file, index) =>
         createPhoto(file, current.photos.length === 0 && index === 0),
       );
 

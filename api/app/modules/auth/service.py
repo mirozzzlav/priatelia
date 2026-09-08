@@ -16,6 +16,7 @@ from app.shared.auth.passwords import hash_password, verify_password
 from app.shared.auth.tokens import create_access_token
 from app.shared.events.repository import EventRepository
 from app.shared.geo import coordinates_are_valid, resolve_coordinates
+from app.shared.profile_photos import validate_profile_photos
 from app.shared.tags import normalize_tag_id
 
 
@@ -56,8 +57,9 @@ def validate_registration(data: RegisterRequest) -> dict[str, str]:
         errors_by_field["bio"] = "Bio musí obsahovať aspoň 3 slová."
     if not data.interests:
         errors_by_field["interests"] = "Pridaj aspoň jeden záujem."
-    if not data.photos:
-        errors_by_field["photos"] = "Pridaj aspoň jednu fotku."
+    photo_error = validate_profile_photos(data.photos)
+    if photo_error:
+        errors_by_field["photos"] = photo_error
 
     return errors_by_field
 

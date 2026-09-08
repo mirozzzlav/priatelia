@@ -12,6 +12,10 @@ import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import type { EditableProfileData } from "src/features/profile";
 import type { Gender } from "src/constants/gender";
 import {
+  maxProfilePhotoCount,
+  maxProfilePhotoError,
+} from "src/constants/profilePhotos";
+import {
   mockChatMessagesByMatchId,
   mockIncomingLikePersonPreviewIds,
   mockInitialChatMatchIds,
@@ -289,6 +293,10 @@ function getRegistrationErrors(data: Parameters<ApiClient["register"]>[0]) {
 
   if (data.photos.length === 0) {
     errors.photos = "Pridaj aspoň jednu fotku.";
+  } else if (data.photos.length > maxProfilePhotoCount) {
+    errors.photos = maxProfilePhotoError;
+  } else if (data.photos.filter((photo) => photo.isPrimary).length > 1) {
+    errors.photos = "Profilová fotka môže byť najviac jedna.";
   }
 
   return errors;
@@ -326,6 +334,10 @@ function getProfileErrors(data: Parameters<ApiClient["updateProfile"]>[0]) {
 
   if (data.photos.length === 0) {
     errors.photos = "Pridaj aspoň jednu fotku.";
+  } else if (data.photos.length > maxProfilePhotoCount) {
+    errors.photos = maxProfilePhotoError;
+  } else if (data.photos.filter((photo) => photo.isPrimary).length > 1) {
+    errors.photos = "Profilová fotka môže byť najviac jedna.";
   }
 
   return errors;
