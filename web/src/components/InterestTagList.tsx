@@ -7,7 +7,8 @@ import { ProfileMetaTag } from "src/components/ProfileMetaTag";
 const styles = {
   list: {
     flexWrap: "wrap",
-    gap: "7px",
+    gap: "8px",
+    p: "8px 0",
   },
 } as const;
 
