@@ -1,4 +1,4 @@
-import { Button, Flex, FormControl, FormErrorMessage } from "@chakra-ui/react";
+import { Flex, FormControl, FormErrorMessage } from "@chakra-ui/react";
 
 import personIcon from "assets/person.svg";
 import {
@@ -6,7 +6,10 @@ import {
   genderOptions,
   type Gender,
 } from "src/constants/gender";
-import { RequiredFieldLabel } from "src/components/formElements";
+import {
+  FormToggleButton,
+  RequiredFieldLabel,
+} from "src/components/formElements";
 import { ProfileMetaTag } from "src/components/ProfileMetaTag";
 
 const styles = {
@@ -14,25 +17,6 @@ const styles = {
     flexWrap: "wrap",
     gap: "8px",
   },
-  option: (isSelected: boolean) =>
-    ({
-      h: "38px",
-      px: "13px",
-      border: "1px solid",
-      borderColor: isSelected ? "app.base" : "rgba(53, 87, 45, 0.18)",
-      borderRadius: "999px",
-      bg: isSelected ? "app.base" : "rgba(53, 87, 45, 0.06)",
-      color: isSelected ? "app.white" : "app.text",
-      fontSize: "sm",
-      fontWeight: "bold",
-      _hover: {
-        bg: isSelected ? "app.baseDark" : "app.bgAux",
-        borderColor: isSelected ? "app.baseDark" : "rgba(53, 87, 45, 0.24)",
-      },
-      _active: {
-        bg: isSelected ? "app.baseDark" : "app.bgAux",
-      },
-    }) as const,
   selectedTags: {
     flexWrap: "wrap",
     gap: "7px",
@@ -62,17 +46,15 @@ export function GenderField({
           const isSelected = option.value === value;
 
           return (
-            <Button
+            <FormToggleButton
               key={option.value}
               aria-checked={isSelected}
+              isSelected={isSelected}
               onClick={() => onChange(option.value)}
               role="radio"
-              type="button"
-              variant="unstyled"
-              {...styles.option(isSelected)}
             >
               {option.label}
-            </Button>
+            </FormToggleButton>
           );
         })}
       </Flex>

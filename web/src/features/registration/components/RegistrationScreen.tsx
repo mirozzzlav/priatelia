@@ -33,7 +33,7 @@ type RegistrationScreenProps = {
 const styles = {
   form: {
     display: "grid",
-    gap: "18px",
+    gap: "22px",
   },
   submitButton: {
     mt: "4px",

@@ -24,19 +24,21 @@ const styles = {
     px: { base: "14px", sm: "18px" },
     py: 0,
     border: "1px solid",
-    borderColor: "app.text",
+    borderColor: "rgba(53, 87, 45, 0.18)",
     borderRadius: "999px",
     bg: "app.white",
     color: "app.text",
-    boxShadow: "none",
-    transition: "background 140ms ease, border-color 140ms ease",
+    boxShadow: "0 7px 18px rgba(53, 87, 45, 0.08)",
+    transition: "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
     _hover: {
       bg: "rgba(79, 131, 68, 0.1)",
-      borderColor: "app.text",
+      borderColor: "rgba(53, 87, 45, 0.26)",
+      boxShadow: "0 9px 22px rgba(53, 87, 45, 0.11)",
     },
     _active: {
       bg: "rgba(79, 131, 68, 0.14)",
-      borderColor: "app.text",
+      borderColor: "rgba(53, 87, 45, 0.28)",
+      boxShadow: "0 2px 8px rgba(53, 87, 45, 0.08)",
     },
     sx: {
       "&:hover [data-outline-icon], &:active [data-outline-icon], &[data-active='true'] [data-outline-icon]":
@@ -113,11 +115,13 @@ const styles = {
   likeButton: {
     _hover: {
       bg: "rgba(79, 131, 68, 0.1)",
-      borderColor: "app.text",
+      borderColor: "rgba(53, 87, 45, 0.26)",
+      boxShadow: "0 9px 22px rgba(53, 87, 45, 0.11)",
     },
     _active: {
       bg: "rgba(79, 131, 68, 0.14)",
-      borderColor: "app.text",
+      borderColor: "rgba(53, 87, 45, 0.28)",
+      boxShadow: "0 2px 8px rgba(53, 87, 45, 0.08)",
     },
   },
   nopeButton: {},

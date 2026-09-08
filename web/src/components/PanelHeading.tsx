@@ -12,12 +12,13 @@ const styles = {
       display: "flex",
       alignItems: "center",
       gap: "10px",
-      mb: "16px",
       color: "app.text",
-      fontSize:
-        variant === "main"
-          ? "3xl"
-          : { base: "xl", sm: "2xl" },
+      ...(variant === "main"
+        ? {
+            fontSize: "3xl",
+            mb: "16px",
+          }
+        : { fontSize: "xl", mb: "12px" }),
       fontWeight: "semibold",
       lineHeight: variant === "main" ? 1.05 : 1.2,
       letterSpacing: "0.02em",

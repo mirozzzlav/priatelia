@@ -147,6 +147,72 @@ const secondaryButtonStyles = {
   _hover: { bg: "rgba(79, 131, 68, 0.1)" },
 } as const;
 
+type FormToggleButtonSize = "sm" | "md";
+type FormToggleButtonColorVariant = "green" | "orange";
+
+const toggleButtonColorStyles = {
+  green: {
+    activeBg: "app.base",
+    activeBorder: "app.base",
+    activeHoverBg: "app.baseDark",
+    activeHoverBorder: "app.baseDark",
+    inactiveHoverBg: "app.bgAux",
+  },
+  orange: {
+    activeBg: "app.info",
+    activeBorder: "app.info",
+    activeHoverBg: "#aa5813",
+    activeHoverBorder: "#aa5813",
+    inactiveHoverBg: "app.bgAux",
+  },
+} as const;
+
+const toggleButtonStyles = (
+  isSelected: boolean,
+  size: FormToggleButtonSize,
+  colorVariant: FormToggleButtonColorVariant,
+) => {
+  const colors = toggleButtonColorStyles[colorVariant];
+
+  return {
+    alignItems: "center",
+    display: "inline-flex",
+    gap: size === "sm" ? "4px" : "6px",
+    justifyContent: "center",
+    h: size === "sm" ? "32px" : "38px",
+    px: size === "sm" ? "10px" : "13px",
+    border: "1px solid",
+    borderColor: isSelected
+      ? colors.activeBorder
+      : "rgba(53, 87, 45, 0.18)",
+    borderRadius: "999px",
+    bg: isSelected ? colors.activeBg : "rgba(53, 87, 45, 0.06)",
+    color: isSelected ? "app.white" : "app.text",
+    fontSize: size === "sm" ? "11px" : "sm",
+    fontWeight: size === "sm" ? "extrabold" : "bold",
+    _hover: {
+      bg: isSelected ? colors.activeHoverBg : colors.inactiveHoverBg,
+      borderColor: isSelected
+        ? colors.activeHoverBorder
+        : "rgba(53, 87, 45, 0.24)",
+    },
+    _active: {
+      bg: isSelected ? colors.activeHoverBg : colors.inactiveHoverBg,
+    },
+    _disabled: {
+      cursor: "not-allowed",
+      opacity: 1,
+    },
+  } as const;
+};
+
+const toggleButtonIconStyles = (size: FormToggleButtonSize) =>
+  ({
+    display: "inline-flex",
+    flexShrink: 0,
+    boxSize: size === "sm" ? "11px" : "14px",
+  }) as const;
+
 const linkButtonStyles = {
   h: "auto",
   p: 0,
@@ -279,6 +345,34 @@ export function SecondaryButton(props: ButtonProps) {
       {...secondaryButtonStyles}
       {...props}
     />
+  );
+}
+
+type FormToggleButtonProps = ButtonProps & {
+  colorVariant?: FormToggleButtonColorVariant;
+  icon?: ReactNode;
+  isSelected: boolean;
+  size?: FormToggleButtonSize;
+};
+
+export function FormToggleButton({
+  children,
+  colorVariant = "green",
+  icon,
+  isSelected,
+  size = "md",
+  ...props
+}: FormToggleButtonProps) {
+  return (
+    <Button
+      type="button"
+      variant="unstyled"
+      {...toggleButtonStyles(isSelected, size, colorVariant)}
+      {...props}
+    >
+      {icon && <Box {...toggleButtonIconStyles(size)}>{icon}</Box>}
+      {children}
+    </Button>
   );
 }
 

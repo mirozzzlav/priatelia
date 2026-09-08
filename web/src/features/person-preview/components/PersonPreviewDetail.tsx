@@ -6,9 +6,7 @@ import type { PersonPreview } from "src/features/person-preview/types";
 
 const styles = {
   root: {
-    mt: "8px",
     px: "0",
-    pb: "44px",
   },
   bio: {
     color: "app.text",

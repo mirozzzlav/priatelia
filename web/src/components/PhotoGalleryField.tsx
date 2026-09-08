@@ -8,11 +8,15 @@ import {
   Image,
   Input,
   SimpleGrid,
-  Text,
   VisuallyHidden,
 } from "@chakra-ui/react";
 
-import { RequiredFieldLabel } from "src/components/formElements";
+import {
+  FormToggleButton,
+  RequiredFieldLabel,
+} from "src/components/formElements";
+import personIcon from "assets/person.svg";
+import { SvgImage } from "src/components/SvgImage";
 import { PhotoViewer } from "src/components/PhotoViewer";
 
 type PhotoGalleryItem = {
@@ -32,30 +36,33 @@ type PhotoGalleryFieldProps = {
 };
 
 const styles = {
-  uploadButton: {
-    h: "48px",
+  section: {
     border: "1px solid",
-    borderColor: "app.base",
-    borderRadius: "999px",
-    bg: "app.base",
-    color: "app.white",
+    borderColor: "rgba(53, 87, 45, 0.18)",
+    borderRadius: "18px",
+    bg: "rgba(53, 87, 45, 0.035)",
+    boxShadow:
+      "inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 7px 18px rgba(53, 87, 45, 0.08)",
+    p: "14px",
+  },
+  uploadButton: {
+    w: "max-content",
+    minW: 0,
+    mt: "12px",
     cursor: "pointer",
-    _hover: { bg: "app.baseDark" },
-    _active: { bg: "app.baseDark" },
   },
   photoGrid: {
-    gridTemplateColumns: "repeat(2, minmax(0, 40%))",
+    gridTemplateColumns: "repeat(2, minmax(0, 34%))",
     gap: "10px",
     justifyContent: "start",
-    mt: "12px",
   },
   photoCard: {
     position: "relative",
     overflow: "hidden",
     border: "2px solid",
-    borderColor: "app.bgAux",
+    borderColor: "rgba(53, 87, 45, 0.12)",
     borderRadius: "14px",
-    bg: "app.bgAux",
+    bg: "rgba(53, 87, 45, 0.04)",
   },
   primaryPhotoCard: {
     borderColor: "app.info",
@@ -67,30 +74,24 @@ const styles = {
     objectFit: "cover",
   },
   photoActions: {
-    align: "center",
-    justify: "space-between",
-    gap: "8px",
+    align: "stretch",
+    flexDirection: "column",
+    gap: "6px",
     p: "8px",
     bg: "app.white",
   },
-  primaryBadge: {
-    position: "absolute",
-    top: "8px",
-    left: "8px",
-    px: "8px",
-    py: "4px",
-    borderRadius: "999px",
-    bg: "app.info",
-    color: "app.text",
-    fontSize: "xs",
-    fontWeight: "black",
-  },
   smallButton: {
     h: "32px",
+    minW: 0,
+    w: "100%",
     px: "7px",
     borderRadius: "999px",
     fontSize: "11px",
     fontWeight: "extrabold",
+    _disabled: {
+      cursor: "not-allowed",
+      opacity: 1,
+    },
   },
 } as const;
 
@@ -114,61 +115,77 @@ export function PhotoGalleryField({
   return (
     <FormControl isInvalid={isInvalid}>
       <RequiredFieldLabel>Fotky do galérie</RequiredFieldLabel>
-      <Button
-        type="button"
-        onClick={() => photoInputRef.current?.click()}
-        {...styles.uploadButton}
-      >
-        Nahrať fotky
-        <VisuallyHidden>
-          <Input
-            ref={photoInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={onPhotoUpload}
-          />
-        </VisuallyHidden>
-      </Button>
-      <FormErrorMessage color="app.error">{error}</FormErrorMessage>
+      <Box {...styles.section}>
+        {photos.length > 0 && (
+          <SimpleGrid {...styles.photoGrid}>
+            {photos.map((photo, index) => (
+              <Box
+                key={photo.id}
+                {...styles.photoCard}
+                {...(photo.isPrimary ? styles.primaryPhotoCard : {})}
+              >
+                <Image
+                  src={photo.url}
+                  alt={photo.name}
+                  onClick={() => setSelectedPhotoIndex(index)}
+                  {...styles.photo}
+                />
+                <Flex {...styles.photoActions}>
+                  <FormToggleButton
+                    aria-pressed={photo.isPrimary}
+                    colorVariant="orange"
+                    isDisabled={photo.isPrimary}
+                    isSelected={photo.isPrimary}
+                    icon={
+                      <SvgImage
+                        src={personIcon}
+                        boxSize="100%"
+                        filter={
+                          photo.isPrimary ? "brightness(0) invert(1)" : undefined
+                        }
+                      />
+                    }
+                    onClick={() => onSetPrimaryPhoto(photo.id)}
+                    size="sm"
+                    {...styles.smallButton}
+                  >
+                    Profilová
+                  </FormToggleButton>
+                  <Button
+                    type="button"
+                    onClick={() => onRemovePhoto(photo.id)}
+                    variant="ghost"
+                    {...styles.smallButton}
+                    _hover={{ bg: "rgba(53, 87, 45, 0.06)" }}
+                    _active={{ bg: "rgba(53, 87, 45, 0.1)" }}
+                  >
+                    Zmazať
+                  </Button>
+                </Flex>
+              </Box>
+            ))}
+          </SimpleGrid>
+        )}
 
-      {photos.length > 0 && (
-        <SimpleGrid {...styles.photoGrid}>
-          {photos.map((photo, index) => (
-            <Box
-              key={photo.id}
-              {...styles.photoCard}
-              {...(photo.isPrimary ? styles.primaryPhotoCard : {})}
-            >
-              <Image
-                src={photo.url}
-                alt={photo.name}
-                onClick={() => setSelectedPhotoIndex(index)}
-                {...styles.photo}
-              />
-              {photo.isPrimary && <Text {...styles.primaryBadge}>Hlavná</Text>}
-              <Flex {...styles.photoActions}>
-                <Button
-                  type="button"
-                  onClick={() => onSetPrimaryPhoto(photo.id)}
-                  isDisabled={photo.isPrimary}
-                  {...styles.smallButton}
-                >
-                  Nastaviť
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() => onRemovePhoto(photo.id)}
-                  variant="ghost"
-                  {...styles.smallButton}
-                >
-                  Zmazať
-                </Button>
-              </Flex>
-            </Box>
-          ))}
-        </SimpleGrid>
-      )}
+        <FormToggleButton
+          isSelected
+          type="button"
+          onClick={() => photoInputRef.current?.click()}
+          {...styles.uploadButton}
+        >
+          Nahrať fotky
+          <VisuallyHidden>
+            <Input
+              ref={photoInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={onPhotoUpload}
+            />
+          </VisuallyHidden>
+        </FormToggleButton>
+        <FormErrorMessage color="app.error">{error}</FormErrorMessage>
+      </Box>
 
       <PhotoViewer
         initialIndex={selectedPhotoIndex}

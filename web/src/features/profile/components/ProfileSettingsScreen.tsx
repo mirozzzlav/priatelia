@@ -33,7 +33,7 @@ type ProfileSettingsScreenProps = {
 const styles = {
   form: {
     display: "grid",
-    gap: "18px",
+    gap: "22px",
   },
   passwordLink: {
     justifySelf: "start",

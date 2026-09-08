@@ -22,7 +22,7 @@ type PasswordSettingsScreenProps = {
 const styles = {
   form: {
     display: "grid",
-    gap: "18px",
+    gap: "22px",
   },
 } as const;
 

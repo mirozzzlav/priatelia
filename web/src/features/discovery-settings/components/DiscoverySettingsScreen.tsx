@@ -41,7 +41,7 @@ type DiscoverySettingsScreenProps = {
 const styles = {
   form: {
     display: "grid",
-    gap: "18px",
+    gap: "22px",
   },
   ageGrid: {
     columns: 2,

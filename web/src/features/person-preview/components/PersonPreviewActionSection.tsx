@@ -9,7 +9,7 @@ import type {
 
 const styles = {
   actions: {
-    pb: "5px",
+    p: "18px 0 0 0",
   },
 } as const;
 
