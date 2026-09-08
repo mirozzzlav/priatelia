@@ -36,7 +36,9 @@ type DiscoveryRouteProps = {
 
 const styles = {
   deck: {
-    minH: "calc(100vh - 64px)",
+    minH: "calc(100dvh - 64px)",
+    display: "flex",
+    flexDirection: "column",
     px: { base: "12px", sm: "16px" },
     pb: "22px",
   },
@@ -172,7 +174,10 @@ export function DiscoveryRoute({
       <Box {...styles.deck}>
         {isEmptyDiscovery && discoveryTopPanel}
         <InfoScreen
+          flex="1"
           message={error}
+          minH={0}
+          py="24px"
           title={isEmptyDiscovery ? "Žiadny nový priateľ" : "Chyba načítania"}
           variant={isEmptyDiscovery ? "info" : "error"}
         />

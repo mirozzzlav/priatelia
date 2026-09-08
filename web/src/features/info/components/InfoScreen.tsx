@@ -1,4 +1,4 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Box, Heading, Text, type BoxProps } from "@chakra-ui/react";
 
 import { PrimaryButton } from "src/components/formElements";
 import { CenteredStatusLayout } from "src/components/layouts";
@@ -6,7 +6,7 @@ import { StatusIcon, type StatusIconVariant } from "src/components/StatusIcon";
 
 type InfoScreenVariant = StatusIconVariant;
 
-type InfoScreenProps = {
+type InfoScreenProps = Omit<BoxProps, "title"> & {
   actionLabel?: string;
   message: string;
   onActionClick?: () => void;
@@ -62,9 +62,10 @@ export function InfoScreen({
   onActionClick,
   title,
   variant = "info",
+  ...layoutProps
 }: InfoScreenProps) {
   return (
-    <CenteredStatusLayout>
+    <CenteredStatusLayout {...layoutProps}>
       <Box {...styles.content}>
         <Box {...styles.iconWrap(variant)}>
           <StatusIcon variant={variant} boxSize="58px" />
