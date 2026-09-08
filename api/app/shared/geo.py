@@ -51,7 +51,6 @@ ALLOWED_NOMINATIM_ADDRESS_TYPES = {
     "borough",
     "city",
     "city_district",
-    "hamlet",
     "municipality",
     "neighbourhood",
     "quarter",
@@ -97,25 +96,7 @@ def get_location_label(result: dict[str, Any]) -> str:
 
 def is_allowed_nominatim_result(result: dict[str, Any]) -> bool:
     address_type = result.get("addresstype")
-    if address_type in ALLOWED_NOMINATIM_ADDRESS_TYPES:
-        return True
-
-    address = result.get("address") or {}
-    return any(
-        address.get(key)
-        for key in [
-            "borough",
-            "city",
-            "city_district",
-            "hamlet",
-            "municipality",
-            "neighbourhood",
-            "quarter",
-            "suburb",
-            "town",
-            "village",
-        ]
-    )
+    return address_type in ALLOWED_NOMINATIM_ADDRESS_TYPES
 
 
 def get_nominatim_result_priority(result: dict[str, Any]) -> int:

@@ -5,6 +5,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 import { AutocompleteField } from "src/components/AutocompleteField";
+import { minLocationSearchLength } from "src/constants/locations";
 import type { LocationOption } from "src/services/api";
 import { apiClient } from "src/services/api";
 
@@ -51,7 +52,7 @@ export function LocationSearchField({
   useEffect(() => {
     latestQueryRef.current = value;
 
-    if (value.trim().length < 3) {
+    if (value.trim().length < minLocationSearchLength) {
       return;
     }
 
@@ -92,7 +93,7 @@ export function LocationSearchField({
   }, [value]);
 
   const handleQueryChange = (nextValue: string) => {
-    if (nextValue.trim().length < 3) {
+    if (nextValue.trim().length < minLocationSearchLength) {
       setOptions([]);
       setIsSearching(false);
       setSearchError(null);

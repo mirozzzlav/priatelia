@@ -11,6 +11,7 @@ import type {
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import type { EditableProfileData } from "src/features/profile";
 import type { Gender } from "src/constants/gender";
+import { minLocationSearchLength } from "src/constants/locations";
 import {
   maxProfilePhotoCount,
   maxProfilePhotoError,
@@ -475,7 +476,7 @@ export const mockClient: ApiClient = {
     const normalizedQuery = query.trim().toLocaleLowerCase("sk");
     await delay();
 
-    if (normalizedQuery.length < 3) {
+    if (normalizedQuery.length < minLocationSearchLength) {
       return [];
     }
 
