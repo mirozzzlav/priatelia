@@ -14,6 +14,8 @@ function escapeHtml(value: string) {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const devPort = Number(env.VITE_DEV_PORT ?? 4444);
+  const mediaProxyTarget =
+    env.VITE_MEDIA_PROXY_TARGET ?? env.MEDIA_PROXY_TARGET ?? "http://localhost:9000";
 
   return {
     build: {
@@ -49,6 +51,12 @@ export default defineConfig(({ mode }) => {
     server: {
       host: env.VITE_DEV_HOST ?? "0.0.0.0",
       port: Number.isNaN(devPort) ? 4444 : devPort,
+      proxy: {
+        "/profile-photos": {
+          changeOrigin: true,
+          target: mediaProxyTarget,
+        },
+      },
     },
   };
 });

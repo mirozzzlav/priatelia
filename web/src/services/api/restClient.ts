@@ -1,4 +1,11 @@
-import type { ApiClient, LoginResponse } from "src/services/api/types";
+import type {
+  ApiClient,
+  ChatMatch,
+  ChatThread,
+  LoginResponse,
+  UploadedProfilePhoto,
+} from "src/services/api/types";
+import type { PersonPreview } from "src/features/person-preview";
 import type { EditableProfileData } from "src/features/profile";
 import type { RegistrationPhoto } from "src/features/registration";
 import {
@@ -14,6 +21,7 @@ type ProfileApiData = Omit<
 };
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "/api";
+const mediaPathPrefix = "/profile-photos/";
 
 function isApiErrorResponse(value: unknown) {
   return (
@@ -119,7 +127,24 @@ function stripLocalPhotoFile(photo: RegistrationPhoto): RegistrationPhoto {
     id: photo.id,
     isPrimary: photo.isPrimary,
     name: photo.name,
-    url: photo.url,
+    url: normalizeMediaUrl(photo.url),
+  };
+}
+
+function normalizeMediaUrl(url: string) {
+  const mediaPathIndex = url.indexOf(mediaPathPrefix);
+
+  if (mediaPathIndex < 0) {
+    return url;
+  }
+
+  return url.slice(mediaPathIndex);
+}
+
+function normalizeProfilePhoto(photo: RegistrationPhoto): RegistrationPhoto {
+  return {
+    ...photo,
+    url: normalizeMediaUrl(photo.url),
   };
 }
 
@@ -138,7 +163,7 @@ async function uploadLocalPhotos<TData extends { photos: RegistrationPhoto[] }>(
         id: photo.id,
         isPrimary: photo.isPrimary,
         name: uploadedPhoto.name || photo.name,
-        url: uploadedPhoto.url,
+        url: normalizeMediaUrl(uploadedPhoto.url),
       };
     }),
   );
@@ -164,7 +189,11 @@ export const restClient: ApiClient = {
   },
 
   getPersonPreview() {
-    return request("/discovery/profile");
+    return request<PersonPreview>("/discovery/profile").then((profile) => ({
+      ...profile,
+      photo: normalizeMediaUrl(profile.photo),
+      photos: profile.photos.map(normalizeMediaUrl),
+    }));
   },
 
   getDiscoverySettings() {
@@ -179,6 +208,7 @@ export const restClient: ApiClient = {
       lookingFor: profile.lookingFor ?? "",
       password: "",
       passwordConfirmation: "",
+      photos: profile.photos.map(normalizeProfilePhoto),
     };
   },
 
@@ -193,11 +223,22 @@ export const restClient: ApiClient = {
   },
 
   getChatMatches() {
-    return request("/chats/matches");
+    return request<ChatMatch[]>("/chats/matches").then((matches) =>
+      matches.map((match) => ({
+        ...match,
+        photo: normalizeMediaUrl(match.photo),
+      })),
+    );
   },
 
   getChatThread(matchId) {
-    return request(`/chats/matches/${matchId}`);
+    return request<ChatThread>(`/chats/matches/${matchId}`).then((thread) => ({
+      ...thread,
+      match: {
+        ...thread.match,
+        photo: normalizeMediaUrl(thread.match.photo),
+      },
+    }));
   },
 
   async markChatMatchesSeen(matchIds) {
@@ -263,7 +304,13 @@ export const restClient: ApiClient = {
     const formData = new FormData();
     formData.set("file", file);
 
-    return uploadRequest("/media/profile-photos", formData);
+    return uploadRequest<UploadedProfilePhoto>(
+      "/media/profile-photos",
+      formData,
+    ).then((photo) => ({
+      ...photo,
+      url: normalizeMediaUrl(photo.url),
+    }));
   },
 
   async submitPersonPreviewAction(personPreviewId, action) {
