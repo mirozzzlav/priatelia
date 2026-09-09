@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 
+import { useChatMatches } from "src/context/chatMatches";
 import { ChatThreadScreen } from "src/features/messages";
 import { apiClient, type ChatMessage, type ChatThread } from "src/services/api";
 import {
@@ -36,6 +37,7 @@ export function ChatThreadRoute() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { markMatchMessagesRead } = useChatMatches();
 
   useEffect(() => {
     if (!matchId) {
@@ -53,6 +55,7 @@ export function ChatThreadRoute() {
 
         if (isMounted) {
           setThread(nextThread);
+          markMatchMessagesRead(matchId);
         }
       } catch {
         if (isMounted) {
@@ -70,7 +73,7 @@ export function ChatThreadRoute() {
     return () => {
       isMounted = false;
     };
-  }, [matchId]);
+  }, [markMatchMessagesRead, matchId]);
 
   useEffect(() => {
     if (!matchId || thread?.match.id !== matchId) {
@@ -95,7 +98,10 @@ export function ChatThreadRoute() {
             messages: [...currentThread.messages, message],
           };
         });
-        apiClient.markChatThreadRead(matchId).catch(() => {});
+        apiClient
+          .markChatThreadRead(matchId)
+          .then(() => markMatchMessagesRead(matchId))
+          .catch(() => {});
       },
       onReceiptUpdate: (receipt) => {
         setThread((currentThread) => {
@@ -121,7 +127,7 @@ export function ChatThreadRoute() {
     return () => {
       socket?.close();
     };
-  }, [matchId, thread?.match.id]);
+  }, [markMatchMessagesRead, matchId, thread?.match.id]);
 
   const handleSendMessage = useCallback(async (text: string) => {
     if (!matchId) {

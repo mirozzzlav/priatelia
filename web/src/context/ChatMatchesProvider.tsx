@@ -62,6 +62,14 @@ export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
     [reloadMatches],
   );
 
+  const markMatchMessagesRead = useCallback((matchId: string) => {
+    setMatches((currentMatches) =>
+      currentMatches.map((match) =>
+        match.id === matchId ? { ...match, unreadCount: 0 } : match,
+      ),
+    );
+  }, []);
+
   useEffect(() => {
     if (!isAuthenticated) {
       return;
@@ -104,6 +112,7 @@ export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
   const value = useMemo<ChatMatchesContextValue>(
     () => ({
       isLoadingMatches: isAuthenticated ? isLoadingMatches : false,
+      markMatchMessagesRead,
       markMatchesSeen,
       matchesError: isAuthenticated ? matchesError : null,
       matches: visibleMatches,
@@ -114,6 +123,7 @@ export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
     [
       isAuthenticated,
       isLoadingMatches,
+      markMatchMessagesRead,
       markMatchesSeen,
       matchesError,
       newDiscoveryMatches,

@@ -4,6 +4,7 @@ import type { ChatMatch } from "src/services/api";
 
 export type ChatMatchesContextValue = {
   isLoadingMatches: boolean;
+  markMatchMessagesRead: (matchId: string) => void;
   markMatchesSeen: (matchIds: string[]) => void;
   matchesError: string | null;
   matches: ChatMatch[];
