@@ -25,10 +25,8 @@ case "${1:-all}" in
     ;;
 esac
 
-WEB_ENDPOINT=$(docker compose -f "$COMPOSE_FILE" port web 80 | tail -n 1)
-
 for attempt in {1..30}; do
-  if curl -fsS "http://${WEB_ENDPOINT}/api/health" >/dev/null; then
+  if curl -fsS http://127.0.0.1:4445/api/health >/dev/null; then
     exit 0
   fi
 
