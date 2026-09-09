@@ -5,7 +5,7 @@ import { CenteredStatusLayout } from "src/components/layouts";
 import { LoadingPill } from "src/components/LoadingPill";
 import { PhotoViewer } from "src/components/PhotoViewer";
 import { useChatMatches } from "src/context/chatMatches";
-import { DiscoveryTopPanel } from "src/features/discovery";
+import { DiscoveryIntroBanner, DiscoveryTopPanel } from "src/features/discovery";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import { InfoScreen } from "src/features/info";
 import {
@@ -149,6 +149,7 @@ export function DiscoveryRoute({
   if (isLoadingPersonPreview && !personPreview) {
     return (
       <Box {...styles.deck}>
+        <DiscoveryIntroBanner />
         <CenteredStatusLayout minH="calc(100vh - 108px)" px="16px" py={0}>
           <LoadingPill text="Hľadám ti ďalšieho priateľa." />
         </CenteredStatusLayout>
@@ -161,6 +162,7 @@ export function DiscoveryRoute({
 
     return (
       <Box {...styles.deck}>
+        <DiscoveryIntroBanner />
         {isEmptyDiscovery && discoveryTopPanel}
         <InfoScreen
           flex="1"
@@ -178,6 +180,7 @@ export function DiscoveryRoute({
     <Box {...styles.deck}>
       {personPreview && (
         <>
+          <DiscoveryIntroBanner />
           {discoveryTopPanel}
           <PersonPreviewPhoto
             activeAction={activeAction}
