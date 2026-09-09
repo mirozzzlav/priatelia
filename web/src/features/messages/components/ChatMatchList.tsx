@@ -1,5 +1,6 @@
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 
+import { CountBadge } from "src/components/CountBadge";
 import type { ChatMatch } from "src/services/api";
 
 type ChatMatchListProps = {
@@ -24,7 +25,8 @@ const styles = {
     boxShadow: "0 7px 18px rgba(53, 87, 45, 0.08)",
     color: "app.text",
     textAlign: "left",
-    transition: "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
+    transition:
+      "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
     _hover: {
       bg: "rgba(53, 87, 45, 0.06)",
       borderColor: "rgba(53, 87, 45, 0.26)",
@@ -65,15 +67,7 @@ const styles = {
     noOfLines: 1,
   },
   unreadBadge: {
-    minW: "24px",
-    h: "24px",
-    align: "center",
-    justify: "center",
-    borderRadius: "999px",
-    bg: "app.bgAux",
-    color: "app.text",
-    fontSize: "xs",
-    fontWeight: "black",
+    flexShrink: 0,
   },
 } as const;
 
@@ -99,7 +93,9 @@ export function ChatMatchList({ matches, onMatchClick }: ChatMatchListProps) {
               </Text>
             </Flex>
             {match.unreadCount > 0 && (
-              <Flex {...styles.unreadBadge}>{match.unreadCount}</Flex>
+              <CountBadge {...styles.unreadBadge}>
+                {match.unreadCount}
+              </CountBadge>
             )}
           </Flex>
         </Button>

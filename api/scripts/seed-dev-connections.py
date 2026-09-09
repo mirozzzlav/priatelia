@@ -26,6 +26,13 @@ class SeedProfile:
     looking_for: str | None = None
 
 
+@dataclass(frozen=True)
+class SeedChatMessage:
+    sender: str
+    text: str
+    minutes_ago: int
+
+
 MIRKO = SeedProfile(
     nickname="mirko",
     email="mirko@priatelia.local",
@@ -410,6 +417,45 @@ CONNECTIONS = [
     ),
 ]
 
+SEED_CHAT_MESSAGES_BY_NICKNAME: dict[str, list[SeedChatMessage]] = {
+    "Lucia": [
+        SeedChatMessage(
+            sender="other",
+            text="Ahoj Mirko, videla som, že máš rád pokojné prechádzky. Nechceš niekedy zájsť k Dunaju?",
+            minutes_ago=32,
+        ),
+        SeedChatMessage(
+            sender="other",
+            text="Poznám tam jedno tiché miesto na kávu, mohlo by sa ti páčiť.",
+            minutes_ago=18,
+        ),
+    ],
+    "Peter": [
+        SeedChatMessage(
+            sender="other",
+            text="Čau Mirko, cez víkend idem na krátky výlet do Malých Karpát. Pridal by si sa?",
+            minutes_ago=74,
+        ),
+    ],
+    "Veronika": [
+        SeedChatMessage(
+            sender="other",
+            text="Ahoj, hľadám niekoho na nenáročnú prechádzku okolo Senca. Máš chuť?",
+            minutes_ago=126,
+        ),
+        SeedChatMessage(
+            sender="mirko",
+            text="Ahoj, Senec znie dobre. Kedy by ti to vyhovovalo?",
+            minutes_ago=91,
+        ),
+        SeedChatMessage(
+            sender="other",
+            text="Najlepšie sobota doobeda. Potom môžeme dať aj kávu.",
+            minutes_ago=47,
+        ),
+    ],
+}
+
 LEGACY_NICKNAME_RENAMES = {
     "lucia-dev": "Lucia",
     "peter-dev": "Peter",
@@ -555,6 +601,46 @@ def create_match(cursor: psycopg.Cursor, user_id: str, other_user_id: str) -> st
     return str(cursor.fetchone()["id"])
 
 
+def seed_chat_messages(
+    cursor: psycopg.Cursor,
+    match_id: str,
+    mirko_id: str,
+    other_user_id: str,
+    messages: list[SeedChatMessage],
+) -> None:
+    cursor.execute(
+        """
+        INSERT INTO chat_threads (match_id)
+        VALUES (%s)
+        ON CONFLICT (match_id) DO UPDATE
+        SET match_id = EXCLUDED.match_id
+        RETURNING id
+        """,
+        (match_id,),
+    )
+    thread_id = cursor.fetchone()["id"]
+    seed_texts = [message.text for message in messages]
+
+    cursor.execute(
+        """
+        DELETE FROM chat_messages
+        WHERE thread_id = %s
+          AND text = ANY(%s)
+        """,
+        (thread_id, seed_texts),
+    )
+
+    for message in messages:
+        sender_user_id = mirko_id if message.sender == "mirko" else other_user_id
+        cursor.execute(
+            """
+            INSERT INTO chat_messages (thread_id, sender_user_id, text, sent_at)
+            VALUES (%s, %s, %s, now() - (%s * interval '1 minute'))
+            """,
+            (thread_id, sender_user_id, message.text, message.minutes_ago),
+        )
+
+
 def main() -> None:
     settings = get_settings()
     seed_match_ids: list[str] = []
@@ -592,7 +678,20 @@ def main() -> None:
 
             for profile in CONNECTIONS:
                 other_user_id = upsert_user(cursor, profile)
-                seed_match_ids.append(create_match(cursor, mirko_id, other_user_id))
+                match_id = create_match(cursor, mirko_id, other_user_id)
+                seed_match_ids.append(match_id)
+
+                seed_messages = SEED_CHAT_MESSAGES_BY_NICKNAME.get(
+                    profile.nickname,
+                )
+                if seed_messages:
+                    seed_chat_messages(
+                        cursor,
+                        match_id,
+                        mirko_id,
+                        other_user_id,
+                        seed_messages,
+                    )
 
             cursor.execute(
                 "DELETE FROM match_views WHERE user_id = %s AND match_id = ANY(%s)",

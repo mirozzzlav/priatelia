@@ -9,7 +9,6 @@ export type ChatMatchesContextValue = {
   matches: ChatMatch[];
   newDiscoveryMatchCount: number;
   newDiscoveryMatches: ChatMatch[];
-  recentDiscoveryMatches: ChatMatch[];
   reloadMatches: () => Promise<ChatMatch[]>;
 };
 

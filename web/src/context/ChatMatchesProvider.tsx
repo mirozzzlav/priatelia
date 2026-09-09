@@ -18,7 +18,6 @@ type ChatMatchesProviderProps = {
 };
 
 const emptyMatches: ChatMatch[] = [];
-const recentDiscoveryMatchLimit = 8;
 
 export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
   const { isAuthenticated } = useAuth();
@@ -101,13 +100,6 @@ export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
     () => visibleMatches.filter((match) => match.isNew && !match.lastMessage),
     [visibleMatches],
   );
-  const recentDiscoveryMatches = useMemo(
-    () =>
-      visibleMatches
-        .filter((match) => !match.lastMessage)
-        .slice(0, recentDiscoveryMatchLimit),
-    [visibleMatches],
-  );
 
   const value = useMemo<ChatMatchesContextValue>(
     () => ({
@@ -117,7 +109,6 @@ export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
       matches: visibleMatches,
       newDiscoveryMatchCount: newDiscoveryMatches.length,
       newDiscoveryMatches,
-      recentDiscoveryMatches,
       reloadMatches,
     }),
     [
@@ -126,7 +117,6 @@ export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
       markMatchesSeen,
       matchesError,
       newDiscoveryMatches,
-      recentDiscoveryMatches,
       reloadMatches,
       visibleMatches,
     ],

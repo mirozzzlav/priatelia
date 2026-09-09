@@ -9,8 +9,8 @@ export const topBarStyles = {
     borderRadius: "999px",
     color: "app.base",
     bg: "app.white",
-    _hover: { bg: "app.white" },
-    _active: { bg: "app.white" },
+    _hover: { bg: "#edf3ec" },
+    _active: { bg: "#e7f0e5" },
     _disabled: {
       bg: "app.white",
       borderColor: "app.white",
@@ -43,7 +43,7 @@ export const topBarStyles = {
   },
   menuItemIcon: {
     boxSize: "21px",
-    color: "app.baseDark",
+    color: "app.base",
     flexShrink: 0,
   },
   brand: {
@@ -96,15 +96,9 @@ export const topBarStyles = {
     justifyContent: "center",
     minW: "20px",
     h: "20px",
-    px: "4px",
     border: "2px solid",
     borderColor: "app.white",
-    borderRadius: "999px",
-    bg: "#F97316",
-    color: "app.white",
     fontSize: "11px",
-    fontWeight: "black",
-    lineHeight: 1,
     boxShadow: "0 1px 4px rgba(53, 87, 45, 0.28)",
   },
 } as const;

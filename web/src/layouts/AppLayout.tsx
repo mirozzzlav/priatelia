@@ -1,7 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { Outlet, useNavigate } from "react-router-dom";
 
-import { GlobalNewMatchesPanel } from "src/components/GlobalNewMatchesPanel";
 import { TopBar } from "src/components/TopBar";
 import { useAuth } from "src/context/auth";
 
@@ -33,10 +32,10 @@ export function AppLayout({ onLogout }: AppLayoutProps) {
       <TopBar
         isAuthenticated={auth.isAuthenticated}
         onLogout={handleLogout}
+        onDiscoverClick={() => navigate("/discover")}
         onMessagesClick={() => navigate("/messages")}
         onProfileClick={() => navigate("/profile")}
       />
-      <GlobalNewMatchesPanel />
       <Outlet />
     </Box>
   );
