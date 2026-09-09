@@ -1,7 +1,8 @@
 import { Flex, IconButton } from "@chakra-ui/react";
 
 import { useChatMatches } from "src/context/chatMatches";
-import { MatchIconWithCount } from "src/components/top-bar/MatchIconWithCount";
+import { HeartIconWithCount } from "src/components/top-bar/HeartIconWithCount";
+import { MessageIconWithCount } from "src/components/top-bar/MessageIconWithCount";
 import { TopBarBrand } from "src/components/top-bar/TopBarBrand";
 import { TopBarProfileMenu } from "src/components/top-bar/TopBarProfileMenu";
 import { topBarStyles } from "src/components/top-bar/topBarStyles";
@@ -36,17 +37,11 @@ const styles = {
     position: "relative",
     zIndex: 1,
   },
-  centerBrand: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    maxW: "calc(100% - 132px)",
-    transform: "translate(calc(-50% + 8px), -50%)",
-  },
 } as const;
 
 type TopBarProps = {
   isAuthenticated: boolean;
+  onConnectionsClick: () => void;
   onDiscoverClick: () => void;
   onLogout: () => void;
   onMessagesClick: () => void;
@@ -55,27 +50,17 @@ type TopBarProps = {
 
 export function TopBar({
   isAuthenticated,
+  onConnectionsClick,
   onDiscoverClick,
   onLogout,
   onMessagesClick,
   onProfileClick,
 }: TopBarProps) {
-  const {
-    markMatchesSeen,
-    matches,
-    newDiscoveryMatchCount,
-    newDiscoveryMatches,
-  } = useChatMatches();
+  const { matches, newDiscoveryMatchCount } = useChatMatches();
   const unreadMessageCount = matches.reduce(
     (count, match) => count + match.unreadCount,
     0,
   );
-  const notificationCount = newDiscoveryMatchCount + unreadMessageCount;
-
-  const handleMessagesClick = () => {
-    markMatchesSeen(newDiscoveryMatches.map((match) => match.id));
-    onMessagesClick();
-  };
 
   return (
     <Flex as="header" {...styles.root}>
@@ -87,22 +72,21 @@ export function TopBar({
             onProfileClick={onProfileClick}
           />
         ) : null}
-      </Flex>
-
-      <Flex {...styles.centerBrand}>
         <TopBarBrand />
       </Flex>
 
       {isAuthenticated ? (
         <Flex {...styles.rightActions}>
           <IconButton
-            aria-label="Zobraziť správy a prepojenia"
-            icon={
-              <MatchIconWithCount
-                count={notificationCount}
-              />
-            }
-            onClick={handleMessagesClick}
+            aria-label="Správy"
+            icon={<MessageIconWithCount count={unreadMessageCount} />}
+            onClick={onMessagesClick}
+            {...topBarStyles.iconButton}
+          />
+          <IconButton
+            aria-label="Zobraziť tvoje prepojenia"
+            icon={<HeartIconWithCount count={newDiscoveryMatchCount} />}
+            onClick={onConnectionsClick}
             {...topBarStyles.iconButton}
           />
         </Flex>

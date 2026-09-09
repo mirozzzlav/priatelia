@@ -82,13 +82,13 @@ export const topBarStyles = {
       paintOrder: "stroke fill",
     },
   },
-  matchIconWrap: {
+  countedIconWrap: {
     position: "relative",
     align: "center",
     justify: "center",
     boxSize: "31px",
   },
-  matchIconCount: {
+  iconCount: {
     position: "absolute",
     top: "-5px",
     right: "-8px",

@@ -8,6 +8,7 @@ import { AppLayout } from "src/layouts/AppLayout";
 import { ActivationCompleteRoute } from "src/routes/ActivationCompleteRoute";
 import { ActivationSentRoute } from "src/routes/ActivationSentRoute";
 import { ChatThreadRoute } from "src/routes/ChatThreadRoute";
+import { ConnectionsRoute } from "src/routes/ConnectionsRoute";
 import { CriteriaRoute } from "src/routes/CriteriaRoute";
 import { DiscoveryRoute } from "src/routes/DiscoveryRoute";
 import { LoginRoute } from "src/routes/LoginRoute";
@@ -110,6 +111,14 @@ export function AppRoutes() {
           element={
             <ProtectedRoute>
               <ProfileRoute initialProfile={profileData} onSave={saveProfile} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/connections"
+          element={
+            <ProtectedRoute>
+              <ConnectionsRoute />
             </ProtectedRoute>
           }
         />
