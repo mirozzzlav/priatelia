@@ -491,6 +491,18 @@ export const mockClient: ApiClient = {
     return buildChatMatches();
   },
 
+  async getChatMatchProfile(matchId) {
+    await delay();
+
+    const profile = getPersonPreviewById(matchId);
+
+    if (!profile || !chatMatchIds.has(matchId)) {
+      throw new Error(`Chat match profile not found: ${matchId}`);
+    }
+
+    return profile;
+  },
+
   async getChatThread(matchId) {
     await delay();
 

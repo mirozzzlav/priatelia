@@ -57,6 +57,17 @@ const styles = {
     aspectRatio: "1",
     objectFit: "cover",
   },
+  photoButton: {
+    display: "block",
+    h: "auto",
+    minW: 0,
+    p: 0,
+    borderRadius: 0,
+    overflow: "hidden",
+    _focusVisible: {
+      boxShadow: "inset 0 0 0 3px rgba(79, 131, 68, 0.32)",
+    },
+  },
   cardBody: {
     display: "grid",
     gap: "10px",
@@ -68,6 +79,20 @@ const styles = {
     fontWeight: "black",
     lineHeight: 1.1,
     noOfLines: 1,
+  },
+  nameButton: {
+    display: "block",
+    h: "auto",
+    minW: 0,
+    p: 0,
+    textAlign: "left",
+    _hover: {
+      color: "app.baseDark",
+      textDecoration: "underline",
+    },
+    _focusVisible: {
+      boxShadow: "0 0 0 3px rgba(79, 131, 68, 0.22)",
+    },
   },
   meta: {
     color: "app.text",
@@ -195,10 +220,33 @@ export function ConnectionsRoute() {
           unstartedConnections.map((match) => (
             <Box key={match.id} {...styles.card}>
               {match.isNew && <Badge {...styles.newBadge}>Nové</Badge>}
-              <Image src={match.photo} alt={match.name} {...styles.photo} />
+              <Button
+                aria-label={`Otvoriť profil: ${match.name}`}
+                onClick={() =>
+                  navigate(`/people/${match.id}`, {
+                    state: { from: "/connections" },
+                  })
+                }
+                type="button"
+                variant="unstyled"
+                {...styles.photoButton}
+              >
+                <Image src={match.photo} alt={match.name} {...styles.photo} />
+              </Button>
               <Box {...styles.cardBody}>
                 <Box>
-                  <Text {...styles.name}>{match.name}</Text>
+                  <Button
+                    onClick={() =>
+                      navigate(`/people/${match.id}`, {
+                        state: { from: "/connections" },
+                      })
+                    }
+                    type="button"
+                    variant="unstyled"
+                    {...styles.nameButton}
+                  >
+                    <Text {...styles.name}>{match.name}</Text>
+                  </Button>
                   <Text {...styles.meta}>
                     {match.age} · {match.location}
                   </Text>

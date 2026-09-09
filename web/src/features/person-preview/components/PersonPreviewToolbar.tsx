@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 
 import locationPinIcon from "assets/location-pin.svg";
 import { ProfileMetaTag } from "src/components/ProfileMetaTag";
@@ -28,59 +28,113 @@ const styles = {
     minW: 0,
     maxW: "100%",
   },
-  name: {
-    m: 0,
-    minW: 0,
-    overflow: "hidden",
-    color: "app.text",
-    fontSize: { base: "2xl", sm: "3xl" },
-    lineHeight: 1.05,
-    letterSpacing: 0,
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    fontWeight: "black",
-  },
-  age: {
-    flexShrink: 0,
-    fontSize: { base: "2xl", sm: "3xl" },
-    fontWeight: "bold",
-    color: "app.text",
-    lineHeight: 1.05,
-  },
-  identityDivider: {
-    flexShrink: 0,
-    alignSelf: "center",
-    w: "1px",
-    h: { base: "22px", sm: "26px" },
-    bg: "rgba(53, 87, 45, 0.22)",
-  },
+  name: (size: PersonPreviewIdentitySize) =>
+    ({
+      m: 0,
+      minW: 0,
+      overflow: "hidden",
+      color: "app.text",
+      fontSize: size === "compact" ? "md" : { base: "2xl", sm: "3xl" },
+      lineHeight: 1.05,
+      letterSpacing: 0,
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontWeight: "black",
+    }) as const,
+  age: (size: PersonPreviewIdentitySize) =>
+    ({
+      flexShrink: 0,
+      fontSize: size === "compact" ? "sm" : { base: "2xl", sm: "3xl" },
+      fontWeight: "bold",
+      color: "app.text",
+      lineHeight: 1.05,
+    }) as const,
+  identityDivider: (size: PersonPreviewIdentitySize) =>
+    ({
+      flexShrink: 0,
+      alignSelf: "center",
+      w: "1px",
+      h: size === "compact" ? "16px" : { base: "22px", sm: "26px" },
+      bg: "rgba(53, 87, 45, 0.22)",
+    }) as const,
   metaRow: {
     mt: { base: "9px", sm: "11px" },
     minW: 0,
   },
 } as const;
 
+type PersonPreviewIdentitySize = "compact" | "default";
+
+type PersonPreviewIdentityProps = {
+  age: string;
+  name: string;
+  nameClassName?: string;
+  onNameClick?: () => void;
+  size?: PersonPreviewIdentitySize;
+};
+
 type PersonPreviewToolbarProps = {
   person: PersonPreview;
 };
 
+function getAgeText(age: string) {
+  const ageValue = Number.parseInt(age, 10);
+  return Number.isNaN(ageValue)
+    ? age
+    : `${ageValue} ${getSlovakCountWord("rok", ageValue)}`;
+}
+
+export function PersonPreviewIdentity({
+  age,
+  name,
+  nameClassName,
+  onNameClick,
+  size = "default",
+}: PersonPreviewIdentityProps) {
+  const ageText = getAgeText(age);
+  const nameElement = (
+    <Heading as="h1" className={nameClassName} {...styles.name(size)}>
+      {name}
+    </Heading>
+  );
+
+  return (
+    <Flex {...styles.identityGroup}>
+      {onNameClick ? (
+        <Button
+          onClick={onNameClick}
+          type="button"
+          variant="unstyled"
+          h="auto"
+          minW={0}
+          p={0}
+          textAlign="left"
+          _hover={{
+            color: "app.baseDark",
+            textDecoration: "underline",
+          }}
+          _focusVisible={{
+            boxShadow: "0 0 0 3px rgba(79, 131, 68, 0.22)",
+          }}
+        >
+          {nameElement}
+        </Button>
+      ) : (
+        nameElement
+      )}
+      <Box aria-hidden="true" {...styles.identityDivider(size)} />
+      <Text {...styles.age(size)}>{ageText}</Text>
+    </Flex>
+  );
+}
+
 export function PersonPreviewToolbar({ person }: PersonPreviewToolbarProps) {
   const city = person.meta[0];
-  const ageValue = Number.parseInt(person.age, 10);
-  const ageText = Number.isNaN(ageValue)
-    ? person.age
-    : `${ageValue} ${getSlovakCountWord("rok", ageValue)}`;
 
   return (
     <Box {...styles.root}>
       <Flex {...styles.identityRow}>
-        <Flex {...styles.identityGroup}>
-          <Heading as="h1" {...styles.name}>
-            {person.name}
-          </Heading>
-          <Box aria-hidden="true" {...styles.identityDivider} />
-          <Text {...styles.age}>{ageText}</Text>
-        </Flex>
+        <PersonPreviewIdentity age={person.age} name={person.name} />
       </Flex>
       {city && (
         <Box {...styles.metaRow}>

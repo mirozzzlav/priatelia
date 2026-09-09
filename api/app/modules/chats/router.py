@@ -50,6 +50,21 @@ async def mark_chat_matches_seen(
     await connection.commit()
 
 
+@router.get("/chats/matches/{match_id}/profile")
+async def get_chat_match_profile(
+    match_id: UUID,
+    current_user: CurrentUser = Depends(get_current_user),
+    connection: AsyncConnection = Depends(get_connection),
+):
+    profile = await _service(connection).get_match_profile(current_user.id, match_id)
+    if profile is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Profile not found",
+        )
+    return profile.model_dump()
+
+
 @router.get("/chats/matches/{match_id}")
 async def get_chat_thread(
     match_id: UUID,

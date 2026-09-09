@@ -141,6 +141,7 @@ export type DiscoverySettingsResponse = ApiResponse<
 export type ApiClient = {
   activateAccount: (token: string | null) => Promise<UserSession>;
   getChatMatches: () => Promise<ChatMatch[]>;
+  getChatMatchProfile: (matchId: string) => Promise<PersonPreview>;
   getChatThread: (matchId: string) => Promise<ChatThread>;
   markChatMatchesSeen: (matchIds: string[]) => Promise<void>;
   markChatThreadRead: (matchId: string) => Promise<void>;

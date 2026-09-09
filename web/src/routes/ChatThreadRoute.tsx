@@ -129,30 +129,33 @@ export function ChatThreadRoute() {
     };
   }, [markMatchMessagesRead, matchId, thread?.match.id]);
 
-  const handleSendMessage = useCallback(async (text: string) => {
-    if (!matchId) {
-      return;
-    }
+  const handleSendMessage = useCallback(
+    async (text: string) => {
+      if (!matchId) {
+        return;
+      }
 
-    setIsSending(true);
+      setIsSending(true);
 
-    try {
-      const message = await apiClient.sendChatMessage(matchId, { text });
+      try {
+        const message = await apiClient.sendChatMessage(matchId, { text });
 
-      setThread((currentThread) => {
-        if (!currentThread) {
-          return currentThread;
-        }
+        setThread((currentThread) => {
+          if (!currentThread) {
+            return currentThread;
+          }
 
-        return {
-          ...currentThread,
-          messages: [...currentThread.messages, message],
-        };
-      });
-    } finally {
-      setIsSending(false);
-    }
-  }, [matchId]);
+          return {
+            ...currentThread,
+            messages: [...currentThread.messages, message],
+          };
+        });
+      } finally {
+        setIsSending(false);
+      }
+    },
+    [matchId],
+  );
 
   const handleBack = useCallback(() => {
     navigate("/messages");
@@ -168,6 +171,11 @@ export function ChatThreadRoute() {
       isLoading={isLoading}
       isSending={isSending}
       onBack={handleBack}
+      onProfileClick={(profileMatchId) =>
+        navigate(`/people/${profileMatchId}`, {
+          state: { from: `/messages/${profileMatchId}` },
+        })
+      }
       onSendMessage={handleSendMessage}
       thread={thread}
     />

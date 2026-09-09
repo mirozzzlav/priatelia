@@ -1,10 +1,10 @@
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, type FlexProps } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
 import { SvgImage } from "src/components/SvgImage";
 
 type ProfileMetaTagType = "default" | "special";
-type ProfileMetaTagSize = "sm" | "md";
+type ProfileMetaTagSize = "compact" | "sm" | "md";
 
 const styles = {
   tag: (size: ProfileMetaTagSize) =>
@@ -14,8 +14,8 @@ const styles = {
       minW: 0,
       w: "fit-content",
       maxW: "100%",
-      px: size === "sm" ? "7px" : "8px",
-      py: size === "sm" ? "4px" : "5px",
+      px: size === "compact" ? "6px" : size === "sm" ? "7px" : "8px",
+      py: size === "compact" ? "3px" : size === "sm" ? "4px" : "5px",
       border: "1px solid",
       borderColor: "rgba(53, 87, 45, 0.08)",
       borderRadius: "999px",
@@ -24,8 +24,8 @@ const styles = {
   specialTag: (size: ProfileMetaTagSize) =>
     ({
       columnGap: size === "sm" ? "5px" : "6px",
-      px: size === "sm" ? "8px" : "9px",
-      py: size === "sm" ? "5px" : "6px",
+      px: size === "compact" ? "7px" : size === "sm" ? "8px" : "9px",
+      py: size === "compact" ? "4px" : size === "sm" ? "5px" : "6px",
       borderColor: "app.info",
       bg: "app.bgAux",
       boxShadow:
@@ -39,13 +39,17 @@ const styles = {
     ({
       flexShrink: 0,
       boxSize:
-        size === "sm"
+        size === "compact"
           ? type === "default"
-            ? "16px"
-            : "15px"
-          : type === "default"
-            ? { base: "20px", sm: "22px" }
-            : "17px",
+            ? "13px"
+            : "12px"
+          : size === "sm"
+            ? type === "default"
+              ? "16px"
+              : "15px"
+            : type === "default"
+              ? { base: "20px", sm: "22px" }
+              : "17px",
       filter: iconFilter,
     }) as const,
   label: (size: ProfileMetaTagSize) =>
@@ -53,7 +57,12 @@ const styles = {
       minW: 0,
       overflow: "hidden",
       color: "app.text",
-      fontSize: size === "sm" ? "xs" : { base: "sm", sm: "md" },
+      fontSize:
+        size === "compact"
+          ? "11px"
+          : size === "sm"
+            ? "xs"
+            : { base: "sm", sm: "md" },
       fontWeight: "bold",
       lineHeight: 1,
       textOverflow: "ellipsis",
@@ -64,9 +73,9 @@ const styles = {
       display: "grid",
       placeItems: "center",
       flexShrink: 0,
-      boxSize: size === "sm" ? "16px" : "18px",
-      minW: size === "sm" ? "16px" : "18px",
-      ml: size === "sm" ? "1px" : "2px",
+      boxSize: size === "compact" ? "14px" : size === "sm" ? "16px" : "18px",
+      minW: size === "compact" ? "14px" : size === "sm" ? "16px" : "18px",
+      ml: size === "compact" ? 0 : size === "sm" ? "1px" : "2px",
       borderRadius: "999px",
       bg: "app.white",
       color: "app.text",
@@ -83,7 +92,7 @@ const styles = {
   removeIcon: (size: ProfileMetaTagSize) =>
     ({
       position: "relative",
-      boxSize: size === "sm" ? "8px" : "9px",
+      boxSize: size === "compact" ? "7px" : size === "sm" ? "8px" : "9px",
       _before: {
         content: '""',
         position: "absolute",
@@ -109,7 +118,7 @@ const styles = {
     }) as const,
 } as const;
 
-type ProfileMetaTagProps = {
+type ProfileMetaTagProps = Omit<FlexProps, "children" | "onClick"> & {
   children: ReactNode;
   icon: string;
   iconFilter?: string;
@@ -133,6 +142,7 @@ export function ProfileMetaTag({
   removeLabel,
   size = "md",
   type,
+  ...props
 }: ProfileMetaTagProps) {
   const isClickable = Boolean(onClick);
 
@@ -153,15 +163,14 @@ export function ProfileMetaTag({
             boxShadow: "0 4px 11px rgba(53, 87, 45, 0.16)",
           }
         : {})}
+      {...props}
     >
       <SvgImage
         src={icon}
         {...styles.icon(
           type,
           size,
-          isSelected
-            ? "brightness(0) invert(1)"
-            : iconFilter,
+          isSelected ? "brightness(0) invert(1)" : iconFilter,
         )}
       />
       <Text

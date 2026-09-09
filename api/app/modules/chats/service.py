@@ -8,6 +8,7 @@ from app.modules.chats.schemas import (
     ChatThread,
     ChatThreadReceiptRecord,
 )
+from app.modules.discovery.schemas import PersonPreview
 from app.modules.matching.repository import MatchingRepository
 from app.modules.profiles.repository import ProfileRepository
 from app.shared.events.repository import EventRepository
@@ -154,6 +155,29 @@ class ChatService:
                 for message in messages
             ],
         )
+
+    async def get_match_profile(
+        self,
+        user_id: UUID,
+        match_id: UUID,
+    ) -> PersonPreview | None:
+        if not await self.matching.user_can_access_match(user_id, match_id):
+            return None
+
+        match_records = await self.matching.list_matches(user_id)
+        other_user_id = next(
+            (
+                match_record.other_user_id
+                for match_record in match_records
+                if match_record.id == match_id
+            ),
+            None,
+        )
+        if other_user_id is None:
+            return None
+
+        profile = await self.profiles.get_public_profile_by_id(other_user_id)
+        return PersonPreview(**profile) if profile else None
 
     async def send_message(
         self,

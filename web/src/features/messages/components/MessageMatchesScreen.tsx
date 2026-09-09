@@ -12,6 +12,7 @@ type MessageMatchesScreenProps = {
   matches: ChatMatch[];
   onBack: () => void;
   onMatchClick: (matchId: string) => void;
+  onProfileClick: (matchId: string) => void;
 };
 
 const styles = {
@@ -56,6 +57,7 @@ export function MessageMatchesScreen({
   matches,
   onBack,
   onMatchClick,
+  onProfileClick,
 }: MessageMatchesScreenProps) {
   return (
     <Box {...styles.root}>
@@ -78,7 +80,11 @@ export function MessageMatchesScreen({
         )}
 
         {!isLoading && !error && matches.length > 0 && (
-          <ChatMatchList matches={matches} onMatchClick={onMatchClick} />
+          <ChatMatchList
+            matches={matches}
+            onMatchClick={onMatchClick}
+            onProfileClick={onProfileClick}
+          />
         )}
       </Box>
     </Box>

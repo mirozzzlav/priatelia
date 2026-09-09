@@ -98,12 +98,14 @@ type PersonPreviewPhotoProps = {
   activeAction: ActivePersonPreviewAction;
   isLoadingNextPerson: boolean;
   person: PersonPreview;
+  showDecisionBadges?: boolean;
 };
 
 export function PersonPreviewPhoto({
   activeAction,
   isLoadingNextPerson,
   person,
+  showDecisionBadges = true,
 }: PersonPreviewPhotoProps) {
   const actionIcon = activeAction === "like" ? thumbUpIcon : thumbDownIcon;
 
@@ -115,12 +117,16 @@ export function PersonPreviewPhoto({
         {...styles.activeCard(activeAction)}
       >
         <PersonPreviewToolbar person={person} />
-        <DecisionBadge activeAction={activeAction} side="nope">
-          NIE
-        </DecisionBadge>
-        <DecisionBadge activeAction={activeAction} side="like">
-          ÁNO
-        </DecisionBadge>
+        {showDecisionBadges && (
+          <>
+            <DecisionBadge activeAction={activeAction} side="nope">
+              NIE
+            </DecisionBadge>
+            <DecisionBadge activeAction={activeAction} side="like">
+              ÁNO
+            </DecisionBadge>
+          </>
+        )}
       </Box>
       {isLoadingNextPerson && (
         <Flex {...styles.transitionOverlay}>

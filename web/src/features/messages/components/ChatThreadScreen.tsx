@@ -11,6 +11,7 @@ type ChatThreadScreenProps = {
   isLoading: boolean;
   isSending: boolean;
   onBack: () => void;
+  onProfileClick: (matchId: string) => void;
   onSendMessage: (text: string) => Promise<void>;
   thread: ChatThread | null;
 };
@@ -44,12 +45,17 @@ export function ChatThreadScreen({
   isLoading,
   isSending,
   onBack,
+  onProfileClick,
   onSendMessage,
   thread,
 }: ChatThreadScreenProps) {
   return (
     <Box {...styles.root}>
-      <ChatThreadHeader match={thread?.match ?? null} onBack={onBack} />
+      <ChatThreadHeader
+        match={thread?.match ?? null}
+        onBack={onBack}
+        onProfileClick={onProfileClick}
+      />
 
       {isLoading && (
         <Flex {...styles.loadingStatus}>

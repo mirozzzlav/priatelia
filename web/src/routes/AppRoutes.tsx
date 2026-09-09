@@ -14,6 +14,7 @@ import { DiscoveryRoute } from "src/routes/DiscoveryRoute";
 import { LoginRoute } from "src/routes/LoginRoute";
 import { MessagesRoute } from "src/routes/MessagesRoute";
 import { PasswordRoute } from "src/routes/PasswordRoute";
+import { PersonProfileRoute } from "src/routes/PersonProfileRoute";
 import { ProfileRoute } from "src/routes/ProfileRoute";
 import { ProtectedRoute } from "src/routes/ProtectedRoute";
 import { PublicOnlyRoute } from "src/routes/PublicOnlyRoute";
@@ -39,11 +40,8 @@ export function AppRoutes() {
     resetDiscovery,
     startPersonPreviewAction,
   } = usePersonPreview();
-  const {
-    discoverySettings,
-    resetDiscoverySettings,
-    saveDiscoverySettings,
-  } = useDiscoverySettings(auth.isAuthenticated);
+  const { discoverySettings, resetDiscoverySettings, saveDiscoverySettings } =
+    useDiscoverySettings(auth.isAuthenticated);
 
   return (
     <Routes>
@@ -135,6 +133,14 @@ export function AppRoutes() {
           element={
             <ProtectedRoute>
               <ChatThreadRoute />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/people/:matchId"
+          element={
+            <ProtectedRoute>
+              <PersonProfileRoute />
             </ProtectedRoute>
           }
         />

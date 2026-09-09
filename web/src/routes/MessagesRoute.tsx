@@ -43,6 +43,9 @@ export function MessagesRoute() {
       matches={sortedMatches}
       onBack={() => navigate("/discover")}
       onMatchClick={(matchId) => navigate(`/messages/${matchId}`)}
+      onProfileClick={(matchId) =>
+        navigate(`/people/${matchId}`, { state: { from: "/messages" } })
+      }
     />
   );
 }

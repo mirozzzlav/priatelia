@@ -279,3 +279,50 @@ class ProfileRepository:
             (user_ids,),
         )
         return await cursor.fetchall()
+
+    async def get_public_profile_by_id(self, user_id: UUID) -> dict | None:
+        looking_for_select = (
+            "COALESCE(p.looking_for, '') AS \"lookingFor\""
+            if await self._profile_has_looking_for_column()
+            else "'' AS \"lookingFor\""
+        )
+        cursor = await self.connection.execute(
+            f"""
+            SELECT
+                p.user_id::text AS id,
+                date_part('year', age(p.birth_date))::int::text AS age,
+                p.bio,
+                {looking_for_select},
+                ARRAY[p.location] AS meta,
+                u.nickname AS name,
+                COALESCE(primary_photo.url, '') AS photo,
+                COALESCE(photo_list.photos, ARRAY[]::text[]) AS photos,
+                COALESCE(interest_list.interests, ARRAY[]::json[]) AS tags
+            FROM profiles p
+            JOIN users u ON u.id = p.user_id
+            LEFT JOIN LATERAL (
+                SELECT url
+                FROM profile_photos pp
+                WHERE pp.user_id = p.user_id
+                ORDER BY pp.is_primary DESC, pp.position
+                LIMIT 1
+            ) primary_photo ON true
+            LEFT JOIN LATERAL (
+                SELECT array_agg(url ORDER BY is_primary DESC, position) AS photos
+                FROM profile_photos pp
+                WHERE pp.user_id = p.user_id
+            ) photo_list ON true
+            LEFT JOIN LATERAL (
+                SELECT array_agg(
+                    json_build_object('id', it.id, 'name', it.name)
+                    ORDER BY pi.position, it.name
+                ) AS interests
+                FROM profile_interests pi
+                JOIN interest_tags it ON it.id = pi.interest_id
+                WHERE pi.user_id = p.user_id
+            ) interest_list ON true
+            WHERE p.user_id = %s
+            """,
+            (user_id,),
+        )
+        return await cursor.fetchone()

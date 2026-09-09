@@ -231,6 +231,16 @@ export const restClient: ApiClient = {
     );
   },
 
+  getChatMatchProfile(matchId) {
+    return request<PersonPreview>(`/chats/matches/${matchId}/profile`).then(
+      (profile) => ({
+        ...profile,
+        photo: normalizeMediaUrl(profile.photo),
+        photos: profile.photos.map(normalizeMediaUrl),
+      }),
+    );
+  },
+
   getChatThread(matchId) {
     return request<ChatThread>(`/chats/matches/${matchId}`).then((thread) => ({
       ...thread,
