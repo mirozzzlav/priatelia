@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from fastapi import WebSocket
+from starlette.websockets import WebSocketDisconnect
 
 from app.modules.chats.schemas import ChatMessage, ChatThreadReceiptRecord
 
@@ -61,7 +62,7 @@ class ChatWebSocketManager:
                         "type": "message",
                     }
                 )
-            except RuntimeError:
+            except (RuntimeError, WebSocketDisconnect):
                 self.disconnect(match_id, connection.websocket)
 
     async def broadcast_receipt(
@@ -89,7 +90,7 @@ class ChatWebSocketManager:
                         "type": "receipt_updated",
                     }
                 )
-            except RuntimeError:
+            except (RuntimeError, WebSocketDisconnect):
                 self.disconnect(match_id, connection.websocket)
 
 

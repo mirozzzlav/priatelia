@@ -56,6 +56,35 @@ function getLatestDeliveryStatus(
     : currentStatus;
 }
 
+function mergeThread(currentThread: ChatThread | null, nextThread: ChatThread) {
+  if (!currentThread || currentThread.match.id !== nextThread.match.id) {
+    return nextThread;
+  }
+
+  const currentMessagesById = new Map(
+    currentThread.messages.map((message) => [message.id, message]),
+  );
+
+  return {
+    ...nextThread,
+    messages: nextThread.messages.map((nextMessage) => {
+      const currentMessage = currentMessagesById.get(nextMessage.id);
+
+      if (!currentMessage || nextMessage.sender !== "current-user") {
+        return nextMessage;
+      }
+
+      return {
+        ...nextMessage,
+        deliveryStatus: getLatestDeliveryStatus(
+          currentMessage.deliveryStatus,
+          nextMessage.deliveryStatus,
+        ),
+      };
+    }),
+  };
+}
+
 export function ChatThreadRoute() {
   const navigate = useNavigate();
   const { matchId } = useParams<{ matchId: string }>();
@@ -65,41 +94,70 @@ export function ChatThreadRoute() {
   const [error, setError] = useState<string | null>(null);
   const { markMatchMessagesRead } = useChatMatches();
 
-  useEffect(() => {
-    if (!matchId) {
-      return;
-    }
+  const loadThread = useCallback(
+    async ({
+      isInitialLoad = false,
+      isMounted = () => true,
+    }: {
+      isInitialLoad?: boolean;
+      isMounted?: () => boolean;
+    } = {}) => {
+      if (!matchId) {
+        return;
+      }
 
-    let isMounted = true;
-
-    const loadThread = async () => {
-      setIsLoading(true);
-      setError(null);
+      if (isInitialLoad) {
+        setIsLoading(true);
+        setError(null);
+      }
 
       try {
         const nextThread = await apiClient.getChatThread(matchId);
 
-        if (isMounted) {
-          setThread(nextThread);
+        if (isMounted()) {
+          setThread((currentThread) => mergeThread(currentThread, nextThread));
           markMatchMessagesRead(matchId);
         }
       } catch {
-        if (isMounted) {
+        if (isMounted() && isInitialLoad) {
           setError("Konverzáciu sa nepodarilo načítať.");
         }
       } finally {
-        if (isMounted) {
+        if (isMounted() && isInitialLoad) {
           setIsLoading(false);
         }
       }
-    };
+    },
+    [markMatchMessagesRead, matchId],
+  );
 
-    void loadThread();
+  useEffect(() => {
+    let isMounted = true;
+
+    const timeoutId = window.setTimeout(() => {
+      void loadThread({
+        isInitialLoad: true,
+        isMounted: () => isMounted,
+      });
+    }, 0);
 
     return () => {
       isMounted = false;
+      window.clearTimeout(timeoutId);
     };
-  }, [markMatchMessagesRead, matchId]);
+  }, [loadThread]);
+
+  useEffect(() => {
+    if (!matchId || isLoading || error) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      void loadThread();
+    }, 5_000);
+
+    return () => window.clearInterval(intervalId);
+  }, [error, isLoading, loadThread, matchId]);
 
   useEffect(() => {
     if (!matchId || thread?.match.id !== matchId) {
