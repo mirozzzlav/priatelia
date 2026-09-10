@@ -15,6 +15,7 @@ import {
   PersonPreviewPhoto,
   type PersonPreview,
 } from "src/features/person-preview";
+import type { ProfileActionResult } from "src/services/api";
 
 type DiscoveryRouteProps = {
   activeAction: ActivePersonPreviewAction;
@@ -25,7 +26,7 @@ type DiscoveryRouteProps = {
   onActionEnd: () => void;
   onActionStart: (
     action: ActivePersonPreviewAction,
-    onAfterSuccessfulAction?: () => Promise<void>,
+    onAfterSuccessfulAction?: (result: ProfileActionResult) => Promise<void> | void,
   ) => void;
   onDiscoveryReload: () => Promise<void>;
   onDiscoverySettingsSave: (data: DiscoverySettingsData) => void;
@@ -65,7 +66,7 @@ export function DiscoveryRoute({
     null,
   );
   const previousPersonPreviewIdRef = useRef<string | null>(null);
-  const { reloadMatches } = useChatMatches();
+  const { addChatMatch } = useChatMatches();
   const previewPhotos = useMemo(() => {
     if (!personPreview) {
       return [];
@@ -91,11 +92,13 @@ export function DiscoveryRoute({
   );
   const handleActionStart = useCallback(
     (action: ActivePersonPreviewAction) => {
-      onActionStart(action, async () => {
-        await reloadMatches();
+      onActionStart(action, (result) => {
+        if (result.match) {
+          addChatMatch(result.match);
+        }
       });
     },
-    [onActionStart, reloadMatches],
+    [addChatMatch, onActionStart],
   );
   const closePhotoViewer = useCallback(() => {
     setSelectedPhotoIndex(null);

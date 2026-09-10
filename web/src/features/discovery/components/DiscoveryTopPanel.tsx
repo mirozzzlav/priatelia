@@ -15,6 +15,7 @@ const styles = {
     zIndex: 1,
     h: "112px",
     overflow: "visible",
+    borderTop: 0,
   },
 } as const;
 

@@ -148,18 +148,6 @@ export function ChatThreadRoute() {
   }, [loadThread]);
 
   useEffect(() => {
-    if (!matchId || isLoading || error) {
-      return;
-    }
-
-    const intervalId = window.setInterval(() => {
-      void loadThread();
-    }, 5_000);
-
-    return () => window.clearInterval(intervalId);
-  }, [error, isLoading, loadThread, matchId]);
-
-  useEffect(() => {
     if (!matchId || thread?.match.id !== matchId) {
       return;
     }

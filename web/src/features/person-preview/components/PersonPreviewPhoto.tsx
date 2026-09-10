@@ -12,7 +12,9 @@ import type {
 
 const styles = {
   stage: {
-    position: "relative",
+    position: "sticky",
+    top: "176px",
+    zIndex: 30,
     sx: {
       touchAction: "pan-y",
     },

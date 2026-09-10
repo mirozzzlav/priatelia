@@ -67,6 +67,11 @@ export type ChatThread = {
   messages: ChatMessage[];
 };
 
+export type ProfileActionResult = {
+  matched: boolean;
+  match: ChatMatch | null;
+};
+
 export type SendChatMessageData = {
   text: string;
 };
@@ -165,5 +170,5 @@ export type ApiClient = {
   submitPersonPreviewAction: (
     personPreviewId: string,
     action: PersonPreviewAction,
-  ) => Promise<void>;
+  ) => Promise<ProfileActionResult>;
 };

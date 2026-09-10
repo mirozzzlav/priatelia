@@ -8,10 +8,13 @@ const styles = {
     mx: { base: "-12px", sm: "-16px" },
     px: { base: "26px", sm: "30px" },
     py: "17px",
-    borderTop: "1px solid",
+    borderBottom: "1px solid",
     borderColor: "rgba(53, 87, 45, 0.14)",
     bgGradient:
       "linear(to-b, rgba(241, 243, 246, 0.55), rgba(255, 255, 255, 0) 58%)",
+    _last: {
+      borderBottom: 0,
+    },
   },
 } as const;
 

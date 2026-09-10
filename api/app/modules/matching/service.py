@@ -14,7 +14,7 @@ class MatchingService:
         actor_user_id: UUID,
         target_user_id: UUID,
         action: str,
-    ) -> None:
+    ) -> UUID | None:
         if action not in {"like", "nope"}:
             raise ValueError("Unsupported profile action")
 
@@ -29,10 +29,10 @@ class MatchingService:
         )
 
         if action != "like":
-            return
+            return None
 
         if not await self.repository.has_reverse_like(actor_user_id, target_user_id):
-            return
+            return None
 
         match_id = await self.repository.create_match(actor_user_id, target_user_id)
         await self.events.append(
@@ -43,3 +43,4 @@ class MatchingService:
                 "secondUserId": str(target_user_id),
             },
         )
+        return match_id

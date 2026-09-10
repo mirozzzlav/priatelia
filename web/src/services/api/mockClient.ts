@@ -214,9 +214,10 @@ function buildChatMatches() {
 
 function ensureChatMatch(personPreviewId: string) {
   if (!mockIncomingLikePersonPreviewIds.has(personPreviewId)) {
-    return;
+    return null;
   }
 
+  const alreadyMatched = chatMatchIds.has(personPreviewId);
   chatMatchIds.add(personPreviewId);
   chatMessagesByMatchId[personPreviewId] ??= [
     {
@@ -227,6 +228,7 @@ function ensureChatMatch(personPreviewId: string) {
       text: "Aj ja som dala áno. Môžeme si napísať.",
     },
   ];
+  return alreadyMatched ? null : getChatMatch(personPreviewId);
 }
 
 function getWordCount(value: string) {
@@ -660,8 +662,11 @@ export const mockClient: ApiClient = {
     });
     submittedPersonPreviewIds.add(personPreviewId);
 
-    if (action === "like") {
-      ensureChatMatch(personPreviewId);
-    }
+    const match = action === "like" ? ensureChatMatch(personPreviewId) : null;
+
+    return {
+      matched: Boolean(match),
+      match,
+    };
   },
 };

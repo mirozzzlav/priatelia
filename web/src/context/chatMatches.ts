@@ -3,6 +3,7 @@ import { createContext, useContext } from "react";
 import type { ChatMatch } from "src/services/api";
 
 export type ChatMatchesContextValue = {
+  addChatMatch: (match: ChatMatch) => void;
   isLoadingMatches: boolean;
   markMatchMessagesRead: (matchId: string) => void;
   markMatchesSeen: (matchIds: string[]) => void;

@@ -3,6 +3,7 @@ import type {
   ChatMatch,
   ChatThread,
   LoginResponse,
+  ProfileActionResult,
   UploadedProfilePhoto,
 } from "src/services/api/types";
 import type { PersonPreview } from "src/features/person-preview";
@@ -323,10 +324,21 @@ export const restClient: ApiClient = {
     }));
   },
 
-  async submitPersonPreviewAction(personPreviewId, action) {
-    await request(`/discovery/profiles/${personPreviewId}/action`, {
-      body: JSON.stringify({ action }),
-      method: "POST",
-    });
+  submitPersonPreviewAction(personPreviewId, action) {
+    return request<ProfileActionResult>(
+      `/discovery/profiles/${personPreviewId}/action`,
+      {
+        body: JSON.stringify({ action }),
+        method: "POST",
+      },
+    ).then((result) => ({
+      ...result,
+      match: result.match
+        ? {
+            ...result.match,
+            photo: normalizeMediaUrl(result.match.photo),
+          }
+        : null,
+    }));
   },
 };

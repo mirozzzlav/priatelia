@@ -12,10 +12,11 @@ const styles = {
     px: { base: "26px", sm: "30px" },
     py: "17px",
     color: "app.text",
-    borderTop: "1px solid",
+    borderBottom: "1px solid",
     borderColor: "rgba(53, 87, 45, 0.08)",
+    bg: "app.white",
     bgGradient:
-      "linear(to-b, rgba(241, 243, 246, 0.55), rgba(255, 255, 255, 0) 58%)",
+      "linear(to-b, rgba(241, 243, 246, 0.95), rgba(255, 255, 255, 1) 58%)",
   },
   identityRow: {
     align: "center",

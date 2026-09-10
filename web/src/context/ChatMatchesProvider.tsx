@@ -42,6 +42,20 @@ export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
     }
   }, [isAuthenticated]);
 
+  const addChatMatch = useCallback((match: ChatMatch) => {
+    setMatches((currentMatches) => {
+      const existingMatch = currentMatches.find((item) => item.id === match.id);
+
+      if (existingMatch) {
+        return currentMatches.map((item) =>
+          item.id === match.id ? { ...item, ...match } : item,
+        );
+      }
+
+      return [match, ...currentMatches];
+    });
+  }, []);
+
   const markMatchesSeen = useCallback(
     (matchIds: string[]) => {
       if (matchIds.length === 0) {
@@ -111,6 +125,7 @@ export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
 
   const value = useMemo<ChatMatchesContextValue>(
     () => ({
+      addChatMatch,
       isLoadingMatches: isAuthenticated ? isLoadingMatches : false,
       markMatchMessagesRead,
       markMatchesSeen,
@@ -129,6 +144,7 @@ export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
       newDiscoveryMatches,
       reloadMatches,
       visibleMatches,
+      addChatMatch,
     ],
   );
 

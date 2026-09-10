@@ -4,7 +4,7 @@ import type {
   ActivePersonPreviewAction,
   PersonPreview,
 } from "src/features/person-preview";
-import { apiClient } from "src/services/api";
+import { apiClient, type ProfileActionResult } from "src/services/api";
 
 const noDiscoveryProfilesMessage =
   "V tejto chvíli sa nám nepodarilo nájsť žiadneho nového priateľa, skús upraviť podmienky hľadania.";
@@ -62,7 +62,9 @@ export function usePersonPreview() {
 
   const startPersonPreviewAction = (
     action: ActivePersonPreviewAction,
-    onAfterSuccessfulAction?: () => Promise<void>,
+    onAfterSuccessfulAction?: (
+      result: ProfileActionResult,
+    ) => Promise<void> | void,
   ) => {
     if (!action || !personPreview || isSubmittingPersonPreviewAction) {
       return;
@@ -73,9 +75,12 @@ export function usePersonPreview() {
 
     void (async () => {
       try {
-        await apiClient.submitPersonPreviewAction(personPreview.id, action);
+        const result = await apiClient.submitPersonPreviewAction(
+          personPreview.id,
+          action,
+        );
         await loadPersonPreview();
-        await onAfterSuccessfulAction?.();
+        await onAfterSuccessfulAction?.(result);
       } catch {
         setError("Nepodarilo sa uložiť tvoju voľbu.");
       } finally {

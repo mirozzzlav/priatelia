@@ -22,6 +22,7 @@ export type {
   ProfileErrorData,
   ProfileFieldErrors,
   ProfileResponse,
+  ProfileActionResult,
   RegistrationErrorData,
   RegistrationFieldErrors,
   RegistrationResponse,
