@@ -79,8 +79,10 @@ export function usePersonPreview() {
           personPreview.id,
           action,
         );
-        await loadPersonPreview();
         await onAfterSuccessfulAction?.(result);
+        if (!result.match) {
+          await loadPersonPreview();
+        }
       } catch {
         setError("Nepodarilo sa uložiť tvoju voľbu.");
       } finally {

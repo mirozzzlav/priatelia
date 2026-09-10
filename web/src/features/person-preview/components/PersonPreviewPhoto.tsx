@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, type BoxProps } from "@chakra-ui/react";
 
 import thumbDownIcon from "assets/thumb-down.svg";
 import thumbUpIcon from "assets/thumb-up.svg";
@@ -11,34 +10,18 @@ import type {
 } from "src/features/person-preview/types";
 
 const styles = {
-  stage: {
-    position: "sticky",
-    top: "176px",
-    zIndex: 30,
-    sx: {
-      touchAction: "pan-y",
-    },
-  },
+  stage: (stickyTop: BoxProps["top"]) =>
+    ({
+      position: "sticky",
+      top: stickyTop,
+      zIndex: 30,
+      sx: {
+        touchAction: "pan-y",
+      },
+    }) as const,
   identityBlock: {
     position: "relative",
-    transformOrigin: "50% 86%",
-    transition: "transform 180ms ease, opacity 180ms ease",
     userSelect: "none",
-  },
-  activeCard: (activeAction: ActivePersonPreviewAction) => {
-    if (activeAction === "like") {
-      return {
-        transform: "translateX(-18px) rotate(-2.5deg)",
-      } as const;
-    }
-
-    if (activeAction === "nope") {
-      return {
-        transform: "translateX(18px) rotate(2.5deg)",
-      } as const;
-    }
-
-    return {};
   },
   transitionOverlay: {
     position: "absolute",
@@ -48,89 +31,38 @@ const styles = {
     justify: "center",
     pointerEvents: "none",
   },
-  decisionBadge: (
-    activeAction: ActivePersonPreviewAction,
-    side: NonNullable<ActivePersonPreviewAction>,
-  ) =>
-    ({
-      position: "absolute",
-      top: "28px",
-      zIndex: 2,
-      px: "14px",
-      py: "8px",
-      border: "2px solid",
-      borderColor: "app.white",
-      borderRadius: "12px",
-      color: "app.white",
-      fontSize: "xl",
-      fontWeight: "black",
-      letterSpacing: 0,
-      opacity: activeAction === side ? 1 : 0,
-      pointerEvents: "none",
-    }) as const,
-  nopeBadge: {
-    right: "24px",
-    bg: "app.base",
-    transform: "rotate(-11deg)",
-  },
-  likeBadge: {
-    left: "24px",
-    bg: "app.info",
-    transform: "rotate(11deg)",
-  },
 } as const;
-
-type DecisionBadgeProps = {
-  activeAction: ActivePersonPreviewAction;
-  children: ReactNode;
-  side: NonNullable<ActivePersonPreviewAction>;
-};
-
-function DecisionBadge({ activeAction, children, side }: DecisionBadgeProps) {
-  const sideStyles = side === "like" ? styles.likeBadge : styles.nopeBadge;
-
-  return (
-    <Box {...styles.decisionBadge(activeAction, side)} {...sideStyles}>
-      {children}
-    </Box>
-  );
-}
 
 type PersonPreviewPhotoProps = {
   activeAction: ActivePersonPreviewAction;
+  isMatched?: boolean;
   isLoadingNextPerson: boolean;
   onMessageClick?: () => void;
   person: PersonPreview;
-  showDecisionBadges?: boolean;
+  stickyTop?: BoxProps["top"];
 };
 
 export function PersonPreviewPhoto({
   activeAction,
+  isMatched = false,
   isLoadingNextPerson,
   onMessageClick,
   person,
-  showDecisionBadges = true,
+  stickyTop = "176px",
 }: PersonPreviewPhotoProps) {
   const actionIcon = activeAction === "like" ? thumbUpIcon : thumbDownIcon;
 
   return (
-    <Box {...styles.stage}>
+    <Box {...styles.stage(stickyTop)}>
       <Box
         as="article"
         {...styles.identityBlock}
-        {...styles.activeCard(activeAction)}
       >
-        <PersonPreviewToolbar onMessageClick={onMessageClick} person={person} />
-        {showDecisionBadges && (
-          <>
-            <DecisionBadge activeAction={activeAction} side="nope">
-              NIE
-            </DecisionBadge>
-            <DecisionBadge activeAction={activeAction} side="like">
-              ÁNO
-            </DecisionBadge>
-          </>
-        )}
+        <PersonPreviewToolbar
+          isMatched={isMatched}
+          onMessageClick={onMessageClick}
+          person={person}
+        />
       </Box>
       {isLoadingNextPerson && (
         <Flex {...styles.transitionOverlay}>

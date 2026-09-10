@@ -1,4 +1,3 @@
-import type { KeyboardEvent } from "react";
 import { Box, Button, Flex, Text, type ButtonProps } from "@chakra-ui/react";
 
 import thumbDownFilledIcon from "assets/thumb-down-filled.svg";
@@ -49,34 +48,6 @@ const styles = {
         {
           opacity: 1,
         },
-      "&:hover [data-action-icon='like']": {
-        animation: "thumbUpHover 360ms ease both",
-      },
-      "&:hover [data-action-icon='nope']": {
-        animation: "thumbDownHover 360ms ease both",
-      },
-      "@keyframes thumbUpHover": {
-        "0%": {
-          transform: "translateY(0) rotate(0deg)",
-        },
-        "45%": {
-          transform: "translateY(-3px) rotate(-6deg)",
-        },
-        "100%": {
-          transform: "translateY(0) rotate(0deg)",
-        },
-      },
-      "@keyframes thumbDownHover": {
-        "0%": {
-          transform: "translateY(0) rotate(0deg)",
-        },
-        "45%": {
-          transform: "translateY(3px) rotate(-6deg)",
-        },
-        "100%": {
-          transform: "translateY(0) rotate(0deg)",
-        },
-      },
     },
     _disabled: {
       opacity: 0.54,
@@ -147,12 +118,11 @@ function PersonPreviewActionButton({
   icon,
   isSubmitting,
   label,
-  onActionEnd,
   onActionStart,
 }: PersonPreviewActionButtonProps) {
   const isCurrentActionSubmitting = isSubmitting && activeAction === action;
 
-  const startAction = () => {
+  const handleClick = () => {
     if (isSubmitting) {
       return;
     }
@@ -160,34 +130,12 @@ function PersonPreviewActionButton({
     onActionStart(action);
   };
 
-  const endAction = () => {
-    onActionEnd();
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      startAction();
-    }
-  };
-
-  const handleKeyUp = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      endAction();
-    }
-  };
-
   return (
     <Button
       type="button"
       aria-label={ariaLabel}
       isDisabled={isSubmitting}
-      onBlur={endAction}
-      onKeyDown={handleKeyDown}
-      onKeyUp={handleKeyUp}
-      onPointerCancel={endAction}
-      onPointerDown={startAction}
-      onPointerLeave={endAction}
-      onPointerUp={endAction}
+      onClick={handleClick}
       opacity={isCurrentActionSubmitting ? 1 : undefined}
       data-active={isCurrentActionSubmitting ? "true" : undefined}
       {...styles.button}

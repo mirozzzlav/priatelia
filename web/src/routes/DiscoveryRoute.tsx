@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 import { CenteredStatusLayout } from "src/components/layouts";
 import { LoadingPill } from "src/components/LoadingPill";
@@ -15,7 +16,7 @@ import {
   PersonPreviewPhoto,
   type PersonPreview,
 } from "src/features/person-preview";
-import type { ProfileActionResult } from "src/services/api";
+import type { ChatMatch, ProfileActionResult } from "src/services/api";
 
 type DiscoveryRouteProps = {
   activeAction: ActivePersonPreviewAction;
@@ -62,9 +63,13 @@ export function DiscoveryRoute({
   onPersonPreviewLoad,
   personPreview,
 }: DiscoveryRouteProps) {
+  const navigate = useNavigate();
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null,
   );
+  const [matchedProfileMatch, setMatchedProfileMatch] =
+    useState<ChatMatch | null>(null);
+  const [isContinuingDiscovery, setIsContinuingDiscovery] = useState(false);
   const previousPersonPreviewIdRef = useRef<string | null>(null);
   const { addChatMatch } = useChatMatches();
   const previewPhotos = useMemo(() => {
@@ -94,12 +99,26 @@ export function DiscoveryRoute({
     (action: ActivePersonPreviewAction) => {
       onActionStart(action, (result) => {
         if (result.match) {
-          addChatMatch(result.match);
+          const newMatch = { ...result.match, isNew: true };
+          setMatchedProfileMatch(newMatch);
+          addChatMatch(newMatch);
         }
       });
     },
     [addChatMatch, onActionStart],
   );
+  const handleContinueDiscovery = useCallback(() => {
+    setMatchedProfileMatch(null);
+    setIsContinuingDiscovery(true);
+    void onPersonPreviewLoad().finally(() => {
+      setIsContinuingDiscovery(false);
+    });
+  }, [onPersonPreviewLoad]);
+  const handleMessageClick = useCallback(() => {
+    if (matchedProfileMatch) {
+      navigate(`/messages/${matchedProfileMatch.id}`);
+    }
+  }, [matchedProfileMatch, navigate]);
   const closePhotoViewer = useCallback(() => {
     setSelectedPhotoIndex(null);
   }, []);
@@ -187,7 +206,13 @@ export function DiscoveryRoute({
           {discoveryTopPanel}
           <PersonPreviewPhoto
             activeAction={activeAction}
-            isLoadingNextPerson={isSubmittingPersonPreviewAction}
+            isMatched={Boolean(matchedProfileMatch)}
+            isLoadingNextPerson={
+              isSubmittingPersonPreviewAction || isContinuingDiscovery
+            }
+            onMessageClick={
+              matchedProfileMatch ? handleMessageClick : undefined
+            }
             person={personPreview}
           />
           <PersonPreviewDetail
@@ -196,7 +221,11 @@ export function DiscoveryRoute({
           />
           <PersonPreviewActionSection
             activeAction={activeAction}
-            isSubmitting={isSubmittingPersonPreviewAction}
+            isSubmitting={
+              isSubmittingPersonPreviewAction || isContinuingDiscovery
+            }
+            matchId={matchedProfileMatch?.id}
+            onContinueDiscovery={handleContinueDiscovery}
             onActionEnd={onActionEnd}
             onActionStart={handleActionStart}
           />

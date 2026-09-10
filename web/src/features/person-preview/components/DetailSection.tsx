@@ -26,7 +26,7 @@ type DetailSectionProps = {
 export function DetailSection({ title, children }: DetailSectionProps) {
   return (
     <Box {...styles.root}>
-      <PanelHeading>{title}</PanelHeading>
+      {title && <PanelHeading>{title}</PanelHeading>}
       {children}
     </Box>
   );

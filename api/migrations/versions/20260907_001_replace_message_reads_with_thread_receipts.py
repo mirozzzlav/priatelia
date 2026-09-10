@@ -9,7 +9,7 @@ depends_on = None
 def upgrade() -> None:
     op.execute(
         """
-        CREATE TABLE chat_thread_receipts (
+        CREATE TABLE IF NOT EXISTS chat_thread_receipts (
             thread_id UUID NOT NULL REFERENCES chat_threads(id) ON DELETE CASCADE,
             user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             delivered_at TIMESTAMPTZ,
@@ -17,13 +17,18 @@ def upgrade() -> None:
             PRIMARY KEY (thread_id, user_id)
         );
 
-        INSERT INTO chat_thread_receipts (thread_id, user_id, last_read_at)
-        SELECT thread_id, user_id, last_read_at
-        FROM message_reads
-        ON CONFLICT (thread_id, user_id) DO UPDATE
-        SET last_read_at = EXCLUDED.last_read_at;
+        DO $$
+        BEGIN
+            IF to_regclass('public.message_reads') IS NOT NULL THEN
+                INSERT INTO chat_thread_receipts (thread_id, user_id, last_read_at)
+                SELECT thread_id, user_id, last_read_at
+                FROM message_reads
+                ON CONFLICT (thread_id, user_id) DO UPDATE
+                SET last_read_at = EXCLUDED.last_read_at;
 
-        DROP TABLE message_reads;
+                DROP TABLE message_reads;
+            END IF;
+        END $$;
         """
     )
 

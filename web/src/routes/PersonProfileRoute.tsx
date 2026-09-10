@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Box, Flex } from "@chakra-ui/react";
 import {
   Navigate,
@@ -104,6 +104,12 @@ export function PersonProfileRoute() {
     };
   }, [matchId]);
 
+  useLayoutEffect(() => {
+    window.scrollTo({ left: 0, top: 0, behavior: "auto" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [matchId]);
+
   if (!matchId) {
     return <Navigate to="/messages" replace />;
   }
@@ -147,7 +153,7 @@ export function PersonProfileRoute() {
               isLoadingNextPerson={false}
               onMessageClick={() => navigate(`/messages/${matchId}`)}
               person={person}
-              showDecisionBadges={false}
+              stickyTop="128px"
             />
             <PersonPreviewDetail
               onPhotoClick={(photoSrc) => {

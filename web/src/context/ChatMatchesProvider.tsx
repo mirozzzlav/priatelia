@@ -32,7 +32,21 @@ export function ChatMatchesProvider({ children }: ChatMatchesProviderProps) {
 
     try {
       const nextMatches = await apiClient.getChatMatches();
-      setMatches(nextMatches);
+      setMatches((currentMatches) => {
+        const currentMatchesById = new Map(
+          currentMatches.map((match) => [match.id, match]),
+        );
+
+        return nextMatches.map((nextMatch) => {
+          const currentMatch = currentMatchesById.get(nextMatch.id);
+
+          if (currentMatch?.isNew && !currentMatch.lastMessage) {
+            return { ...nextMatch, isNew: true };
+          }
+
+          return nextMatch;
+        });
+      });
       setMatchesError(null);
       return nextMatches;
     } catch {

@@ -185,10 +185,22 @@ class DiscoveryRepository:
                   WHERE d.actor_user_id = %s
                     AND d.target_user_id = p.user_id
               )
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM matches m
+                  WHERE (
+                      m.first_user_id = %s
+                      AND m.second_user_id = p.user_id
+                  )
+                  OR (
+                      m.second_user_id = %s
+                      AND m.first_user_id = p.user_id
+                  )
+              )
             ORDER BY p.created_at DESC
             LIMIT 1
             """,
-            (user_id, user_id, user_id),
+            (user_id, user_id, user_id, user_id, user_id),
         )
         row = await cursor.fetchone()
         return PersonPreview(**row) if row else None
