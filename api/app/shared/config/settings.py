@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_DIR = Path(__file__).resolve().parents[4]
@@ -12,13 +13,8 @@ class Settings(BaseSettings):
     jwt_secret: str = "change-me-in-production"
     jwt_algorithm: str = "HS256"
     jwt_expires_minutes: int = 60 * 24 * 30
-    cors_origins: list[str] = [
-        "http://localhost:4444",
-        "http://127.0.0.1:4444",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ]
     web_app_url: str = "http://localhost:4444"
+    cors_origins: list[str] | None = None
 
     smtp_host: str = "mailpit"
     smtp_port: int = 1026
@@ -36,7 +32,7 @@ class Settings(BaseSettings):
     media_access_key: str = "priatelia"
     media_secret_key: str = "priatelia"
     media_bucket: str = "profile-photos"
-    media_public_url: str = "http://localhost:9000/profile-photos"
+    media_public_url: str = "/profile-photos"
     media_secure: bool = False
 
     model_config = SettingsConfigDict(
@@ -44,6 +40,17 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def normalize_empty_cors_origins(cls, value):
+        return None if value == "" else value
+
+    @model_validator(mode="after")
+    def set_default_cors_origins(self) -> "Settings":
+        if self.cors_origins is None:
+            self.cors_origins = [self.web_app_url]
+        return self
 
 
 @lru_cache

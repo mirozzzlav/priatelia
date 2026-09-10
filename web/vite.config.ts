@@ -14,6 +14,8 @@ function escapeHtml(value: string) {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const devPort = Number(env.VITE_DEV_PORT ?? 4444);
+  const apiProxyTarget =
+    env.VITE_API_PROXY_TARGET ?? env.API_PROXY_TARGET ?? "http://localhost:3000";
   const mediaProxyTarget =
     env.VITE_MEDIA_PROXY_TARGET ?? env.MEDIA_PROXY_TARGET ?? "http://localhost:9000";
 
@@ -52,6 +54,12 @@ export default defineConfig(({ mode }) => {
       host: env.VITE_DEV_HOST ?? "0.0.0.0",
       port: Number.isNaN(devPort) ? 4444 : devPort,
       proxy: {
+        "/api": {
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ""),
+          target: apiProxyTarget,
+          ws: true,
+        },
         "/profile-photos": {
           changeOrigin: true,
           target: mediaProxyTarget,
