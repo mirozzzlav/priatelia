@@ -61,6 +61,21 @@ const styles = {
     mt: { base: "9px", sm: "11px" },
     minW: 0,
   },
+  messageButton: {
+    mt: "12px",
+    h: "38px",
+    px: "10px",
+    borderRadius: "999px",
+    bg: "app.base",
+    color: "app.white",
+    fontSize: "xs",
+    fontWeight: "black",
+    _hover: { bg: "app.baseDark" },
+    _active: { bg: "app.baseDark" },
+    _focusVisible: {
+      boxShadow: "0 0 0 3px rgba(79, 131, 68, 0.22)",
+    },
+  },
 } as const;
 
 type PersonPreviewIdentitySize = "compact" | "default";
@@ -74,6 +89,7 @@ type PersonPreviewIdentityProps = {
 };
 
 type PersonPreviewToolbarProps = {
+  onMessageClick?: () => void;
   person: PersonPreview;
 };
 
@@ -128,7 +144,10 @@ export function PersonPreviewIdentity({
   );
 }
 
-export function PersonPreviewToolbar({ person }: PersonPreviewToolbarProps) {
+export function PersonPreviewToolbar({
+  onMessageClick,
+  person,
+}: PersonPreviewToolbarProps) {
   const city = person.meta[0];
 
   return (
@@ -146,6 +165,15 @@ export function PersonPreviewToolbar({ person }: PersonPreviewToolbarProps) {
             {city}
           </ProfileMetaTag>
         </Box>
+      )}
+      {onMessageClick && (
+        <Button
+          onClick={onMessageClick}
+          type="button"
+          {...styles.messageButton}
+        >
+          Napísať správu
+        </Button>
       )}
     </Box>
   );

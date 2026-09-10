@@ -145,6 +145,7 @@ export function PersonProfileRoute() {
             <PersonPreviewPhoto
               activeAction={null}
               isLoadingNextPerson={false}
+              onMessageClick={() => navigate(`/messages/${matchId}`)}
               person={person}
               showDecisionBadges={false}
             />

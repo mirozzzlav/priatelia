@@ -17,7 +17,7 @@ const styles = {
   header: {
     position: "sticky",
     top: "64px",
-    zIndex: 1,
+    zIndex: 20,
   },
   content: {
     display: "grid",
@@ -28,17 +28,48 @@ const styles = {
   card: {
     position: "relative",
     overflow: "hidden",
+    transition:
+      "border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease",
     border: "1px solid",
     borderColor: "rgba(53, 87, 45, 0.16)",
     borderRadius: "8px",
     bg: "app.white",
     boxShadow: "0 9px 22px rgba(53, 87, 45, 0.1)",
+    p: "6px",
+    sx: {
+      "&:has(.connection-thread-button:hover)": {
+        borderColor: "rgba(197, 106, 24, 0.42)",
+        boxShadow:
+          "0 0 0 2px rgba(197, 106, 24, 0.24), 0 11px 26px rgba(53, 87, 45, 0.14)",
+      },
+      "&:has(.connection-thread-button:active)": {
+        borderColor: "rgba(197, 106, 24, 0.5)",
+        boxShadow:
+          "0 0 0 2px rgba(197, 106, 24, 0.3), 0 8px 20px rgba(53, 87, 45, 0.12)",
+        transform: "scale(0.997)",
+      },
+    },
+  },
+  threadButton: {
+    position: "absolute",
+    inset: 0,
+    zIndex: 1,
+    display: "block",
+    h: "100%",
+    minW: 0,
+    p: 0,
+    borderRadius: "8px",
+    cursor: "pointer",
+    _focusVisible: {
+      boxShadow: "0 0 0 3px rgba(197, 106, 24, 0.28)",
+    },
   },
   newBadge: {
     position: "absolute",
     top: "8px",
     right: "8px",
-    zIndex: 1,
+    zIndex: 2,
+    pointerEvents: "none",
     border: "2px solid",
     borderColor: "app.white",
     borderRadius: "999px",
@@ -55,14 +86,17 @@ const styles = {
   photo: {
     w: "100%",
     aspectRatio: "1",
+    borderRadius: "6px",
     objectFit: "cover",
   },
   photoButton: {
+    position: "relative",
+    zIndex: 2,
     display: "block",
     h: "auto",
     minW: 0,
     p: 0,
-    borderRadius: 0,
+    borderRadius: "6px",
     overflow: "hidden",
     _focusVisible: {
       boxShadow: "inset 0 0 0 3px rgba(79, 131, 68, 0.32)",
@@ -81,6 +115,8 @@ const styles = {
     noOfLines: 1,
   },
   nameButton: {
+    position: "relative",
+    zIndex: 2,
     display: "block",
     h: "auto",
     minW: 0,
@@ -101,6 +137,10 @@ const styles = {
     noOfLines: 1,
   },
   messageButton: {
+    position: "relative",
+    zIndex: 0,
+    alignItems: "center",
+    justifyContent: "center",
     h: "38px",
     px: "10px",
     borderRadius: "999px",
@@ -219,6 +259,14 @@ export function ConnectionsRoute() {
           !matchesError &&
           unstartedConnections.map((match) => (
             <Box key={match.id} {...styles.card}>
+              <Button
+                aria-label={`Otvoriť konverzáciu s: ${match.name}`}
+                className="connection-thread-button"
+                onClick={() => navigate(`/messages/${match.id}`)}
+                type="button"
+                variant="unstyled"
+                {...styles.threadButton}
+              />
               {match.isNew && <Badge {...styles.newBadge}>Nové</Badge>}
               <Button
                 aria-label={`Otvoriť profil: ${match.name}`}
@@ -251,13 +299,9 @@ export function ConnectionsRoute() {
                     {match.age} · {match.location}
                   </Text>
                 </Box>
-                <Button
-                  type="button"
-                  onClick={() => navigate(`/messages/${match.id}`)}
-                  {...styles.messageButton}
-                >
+                <Flex {...styles.messageButton}>
                   Napísať správu
-                </Button>
+                </Flex>
               </Box>
             </Box>
           ))}

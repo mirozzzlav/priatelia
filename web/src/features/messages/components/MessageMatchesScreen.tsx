@@ -24,7 +24,7 @@ const styles = {
   header: {
     position: "sticky",
     top: "64px",
-    zIndex: 1,
+    zIndex: 20,
   },
   content: {
     pt: { base: "22px", sm: "28px" },

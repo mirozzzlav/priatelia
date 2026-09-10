@@ -97,6 +97,7 @@ function DecisionBadge({ activeAction, children, side }: DecisionBadgeProps) {
 type PersonPreviewPhotoProps = {
   activeAction: ActivePersonPreviewAction;
   isLoadingNextPerson: boolean;
+  onMessageClick?: () => void;
   person: PersonPreview;
   showDecisionBadges?: boolean;
 };
@@ -104,6 +105,7 @@ type PersonPreviewPhotoProps = {
 export function PersonPreviewPhoto({
   activeAction,
   isLoadingNextPerson,
+  onMessageClick,
   person,
   showDecisionBadges = true,
 }: PersonPreviewPhotoProps) {
@@ -116,7 +118,7 @@ export function PersonPreviewPhoto({
         {...styles.identityBlock}
         {...styles.activeCard(activeAction)}
       >
-        <PersonPreviewToolbar person={person} />
+        <PersonPreviewToolbar onMessageClick={onMessageClick} person={person} />
         {showDecisionBadges && (
           <>
             <DecisionBadge activeAction={activeAction} side="nope">
