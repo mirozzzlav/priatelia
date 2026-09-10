@@ -30,6 +30,32 @@ function getReceiptStatus(
   return message.deliveryStatus ?? "sent";
 }
 
+const deliveryStatusRank: Record<
+  NonNullable<ChatMessage["deliveryStatus"]>,
+  number
+> = {
+  sent: 0,
+  delivered: 1,
+  seen: 2,
+};
+
+function getLatestDeliveryStatus(
+  currentStatus: ChatMessage["deliveryStatus"],
+  nextStatus: ChatMessage["deliveryStatus"],
+) {
+  if (!nextStatus) {
+    return currentStatus ?? "sent";
+  }
+
+  if (!currentStatus) {
+    return nextStatus;
+  }
+
+  return deliveryStatusRank[nextStatus] > deliveryStatusRank[currentStatus]
+    ? nextStatus
+    : currentStatus;
+}
+
 export function ChatThreadRoute() {
   const navigate = useNavigate();
   const { matchId } = useParams<{ matchId: string }>();
@@ -115,7 +141,10 @@ export function ChatThreadRoute() {
               message.sender === "current-user"
                 ? {
                     ...message,
-                    deliveryStatus: getReceiptStatus(message, receipt),
+                    deliveryStatus: getLatestDeliveryStatus(
+                      message.deliveryStatus,
+                      getReceiptStatus(message, receipt),
+                    ),
                   }
                 : message,
             ),
