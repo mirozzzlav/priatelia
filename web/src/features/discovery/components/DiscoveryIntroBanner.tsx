@@ -2,6 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 
 import handshakeIcon from "assets/shake-hands.svg";
 import { SvgImage } from "src/components/SvgImage";
+import { useAuth } from "src/context/auth";
 
 const styles = {
   root: {
@@ -40,6 +41,20 @@ const styles = {
     fontWeight: "black",
     lineHeight: 1.2,
   },
+  greeting: {
+    display: "block",
+    color: "app.info",
+    fontSize: { base: "lg", sm: "xl" },
+    fontWeight: "black",
+    lineHeight: 1.05,
+  },
+  nickname: {
+    color: "app.text",
+  },
+  titleLine: {
+    display: "block",
+    mt: "3px",
+  },
   text: {
     mt: "3px",
     color: "app.text",
@@ -51,6 +66,9 @@ const styles = {
 } as const;
 
 export function DiscoveryIntroBanner() {
+  const { session } = useAuth();
+  const nickname = session?.nickname;
+
   return (
     <Box {...styles.root}>
       <Flex {...styles.inner}>
@@ -58,7 +76,23 @@ export function DiscoveryIntroBanner() {
           <SvgImage src={handshakeIcon} {...styles.icon} />
         </Box>
         <Box {...styles.copy}>
-          <Text {...styles.title}>Spoznaj nových priateľov v okolí.</Text>
+          <Text {...styles.title}>
+            {nickname ? (
+              <>
+                <Text as="span" {...styles.greeting}>
+                  Ahoj{" "}
+                  <Text as="span" {...styles.nickname}>
+                    {nickname},
+                  </Text>
+                </Text>
+                <Text as="span" {...styles.titleLine}>
+                  spoznaj nových priateľov v okolí.
+                </Text>
+              </>
+            ) : (
+              "Spoznaj nových priateľov v okolí."
+            )}
+          </Text>
           <Text {...styles.text}>
             Pozri si ľudí nablízku a začni kontakt, ak ste si navzájom blízki.
           </Text>
