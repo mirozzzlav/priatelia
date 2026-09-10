@@ -68,8 +68,7 @@ export const topBarStyles = {
     mt: "2px",
     ml: "-2px",
     color: "app.white",
-    fontFamily:
-      '"Comic Sans MS", "Comic Neue", "Trebuchet MS", Verdana, sans-serif',
+    fontFamily: '"DejaVu Sans", "Trebuchet MS", Verdana, sans-serif',
     fontSize: { base: "21px", sm: "24px" },
     fontWeight: "normal",
     lineHeight: 1,
