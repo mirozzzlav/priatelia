@@ -35,6 +35,7 @@ class ProfileRepository:
             SELECT
                 p.user_id,
                 u.nickname,
+                u.email,
                 p.birth_date,
                 p.gender,
                 p.location,

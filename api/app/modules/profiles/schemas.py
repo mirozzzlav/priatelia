@@ -43,6 +43,7 @@ class MutationSuccessData(BaseModel):
 class ProfileRecord:
     user_id: UUID
     nickname: str
+    email: str
     birth_date: date
     gender: Gender
     location: str

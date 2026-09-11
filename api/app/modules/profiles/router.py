@@ -34,6 +34,7 @@ async def get_profile(
     if profile is None:
         return {
             "nickname": current_user.nickname,
+            "email": "",
             "birthDate": "",
             "gender": "unspecified",
             "interests": [],
@@ -47,6 +48,7 @@ async def get_profile(
 
     return {
         "nickname": profile.nickname,
+        "email": profile.email,
         "birthDate": profile.birth_date.isoformat(),
         "gender": profile.gender,
         "interests": [interest.model_dump() for interest in interests],
