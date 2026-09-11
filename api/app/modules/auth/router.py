@@ -4,7 +4,13 @@ from fastapi import APIRouter, Depends
 from psycopg import AsyncConnection
 
 from app.modules.auth.repository import AuthRepository
-from app.modules.auth.schemas import ActivationRequest, LoginRequest, RegisterRequest
+from app.modules.auth.schemas import (
+    ActivationRequest,
+    LoginRequest,
+    PasswordResetConfirmRequest,
+    PasswordResetRequest,
+    RegisterRequest,
+)
 from app.modules.auth.service import AuthService
 from app.modules.notifications.repository import NotificationRepository
 from app.modules.notifications.service import NotificationService
@@ -60,6 +66,36 @@ async def activate_account(
         NotificationService(NotificationRepository(connection)),
     )
     result = await service.activate_account(data)
+    await connection.commit()
+    return _api_response(result)
+
+
+@router.post("/auth/password-reset")
+async def request_password_reset(
+    data: PasswordResetRequest,
+    connection: AsyncConnection = Depends(get_connection),
+) -> dict[str, Any]:
+    service = AuthService(
+        AuthRepository(connection),
+        EventRepository(connection),
+        NotificationService(NotificationRepository(connection)),
+    )
+    result = await service.request_password_reset(data)
+    await connection.commit()
+    return _api_response(result)
+
+
+@router.post("/auth/password-reset/confirm")
+async def reset_password(
+    data: PasswordResetConfirmRequest,
+    connection: AsyncConnection = Depends(get_connection),
+) -> dict[str, Any]:
+    service = AuthService(
+        AuthRepository(connection),
+        EventRepository(connection),
+        NotificationService(NotificationRepository(connection)),
+    )
+    result = await service.reset_password(data)
     await connection.commit()
     return _api_response(result)
 

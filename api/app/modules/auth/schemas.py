@@ -45,6 +45,16 @@ class ActivationRequest(BaseModel):
     token: str | None = None
 
 
+class PasswordResetRequest(BaseModel):
+    email: str
+
+
+class PasswordResetConfirmRequest(BaseModel):
+    token: str | None = None
+    password: str
+    passwordConfirmation: str
+
+
 class UserSession(BaseModel):
     nickname: str
     token: str
@@ -52,6 +62,10 @@ class UserSession(BaseModel):
 
 class RegistrationSuccess(BaseModel):
     registered: bool = True
+
+
+class PasswordResetRequestSuccess(BaseModel):
+    sent: bool = True
 
 
 class AuthErrorData(BaseModel):
@@ -78,6 +92,16 @@ class UserRecord:
 
 @dataclass(frozen=True)
 class ActivationTokenRecord:
+    token: str
+    user_id: UUID
+    nickname: str
+    status: str
+    expires_at: datetime
+    used_at: datetime | None
+
+
+@dataclass(frozen=True)
+class PasswordResetTokenRecord:
     token: str
     user_id: UUID
     nickname: str

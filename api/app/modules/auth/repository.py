@@ -4,6 +4,7 @@ from psycopg import AsyncConnection
 
 from app.modules.auth.schemas import (
     ActivationTokenRecord,
+    PasswordResetTokenRecord,
     RegistrationPhoto,
     UserRecord,
 )
@@ -123,6 +124,66 @@ class AuthRepository:
         await self.connection.execute(
             """
             UPDATE activation_tokens
+            SET used_at = now()
+            WHERE token = %s
+            """,
+            (token,),
+        )
+
+    async def create_password_reset_token(
+        self,
+        user_id: UUID,
+        token: str,
+        expires_at,
+    ) -> None:
+        await self.connection.execute(
+            """
+            INSERT INTO password_reset_tokens (user_id, token, expires_at)
+            VALUES (%s, %s, %s)
+            """,
+            (user_id, token, expires_at),
+        )
+
+    async def mark_unused_password_reset_tokens_used_for_user(
+        self,
+        user_id: UUID,
+    ) -> None:
+        await self.connection.execute(
+            """
+            UPDATE password_reset_tokens
+            SET used_at = now()
+            WHERE user_id = %s
+              AND used_at IS NULL
+            """,
+            (user_id,),
+        )
+
+    async def get_password_reset_token(
+        self,
+        token: str,
+    ) -> PasswordResetTokenRecord | None:
+        cursor = await self.connection.execute(
+            """
+            SELECT
+                prt.token,
+                prt.user_id,
+                u.nickname,
+                u.status,
+                prt.expires_at,
+                prt.used_at
+            FROM password_reset_tokens prt
+            JOIN users u ON u.id = prt.user_id
+            WHERE prt.token = %s
+            """,
+            (token,),
+        )
+        row = await cursor.fetchone()
+        return PasswordResetTokenRecord(**row) if row else None
+
+    async def mark_password_reset_token_used(self, token: str) -> None:
+        await self.connection.execute(
+            """
+            UPDATE password_reset_tokens
             SET used_at = now()
             WHERE token = %s
             """,

@@ -5,6 +5,8 @@ import type {
   DiscoverySettingsFieldErrors,
   LoginFieldErrors,
   PasswordFieldErrors,
+  PasswordResetConfirmFieldErrors,
+  PasswordResetRequestFieldErrors,
   ProfileFieldErrors,
   RegistrationFieldErrors,
 } from "src/services/api/types";
@@ -368,6 +370,45 @@ function getPasswordErrors(data: Parameters<ApiClient["updatePassword"]>[0]) {
   return errors;
 }
 
+function getPasswordResetRequestErrors(
+  data: Parameters<ApiClient["requestPasswordReset"]>[0],
+) {
+  const errors: PasswordResetRequestFieldErrors = {};
+
+  if (data.email.trim().length === 0) {
+    errors.email = "Vyplň email.";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+    errors.email = "Email nemá správny formát.";
+  }
+
+  return errors;
+}
+
+function getPasswordResetConfirmErrors(
+  token: Parameters<ApiClient["resetPassword"]>[0],
+  data: Parameters<ApiClient["resetPassword"]>[1],
+) {
+  const errors: PasswordResetConfirmFieldErrors = {};
+
+  if (!token) {
+    errors.token = "Link na obnovu hesla nie je platný.";
+  }
+
+  if (data.password.length === 0) {
+    errors.password = "Vyplň nové heslo.";
+  } else if (data.password.length < 8) {
+    errors.password = "Heslo musí mať aspoň 8 znakov.";
+  }
+
+  if (data.passwordConfirmation.length === 0) {
+    errors.passwordConfirmation = "Zopakuj nové heslo.";
+  } else if (data.password !== data.passwordConfirmation) {
+    errors.passwordConfirmation = "Heslá sa nezhodujú.";
+  }
+
+  return errors;
+}
+
 function getDiscoverySettingsErrors(
   data: Parameters<ApiClient["updateDiscoverySettings"]>[0],
 ) {
@@ -578,6 +619,47 @@ export const mockClient: ApiClient = {
     return {
       data: {
         registered: true,
+      },
+      status: "success",
+    };
+  },
+
+  async requestPasswordReset(data) {
+    await delay();
+
+    const errors = getPasswordResetRequestErrors(data);
+
+    if (Object.keys(errors).length > 0) {
+      return {
+        data: { errors },
+        status: "error",
+      };
+    }
+
+    return {
+      data: {
+        sent: true,
+      },
+      status: "success",
+    };
+  },
+
+  async resetPassword(token, data) {
+    await delay();
+
+    const errors = getPasswordResetConfirmErrors(token, data);
+
+    if (Object.keys(errors).length > 0) {
+      return {
+        data: { errors },
+        status: "error",
+      };
+    }
+
+    return {
+      data: {
+        nickname: currentProfile.nickname,
+        token: "mock-password-reset-session-token",
       },
       status: "success",
     };

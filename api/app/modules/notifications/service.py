@@ -6,7 +6,10 @@ from app.modules.notifications.repository import (
     NotificationRepository,
 )
 from app.shared.config.settings import get_settings
-from app.shared.mail.activation import send_activation_email
+from app.shared.mail.activation import (
+    send_activation_email,
+    send_password_reset_email,
+)
 from app.shared.mail.client import MailClient
 
 
@@ -44,9 +47,30 @@ class NotificationService:
             {"matchId": str(match_id)},
         )
 
+    async def enqueue_password_reset_email(
+        self,
+        user_id: UUID,
+        email: str,
+        nickname: str,
+        reset_token: str,
+    ) -> None:
+        reset_url = f"{get_settings().web_app_url}/reset-password?token={reset_token}"
+        await self.repository.enqueue(
+            "password_reset_email",
+            user_id,
+            {
+                "email": email,
+                "nickname": nickname,
+                "resetUrl": reset_url,
+            },
+        )
+
     async def send_job(self, job: NotificationJobRecord) -> None:
         if job.type == "activation_email":
             await self._send_activation_email(job.payload)
+            return
+        if job.type == "password_reset_email":
+            await self._send_password_reset_email(job.payload)
             return
 
         raise ValueError(f"Unsupported notification job type: {job.type}")
@@ -65,4 +89,20 @@ class NotificationService:
             to=email,
             greeting_name=greeting_name,
             activation_url=activation_url,
+        )
+
+    async def _send_password_reset_email(self, payload: dict) -> None:
+        email = str(payload.get("email", "")).strip()
+        reset_url = str(payload.get("resetUrl", "")).strip()
+        nickname = str(payload.get("nickname", "")).strip()
+
+        if not email or not reset_url:
+            raise ValueError("Password reset email job payload is missing email or URL")
+
+        greeting_name = nickname or "priateľ"
+        await send_password_reset_email(
+            self.mail,
+            to=email,
+            greeting_name=greeting_name,
+            reset_url=reset_url,
         )

@@ -6,6 +6,10 @@ import type {
   PersonPreview,
   PersonPreviewAction,
 } from "src/features/person-preview";
+import type {
+  PasswordResetConfirmFormData,
+  PasswordResetRequestFormData,
+} from "src/features/password-reset/types";
 import type { RegistrationFormData } from "src/features/registration";
 
 export type DataSource = "mock" | "rest";
@@ -131,6 +135,36 @@ export type PasswordResponse = ApiResponse<
   PasswordErrorData
 >;
 
+export type PasswordResetRequestFieldErrors =
+  FormFieldErrors<PasswordResetRequestFormData>;
+
+export type PasswordResetRequestErrorData = {
+  errors: PasswordResetRequestFieldErrors;
+};
+
+export type PasswordResetRequestSuccessData = {
+  sent: true;
+};
+
+export type PasswordResetRequestResponse = ApiResponse<
+  PasswordResetRequestSuccessData,
+  PasswordResetRequestErrorData
+>;
+
+export type PasswordResetConfirmFieldErrors =
+  FormFieldErrors<PasswordResetConfirmFormData> & {
+    token?: string;
+  };
+
+export type PasswordResetConfirmErrorData = {
+  errors: PasswordResetConfirmFieldErrors;
+};
+
+export type PasswordResetConfirmResponse = ApiResponse<
+  UserSession,
+  PasswordResetConfirmErrorData
+>;
+
 export type DiscoverySettingsFieldErrors =
   FormFieldErrors<DiscoverySettingsData>;
 
@@ -157,6 +191,13 @@ export type ApiClient = {
   searchLocations: (query: string) => Promise<LocationOption[]>;
   uploadProfilePhoto: (file: File) => Promise<UploadedProfilePhoto>;
   login: (data: LoginFormData) => Promise<LoginResponse>;
+  requestPasswordReset: (
+    data: PasswordResetRequestFormData,
+  ) => Promise<PasswordResetRequestResponse>;
+  resetPassword: (
+    token: string | null,
+    data: PasswordResetConfirmFormData,
+  ) => Promise<PasswordResetConfirmResponse>;
   register: (data: RegistrationFormData) => Promise<RegistrationResponse>;
   sendChatMessage: (
     matchId: string,

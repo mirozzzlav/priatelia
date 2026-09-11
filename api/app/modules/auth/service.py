@@ -7,6 +7,9 @@ from app.modules.auth.repository import AuthRepository
 from app.modules.auth.schemas import (
     ActivationRequest,
     LoginRequest,
+    PasswordResetConfirmRequest,
+    PasswordResetRequest,
+    PasswordResetRequestSuccess,
     RegisterRequest,
     RegistrationSuccess,
     UserSession,
@@ -213,6 +216,87 @@ class AuthService:
                 activation_token.user_id,
                 activation_token.nickname,
             ),
+        )
+
+    async def request_password_reset(
+        self,
+        data: PasswordResetRequest,
+    ) -> PasswordResetRequestSuccess | dict[str, Any]:
+        if not data.email.strip():
+            return {"errors": {"email": "Vyplň email."}}
+        if not _is_valid_email(data.email):
+            return {"errors": {"email": "Email nemá správny formát."}}
+
+        user = await self.repository.get_user_by_email(data.email.strip())
+        if user is None or user.status != "active":
+            return PasswordResetRequestSuccess()
+
+        reset_token = secrets.token_urlsafe(32)
+        await self.repository.mark_unused_password_reset_tokens_used_for_user(user.id)
+        await self.repository.create_password_reset_token(
+            user_id=user.id,
+            token=reset_token,
+            expires_at=datetime.now(UTC) + timedelta(hours=1),
+        )
+        await self.notifications.enqueue_password_reset_email(
+            user_id=user.id,
+            email=data.email.strip(),
+            nickname=user.nickname,
+            reset_token=reset_token,
+        )
+        await self.events.append(
+            "PasswordResetRequested",
+            {"userId": str(user.id)},
+        )
+
+        return PasswordResetRequestSuccess()
+
+    async def reset_password(
+        self,
+        data: PasswordResetConfirmRequest,
+    ) -> UserSession | dict[str, Any]:
+        errors_by_field: dict[str, str] = {}
+        if not data.token:
+            errors_by_field["token"] = "Token na obnovu hesla chýba."
+        if not data.password:
+            errors_by_field["password"] = "Vyplň nové heslo."
+        elif len(data.password) < 8:
+            errors_by_field["password"] = "Heslo musí mať aspoň 8 znakov."
+        if not data.passwordConfirmation:
+            errors_by_field["passwordConfirmation"] = "Zopakuj nové heslo."
+        elif data.password != data.passwordConfirmation:
+            errors_by_field["passwordConfirmation"] = "Heslá sa nezhodujú."
+
+        if errors_by_field:
+            return {"errors": errors_by_field}
+
+        reset_token = await self.repository.get_password_reset_token(data.token or "")
+        if reset_token is None:
+            return {"errors": {"token": "Link na obnovu hesla nie je platný."}}
+        if reset_token.used_at is not None:
+            return {"errors": {"token": "Link na obnovu hesla už bol použitý."}}
+        if reset_token.status != "active":
+            return {"errors": {"token": "Účet nie je aktívny."}}
+
+        expires_at = reset_token.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=UTC)
+        if expires_at < datetime.now(UTC):
+            return {"errors": {"token": "Link na obnovu hesla expiroval."}}
+
+        await self.repository.update_password(
+            reset_token.user_id,
+            hash_password(data.password),
+        )
+        await self.repository.mark_password_reset_token_used(reset_token.token)
+        await self.events.append(
+            "PasswordResetCompleted",
+            {"userId": str(reset_token.user_id)},
+        )
+
+        return UserSession(
+            nickname=reset_token.nickname,
+            token=create_access_token(reset_token.user_id, reset_token.nickname),
         )
 
     async def update_password(

@@ -33,6 +33,7 @@ export function LoginRoute({
 
   return (
     <LoginScreen
+      onForgotPasswordClick={() => navigate("/forgot-password")}
       onLogin={handleLogin}
       onRegisterClick={() => navigate("/register")}
     />

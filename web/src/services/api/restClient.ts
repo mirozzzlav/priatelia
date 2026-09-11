@@ -272,6 +272,20 @@ export const restClient: ApiClient = {
     });
   },
 
+  requestPasswordReset(data) {
+    return request("/auth/password-reset", {
+      body: JSON.stringify(data),
+      method: "POST",
+    });
+  },
+
+  resetPassword(token, data) {
+    return request("/auth/password-reset/confirm", {
+      body: JSON.stringify({ ...data, token }),
+      method: "POST",
+    });
+  },
+
   async register(data) {
     const dataWithUploadedPhotos = await uploadLocalPhotos(data);
 

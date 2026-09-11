@@ -11,6 +11,7 @@ import { ChatThreadRoute } from "src/routes/ChatThreadRoute";
 import { ConnectionsRoute } from "src/routes/ConnectionsRoute";
 import { CriteriaRoute } from "src/routes/CriteriaRoute";
 import { DiscoveryRoute } from "src/routes/DiscoveryRoute";
+import { ForgotPasswordRoute } from "src/routes/ForgotPasswordRoute";
 import { LoginRoute } from "src/routes/LoginRoute";
 import { MessagesRoute } from "src/routes/MessagesRoute";
 import { PasswordRoute } from "src/routes/PasswordRoute";
@@ -19,6 +20,7 @@ import { ProfileRoute } from "src/routes/ProfileRoute";
 import { ProtectedRoute } from "src/routes/ProtectedRoute";
 import { PublicOnlyRoute } from "src/routes/PublicOnlyRoute";
 import { RegistrationRoute } from "src/routes/RegistrationRoute";
+import { ResetPasswordRoute } from "src/routes/ResetPasswordRoute";
 
 export function AppRoutes() {
   const auth = useAuth();
@@ -74,6 +76,22 @@ export function AppRoutes() {
               <RegistrationRoute
                 onRegisteredProfileSync={syncRegisteredProfile}
               />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicOnlyRoute>
+              <ForgotPasswordRoute />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <PublicOnlyRoute>
+              <ResetPasswordRoute />
             </PublicOnlyRoute>
           }
         />

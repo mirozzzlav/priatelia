@@ -13,6 +13,7 @@ import { FormStatusMessage } from "src/components/FormStatusMessage";
 import type { LoginFormData } from "src/features/login/types";
 
 type LoginScreenProps = {
+  onForgotPasswordClick: () => void;
   onLogin: (data: LoginFormData) => Promise<boolean>;
   onRegisterClick: () => void;
 };
@@ -37,7 +38,11 @@ const initialFormData: LoginFormData = {
   password: "",
 };
 
-export function LoginScreen({ onLogin, onRegisterClick }: LoginScreenProps) {
+export function LoginScreen({
+  onForgotPasswordClick,
+  onLogin,
+  onRegisterClick,
+}: LoginScreenProps) {
   const [formData, setFormData] = useState<LoginFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -99,6 +104,12 @@ export function LoginScreen({ onLogin, onRegisterClick }: LoginScreenProps) {
             autoComplete="current-password"
           />
         </FormControl>
+
+        <Text color="app.text" fontSize="sm" mt="-12px">
+          <FormLinkButton onClick={onForgotPasswordClick}>
+            Zabudol/a si heslo?
+          </FormLinkButton>
+        </Text>
 
         {submitError && (
           <FormStatusMessage variant="error">{submitError}</FormStatusMessage>
