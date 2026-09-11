@@ -6,7 +6,7 @@ import type { LoginFormData } from "src/features/login";
 import { apiClient } from "src/services/api";
 
 type LoginRouteProps = {
-  onLoginProfileSync: (data: LoginFormData) => void;
+  onLoginProfileSync: (nickname: string) => void;
   onPersonPreviewLoad: () => Promise<void>;
 };
 
@@ -25,7 +25,7 @@ export function LoginRoute({
     }
 
     auth.login(response.data);
-    onLoginProfileSync(data);
+    onLoginProfileSync(response.data.nickname);
     await onPersonPreviewLoad();
     navigate("/discover");
     return true;

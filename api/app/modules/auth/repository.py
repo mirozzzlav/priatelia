@@ -41,14 +41,17 @@ class AuthRepository:
         row = await cursor.fetchone()
         return UserRecord(**row) if row else None
 
-    async def get_user_by_exact_nickname(self, nickname: str) -> UserRecord | None:
+    async def get_user_by_login_identifier(
+        self, login_identifier: str
+    ) -> UserRecord | None:
         cursor = await self.connection.execute(
             """
             SELECT id, nickname, password_hash, status
             FROM users
-            WHERE nickname = %s
+            WHERE lower(nickname) = lower(%s)
+               OR lower(email) = lower(%s)
             """,
-            (nickname,),
+            (login_identifier, login_identifier),
         )
         row = await cursor.fetchone()
         return UserRecord(**row) if row else None

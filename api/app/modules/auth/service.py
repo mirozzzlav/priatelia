@@ -153,13 +153,15 @@ class AuthService:
         return RegistrationSuccess()
 
     async def login(self, data: LoginRequest) -> UserSession | dict[str, Any]:
-        user = await self.repository.get_user_by_exact_nickname(data.nickname.strip())
+        user = await self.repository.get_user_by_login_identifier(
+            data.nickname.strip()
+        )
 
         if user is None or not verify_password(data.password, user.password_hash):
             return {
                 "errors": {
-                    "nickname": "Nesprávna kombinácia mena a hesla.",
-                    "password": "Nesprávna kombinácia mena a hesla.",
+                    "nickname": "Nesprávna kombinácia emailu/nickname a hesla.",
+                    "password": "Nesprávna kombinácia emailu/nickname a hesla.",
                 }
             }
 

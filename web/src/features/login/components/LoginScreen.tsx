@@ -70,10 +70,10 @@ export function LoginScreen({
       const isSuccess = await onLogin(formData);
 
       if (!isSuccess) {
-        setSubmitError("Nesprávna kombinácia mena a hesla.");
+        setSubmitError("Nesprávna kombinácia emailu/nickname a hesla.");
       }
     } catch {
-      setSubmitError("Nesprávna kombinácia mena a hesla.");
+      setSubmitError("Nesprávna kombinácia emailu/nickname a hesla.");
     } finally {
       setIsSubmitting(false);
     }
@@ -82,17 +82,17 @@ export function LoginScreen({
   return (
     <ScreenLayout
       title="Prihlásenie"
-      intro="Prihlás sa cez nickname a heslo, potom môžeš vyberať ľudí, s ktorými chceš komunikovať."
+      intro="Prihlás sa cez email alebo nickname a heslo, potom môžeš vyberať ľudí, s ktorými chceš komunikovať."
       pt="12px"
     >
       <Box as="form" noValidate onSubmit={handleSubmit} {...styles.form}>
         <FormControl>
-          <RequiredFieldLabel>Nickname</RequiredFieldLabel>
+          <RequiredFieldLabel>Email alebo nickname</RequiredFieldLabel>
           <FormInput
             value={formData.nickname}
             onChange={updateField("nickname")}
-            placeholder="napr. nina27"
-            autoComplete="nickname"
+            placeholder="napr. nina27 alebo nina@email.sk"
+            autoComplete="username"
           />
         </FormControl>
 

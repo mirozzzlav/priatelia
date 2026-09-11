@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
 
-import type { LoginFormData } from "src/features/login";
 import type { EditableProfileData } from "src/features/profile";
 import type { RegistrationFormData } from "src/features/registration";
 
@@ -24,10 +23,10 @@ export function useProfileState() {
   const [profileData, setProfileData] =
     useState<EditableProfileData>(initialProfileData);
 
-  const syncLoginProfile = useCallback((data: LoginFormData) => {
+  const syncLoginProfile = useCallback((nickname: string) => {
     setProfileData((current) => ({
       ...current,
-      nickname: data.nickname.trim(),
+      nickname: nickname.trim(),
       password: "",
       passwordConfirmation: "",
     }));

@@ -238,11 +238,14 @@ function getWordCount(value: string) {
   return value.trim().split(/\s+/).filter(Boolean).length;
 }
 
-function getLoginErrors(nickname: string, password: string): LoginFieldErrors {
-  if (nickname.trim().length === 0 || password.length === 0) {
+function getLoginErrors(
+  loginIdentifier: string,
+  password: string,
+): LoginFieldErrors {
+  if (loginIdentifier.trim().length === 0 || password.length === 0) {
     return {
-      nickname: "Nesprávna kombinácia mena a hesla.",
-      password: "Nesprávna kombinácia mena a hesla.",
+      nickname: "Nesprávna kombinácia emailu/nickname a hesla.",
+      password: "Nesprávna kombinácia emailu/nickname a hesla.",
     };
   }
 
@@ -590,7 +593,7 @@ export const mockClient: ApiClient = {
 
     return {
       data: {
-        nickname: data.nickname.trim(),
+        nickname: currentProfile.nickname || data.nickname.trim(),
         token: "mock-session-token",
       },
       status: "success",
