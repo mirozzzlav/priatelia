@@ -314,6 +314,7 @@ export function FormPasswordInput(props: Omit<InputProps, "type">) {
             />
           }
           onClick={() => setIsVisible((current) => !current)}
+          tabIndex={-1}
           type="button"
           variant="unstyled"
           {...passwordInputStyles.toggle}
