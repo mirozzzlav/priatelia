@@ -6,10 +6,8 @@ from app.modules.notifications.repository import (
     NotificationRepository,
 )
 from app.shared.config.settings import get_settings
+from app.shared.mail.activation import send_activation_email
 from app.shared.mail.client import MailClient
-from app.shared.mail.templates import render_mail_template
-
-APP_NAME = "Priatelia"
 
 
 class NotificationService:
@@ -62,33 +60,9 @@ class NotificationService:
             raise ValueError("Activation email job payload is missing email or URL")
 
         greeting_name = nickname or "priateľ"
-        await self.mail.send(
+        await send_activation_email(
+            self.mail,
             to=email,
-            subject="Aktivuj si účet Priatelia",
-            body=(
-                f"Ahoj {greeting_name.lower()}, aktivuj si účet.\n\n"
-                "Klikni na tento odkaz:\n"
-                f"{activation_url}\n\n"
-                "Link platí 24 hodín."
-            ),
-            html_body=_render_activation_email_html(greeting_name, activation_url),
+            greeting_name=greeting_name,
+            activation_url=activation_url,
         )
-
-
-def _render_activation_email_html(
-    greeting_name: str,
-    activation_url: str,
-    logo_url: str | None = None,
-) -> str:
-    if logo_url is None:
-        logo_url = f"{get_settings().web_app_url.rstrip('/')}/email-logo.png"
-
-    return render_mail_template(
-        "activation.html",
-        activation_url=activation_url,
-        app_name=APP_NAME,
-        greeting_name=greeting_name.lower(),
-        logo_url=logo_url,
-        subject_text="aktivuj si účet",
-        title="Aktivuj si účet.",
-    )
