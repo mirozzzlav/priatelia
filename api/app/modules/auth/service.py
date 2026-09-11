@@ -153,7 +153,7 @@ class AuthService:
         return RegistrationSuccess()
 
     async def login(self, data: LoginRequest) -> UserSession | dict[str, Any]:
-        user = await self.repository.get_user_by_nickname(data.nickname.strip())
+        user = await self.repository.get_user_by_exact_nickname(data.nickname.strip())
 
         if user is None or not verify_password(data.password, user.password_hash):
             return {
