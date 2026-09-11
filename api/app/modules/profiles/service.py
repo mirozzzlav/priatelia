@@ -2,8 +2,8 @@ from app.modules.profiles.repository import ProfileRepository
 from app.modules.profiles.schemas import ProfileUpdateRequest
 from app.shared.events.repository import EventRepository
 from app.shared.geo import coordinates_are_valid, resolve_coordinates
+from app.shared.nicknames import INVALID_NICKNAME_MESSAGE, is_valid_nickname
 from app.shared.profile_photos import validate_profile_photos
-from app.shared.tags import normalize_tag_id
 
 
 def _word_count(value: str) -> int:
@@ -15,6 +15,8 @@ def validate_profile(data: ProfileUpdateRequest) -> dict[str, str]:
 
     if not data.nickname.strip():
         errors_by_field["nickname"] = "Vyplň nickname."
+    elif not is_valid_nickname(data.nickname):
+        errors_by_field["nickname"] = INVALID_NICKNAME_MESSAGE
     if not data.birthDate:
         errors_by_field["birthDate"] = "Vyplň dátum narodenia."
     if not data.location.strip():
@@ -47,12 +49,6 @@ class ProfileService:
             return errors_by_field
 
         interest_ids = list(dict.fromkeys(interest.id for interest in data.interests))
-        if any(
-            normalize_tag_id(interest.name) != interest.id
-            for interest in data.interests
-        ):
-            return {"interests": "Vyber záujmy zo zoznamu."}
-
         known_interest_ids = await self.repository.list_known_interest_ids(interest_ids)
         if any(interest_id not in known_interest_ids for interest_id in interest_ids):
             return {"interests": "Vyber záujmy zo zoznamu."}

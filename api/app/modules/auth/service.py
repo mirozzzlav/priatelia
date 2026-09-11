@@ -16,8 +16,8 @@ from app.shared.auth.passwords import hash_password, verify_password
 from app.shared.auth.tokens import create_access_token
 from app.shared.events.repository import EventRepository
 from app.shared.geo import coordinates_are_valid, resolve_coordinates
+from app.shared.nicknames import INVALID_NICKNAME_MESSAGE, is_valid_nickname
 from app.shared.profile_photos import validate_profile_photos
-from app.shared.tags import normalize_tag_id
 
 
 def _word_count(value: str) -> int:
@@ -33,6 +33,8 @@ def validate_registration(data: RegisterRequest) -> dict[str, str]:
 
     if not data.nickname.strip():
         errors_by_field["nickname"] = "Vyplň nickname."
+    elif not is_valid_nickname(data.nickname):
+        errors_by_field["nickname"] = INVALID_NICKNAME_MESSAGE
     if not data.email.strip():
         errors_by_field["email"] = "Vyplň email."
     elif not _is_valid_email(data.email):
@@ -83,12 +85,6 @@ class AuthService:
             return {"errors": validation_errors}
 
         interest_ids = list(dict.fromkeys(interest.id for interest in data.interests))
-        if any(
-            normalize_tag_id(interest.name) != interest.id
-            for interest in data.interests
-        ):
-            return {"errors": {"interests": "Vyber záujmy zo zoznamu."}}
-
         known_interest_ids = await self.repository.list_known_interest_ids(interest_ids)
         if any(interest_id not in known_interest_ids for interest_id in interest_ids):
             return {"errors": {"interests": "Vyber záujmy zo zoznamu."}}
