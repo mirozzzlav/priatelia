@@ -10,17 +10,6 @@ from app.shared.mail.client import MailClient
 from app.shared.mail.templates import render_mail_template
 
 APP_NAME = "Priatelia"
-APP_LOGO_DATA_URI = (
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
-    "viewBox='0 0 28 24' fill='none' stroke='%23ffffff' stroke-width='2' "
-    "stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath "
-    "d='M14 8.9a3.35 3.35 0 1 0 0-6.7 3.35 3.35 0 0 0 0 6.7z'/%3E"
-    "%3Cpath d='M8.4 9.3a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4z'/%3E"
-    "%3Cpath d='M19.6 9.3a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4z'/%3E"
-    "%3Cpath d='M5.1 19.8c2-3.8 5-5.8 8.9-5.8s6.9 2 8.9 5.8'/%3E"
-    "%3Cpath d='M6.8 15.9c2 2.4 4.4 3.7 7.2 3.7s5.2-1.3 7.2-3.7'/%3E"
-    "%3C/svg%3E"
-)
 
 
 class NotificationService:
@@ -86,13 +75,20 @@ class NotificationService:
         )
 
 
-def _render_activation_email_html(greeting_name: str, activation_url: str) -> str:
+def _render_activation_email_html(
+    greeting_name: str,
+    activation_url: str,
+    logo_url: str | None = None,
+) -> str:
+    if logo_url is None:
+        logo_url = f"{get_settings().web_app_url.rstrip('/')}/email-logo.png"
+
     return render_mail_template(
         "activation.html",
         activation_url=activation_url,
         app_name=APP_NAME,
         greeting_name=greeting_name.lower(),
-        logo_url=APP_LOGO_DATA_URI,
+        logo_url=logo_url,
         subject_text="aktivuj si účet",
         title="Aktivuj si účet.",
     )
