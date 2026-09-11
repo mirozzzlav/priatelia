@@ -10,6 +10,7 @@ from app.modules.auth.schemas import (
     PasswordResetConfirmRequest,
     PasswordResetRequest,
     PasswordResetRequestSuccess,
+    PasswordResetTokenDetail,
     RegisterRequest,
     RegistrationSuccess,
     UserSession,
@@ -250,6 +251,29 @@ class AuthService:
         )
 
         return PasswordResetRequestSuccess()
+
+    async def get_password_reset_detail(
+        self,
+        token: str | None,
+    ) -> PasswordResetTokenDetail | dict[str, Any]:
+        if not token:
+            return {"errors": {"token": "Link na obnovu hesla nie je platný."}}
+
+        reset_token = await self.repository.get_password_reset_token(token)
+        if reset_token is None:
+            return {"errors": {"token": "Link na obnovu hesla nie je platný."}}
+        if reset_token.used_at is not None:
+            return {"errors": {"token": "Link na obnovu hesla už bol použitý."}}
+        if reset_token.status != "active":
+            return {"errors": {"token": "Účet nie je aktívny."}}
+
+        expires_at = reset_token.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=UTC)
+        if expires_at < datetime.now(UTC):
+            return {"errors": {"token": "Link na obnovu hesla expiroval."}}
+
+        return PasswordResetTokenDetail(nickname=reset_token.nickname)
 
     async def reset_password(
         self,

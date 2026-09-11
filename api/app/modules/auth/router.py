@@ -85,6 +85,19 @@ async def request_password_reset(
     return _api_response(result)
 
 
+@router.get("/auth/password-reset")
+async def get_password_reset_detail(
+    token: str | None = None,
+    connection: AsyncConnection = Depends(get_connection),
+) -> dict[str, Any]:
+    service = AuthService(
+        AuthRepository(connection),
+        EventRepository(connection),
+        NotificationService(NotificationRepository(connection)),
+    )
+    return _api_response(await service.get_password_reset_detail(token))
+
+
 @router.post("/auth/password-reset/confirm")
 async def reset_password(
     data: PasswordResetConfirmRequest,

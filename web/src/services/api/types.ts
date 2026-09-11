@@ -151,6 +151,21 @@ export type PasswordResetRequestResponse = ApiResponse<
   PasswordResetRequestErrorData
 >;
 
+export type PasswordResetTokenDetail = {
+  nickname: string;
+};
+
+export type PasswordResetTokenDetailErrorData = {
+  errors: {
+    token?: string;
+  };
+};
+
+export type PasswordResetTokenDetailResponse = ApiResponse<
+  PasswordResetTokenDetail,
+  PasswordResetTokenDetailErrorData
+>;
+
 export type PasswordResetConfirmFieldErrors =
   FormFieldErrors<PasswordResetConfirmFormData> & {
     token?: string;
@@ -194,6 +209,9 @@ export type ApiClient = {
   requestPasswordReset: (
     data: PasswordResetRequestFormData,
   ) => Promise<PasswordResetRequestResponse>;
+  getPasswordResetDetail: (
+    token: string | null,
+  ) => Promise<PasswordResetTokenDetailResponse>;
   resetPassword: (
     token: string | null,
     data: PasswordResetConfirmFormData,

@@ -645,6 +645,28 @@ export const mockClient: ApiClient = {
     };
   },
 
+  async getPasswordResetDetail(token) {
+    await delay();
+
+    if (!token) {
+      return {
+        data: {
+          errors: {
+            token: "Link na obnovu hesla nie je platný.",
+          },
+        },
+        status: "error",
+      };
+    }
+
+    return {
+      data: {
+        nickname: currentProfile.nickname,
+      },
+      status: "success",
+    };
+  },
+
   async resetPassword(token, data) {
     await delay();
 

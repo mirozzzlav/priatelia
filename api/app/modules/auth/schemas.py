@@ -68,6 +68,10 @@ class PasswordResetRequestSuccess(BaseModel):
     sent: bool = True
 
 
+class PasswordResetTokenDetail(BaseModel):
+    nickname: str
+
+
 class AuthErrorData(BaseModel):
     errors: dict[str, str]
 

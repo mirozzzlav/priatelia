@@ -13,6 +13,7 @@ import type { PasswordResetConfirmFieldErrors } from "src/services/api";
 import { getPasswordConfirmationError } from "src/utils/passwordValidation";
 
 type ResetPasswordScreenProps = {
+  nickname: string;
   onBackToLoginClick: () => void;
   onSubmit: (
     data: PasswordResetConfirmFormData,
@@ -35,6 +36,7 @@ const styles = {
 } as const;
 
 export function ResetPasswordScreen({
+  nickname,
   onBackToLoginClick,
   onSubmit,
 }: ResetPasswordScreenProps) {
@@ -96,7 +98,12 @@ export function ResetPasswordScreen({
   return (
     <ScreenLayout
       title="Nové heslo"
-      intro="Nastav si nové heslo. Po uložení ťa automaticky prihlásime."
+      intro={
+        <>
+          Ahoj <Box as="strong">{nickname}</Box>. Nastav si nové heslo. Po
+          uložení ťa automaticky prihlásime.
+        </>
+      }
       pt="12px"
     >
       <Box as="form" noValidate onSubmit={handleSubmit} {...styles.form}>

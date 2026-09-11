@@ -300,6 +300,16 @@ export const restClient: ApiClient = {
     });
   },
 
+  getPasswordResetDetail(token) {
+    const params = new URLSearchParams();
+    if (token) {
+      params.set("token", token);
+    }
+
+    const query = params.toString();
+    return request(`/auth/password-reset${query ? `?${query}` : ""}`);
+  },
+
   resetPassword(token, data) {
     return request("/auth/password-reset/confirm", {
       body: JSON.stringify({ ...data, token }),
