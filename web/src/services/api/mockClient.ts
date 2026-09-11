@@ -106,6 +106,7 @@ const mockLocationOptions = [
 let currentProfile: EditableProfileData = {
   bio: "Rád spoznávam ľudí cez dobré jedlo, výlety a pokojné rozhovory.",
   birthDate: "1996-04-18",
+  email: "mirko@priatelia.local",
   gender: "male",
   interests: [
     { id: "cestovanie", name: "Cestovanie" },
@@ -724,10 +725,19 @@ export const mockClient: ApiClient = {
 
     if (response.status === "success") {
       currentProfile = {
-        ...data,
+        ...currentProfile,
+        bio: data.bio,
+        birthDate: data.birthDate,
+        gender: data.gender,
+        interests: data.interests,
+        lookingFor: data.lookingFor,
+        location: data.location,
+        locationLatitude: data.locationLatitude,
+        locationLongitude: data.locationLongitude,
         nickname: data.nickname.trim(),
         password: "",
         passwordConfirmation: "",
+        photos: data.photos,
       };
     }
 

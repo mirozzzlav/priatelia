@@ -7,6 +7,7 @@ import type { RegistrationFormData } from "src/features/registration";
 const initialProfileData: EditableProfileData = {
   bio: "",
   birthDate: "",
+  email: "",
   gender: "unspecified",
   interests: [],
   lookingFor: "",
@@ -35,6 +36,7 @@ export function useProfileState() {
   const syncRegisteredProfile = useCallback((data: RegistrationFormData) => {
     setProfileData({
       ...data,
+      email: data.email.trim(),
       lookingFor: data.lookingFor.trim(),
       nickname: data.nickname.trim(),
       password: "",

@@ -5,6 +5,7 @@ import type { Gender } from "src/constants/gender";
 export type EditableProfileData = {
   bio: string;
   birthDate: string;
+  email: string;
   gender: Gender;
   interests: InterestTag[];
   lookingFor: string;

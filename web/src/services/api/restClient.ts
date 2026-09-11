@@ -21,6 +21,8 @@ type ProfileApiData = Omit<
   lookingFor?: string | null;
 };
 
+type ProfileUpdateApiData = Omit<EditableProfileData, "email">;
+
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "/api";
 const mediaPathPrefix = "/profile-photos/";
 
@@ -175,6 +177,25 @@ async function uploadLocalPhotos<TData extends { photos: RegistrationPhoto[] }>(
   };
 }
 
+function stripReadOnlyProfileFields(
+  data: EditableProfileData,
+): ProfileUpdateApiData {
+  return {
+    bio: data.bio,
+    birthDate: data.birthDate,
+    gender: data.gender,
+    interests: data.interests,
+    lookingFor: data.lookingFor,
+    location: data.location,
+    locationLatitude: data.locationLatitude,
+    locationLongitude: data.locationLongitude,
+    nickname: data.nickname,
+    password: data.password,
+    passwordConfirmation: data.passwordConfirmation,
+    photos: data.photos,
+  };
+}
+
 export const restClient: ApiClient = {
   async activateAccount(token) {
     const response = await request<LoginResponse>("/auth/activate", {
@@ -317,7 +338,9 @@ export const restClient: ApiClient = {
   },
 
   async updateProfile(data) {
-    const dataWithUploadedPhotos = await uploadLocalPhotos(data);
+    const dataWithUploadedPhotos = await uploadLocalPhotos(
+      stripReadOnlyProfileFields(data),
+    );
 
     return request("/profile", {
       body: JSON.stringify(dataWithUploadedPhotos),

@@ -72,7 +72,7 @@ export function ProfileSettingsScreen({
     });
 
   const updateField =
-    (field: keyof Omit<EditableProfileData, "interests" | "photos">) =>
+    (field: keyof Omit<EditableProfileData, "email" | "interests" | "photos">) =>
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       resetFeedback();
       setFormData((current) => ({
@@ -159,6 +159,20 @@ export function ProfileSettingsScreen({
           <FormErrorMessage color="app.error">
             {fieldErrors.nickname}
           </FormErrorMessage>
+        </FormControl>
+
+        <FormControl>
+          <OptionalFieldLabel>Email</OptionalFieldLabel>
+          <FormInput
+            value={formData.email}
+            isReadOnly
+            placeholder="email pri účte"
+            autoComplete="email"
+            _readOnly={{
+              cursor: "not-allowed",
+              opacity: 0.78,
+            }}
+          />
         </FormControl>
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.birthDate)}>
