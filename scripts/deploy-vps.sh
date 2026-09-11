@@ -5,6 +5,12 @@ APP_DIR=${APP_DIR:-/home/miro/priatelia}
 COMPOSE_FILE=${COMPOSE_FILE:-docker-compose.prod.yml}
 
 cd "$APP_DIR"
+
+if [[ ! -f .env ]]; then
+  echo "Missing .env in $APP_DIR. Create it from .env.production.example before deploying." >&2
+  exit 1
+fi
+
 git pull --ff-only
 
 case "${1:-all}" in
