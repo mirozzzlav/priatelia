@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Flex,
   FormLabel,
   IconButton,
   Input,
@@ -13,7 +14,9 @@ import {
   type InputProps,
   type TextareaProps,
 } from "@chakra-ui/react";
-import { useState, type ReactNode } from "react";
+import { useState, type ChangeEvent, type ReactNode } from "react";
+
+import { CountBadge } from "src/components/CountBadge";
 
 const fieldLabelStyles = {
   color: "app.text",
@@ -113,6 +116,23 @@ const fieldTextareaStyles = {
   py: "12px",
   borderRadius: "18px",
   resize: "none",
+} as const;
+
+const fieldTextareaCounterStyles = {
+  alignItems: "center",
+  justifyContent: "flex-end",
+  minH: "18px",
+  pt: "6px",
+  px: "4px",
+} as const;
+
+const fieldTextareaCounterTextStyles = {
+  minW: "66px",
+  h: "24px",
+  px: "11px",
+  fontSize: "xs",
+  fontWeight: "black",
+  lineHeight: 1,
 } as const;
 
 const primaryButtonStyles = {
@@ -324,13 +344,101 @@ export function FormPasswordInput(props: Omit<InputProps, "type">) {
   );
 }
 
-export function FormTextarea(props: TextareaProps) {
+type FormTextareaProps = TextareaProps & {
+  characterLimit?: number;
+};
+
+function getTextareaCharacterCount(value: TextareaProps["value"]) {
+  if (typeof value === "string" || typeof value === "number") {
+    return Array.from(String(value)).length;
+  }
+
+  if (Array.isArray(value)) {
+    return Array.from(value.join("")).length;
+  }
+
+  return 0;
+}
+
+function getCounterStyles(characterCount: number, characterLimit: number) {
+  const usage = characterCount / characterLimit;
+
+  if (usage > 0.9) {
+    return {
+      bg: "rgba(159, 63, 74, 0.12)",
+      borderColor: "app.error",
+      color: "app.error",
+    };
+  }
+
+  if (usage > 0.6) {
+    return {
+      bg: "rgba(197, 106, 24, 0.12)",
+      borderColor: "app.info",
+      color: "app.info",
+    };
+  }
+
+  return {
+    bg: "rgba(79, 131, 68, 0.12)",
+    borderColor: "app.base",
+    color: "app.base",
+  };
+}
+
+function limitTextareaValue(value: string, characterLimit: number) {
+  return Array.from(value).slice(0, characterLimit).join("");
+}
+
+export function FormTextarea({
+  characterLimit,
+  maxLength,
+  onChange,
+  value,
+  defaultValue,
+  ...props
+}: FormTextareaProps) {
+  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const textValue = value ?? uncontrolledValue;
+  const characterCount = getTextareaCharacterCount(textValue);
+  const hasCounter = typeof characterLimit === "number";
+  const resolvedMaxLength = characterLimit ?? maxLength;
+
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    if (characterLimit && event.target.value.length > characterLimit) {
+      event.target.value = limitTextareaValue(event.target.value, characterLimit);
+    }
+
+    if (value === undefined) {
+      setUncontrolledValue(event.target.value);
+    }
+
+    onChange?.(event);
+  };
+
   return (
-    <Textarea
-      errorBorderColor="app.error"
-      {...fieldTextareaStyles}
-      {...props}
-    />
+    <Box>
+      <Textarea
+        defaultValue={defaultValue}
+        errorBorderColor="app.error"
+        maxLength={resolvedMaxLength}
+        onChange={handleChange}
+        value={value}
+        {...fieldTextareaStyles}
+        {...props}
+      />
+      {hasCounter && (
+        <Flex {...fieldTextareaCounterStyles}>
+          <CountBadge
+            border="1px solid"
+            {...getCounterStyles(characterCount, characterLimit)}
+            {...fieldTextareaCounterTextStyles}
+          >
+            {characterCount} / {characterLimit}
+          </CountBadge>
+        </Flex>
+      )}
+    </Box>
   );
 }
 

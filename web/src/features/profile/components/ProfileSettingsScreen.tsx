@@ -209,6 +209,7 @@ export function ProfileSettingsScreen({
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.bio)}>
           <RequiredFieldLabel>Krátke bio</RequiredFieldLabel>
           <FormTextarea
+            characterLimit={500}
             value={formData.bio}
             onChange={updateField("bio")}
             placeholder="Čo rád/rada robíš a akých priateľov hľadáš?"
@@ -223,6 +224,7 @@ export function ProfileSettingsScreen({
         >
           <OptionalFieldLabel>Čo hľadám</OptionalFieldLabel>
           <FormTextarea
+            characterLimit={300}
             value={formData.lookingFor}
             onChange={updateField("lookingFor")}
             placeholder="Aký typ priateľstva, aktivít alebo ľudí by ti sadol?"

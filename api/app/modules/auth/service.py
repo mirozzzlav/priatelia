@@ -22,6 +22,7 @@ from app.shared.events.repository import EventRepository
 from app.shared.geo import coordinates_are_valid, resolve_coordinates
 from app.shared.nicknames import INVALID_NICKNAME_MESSAGE, is_valid_nickname
 from app.shared.profile_photos import validate_profile_photos
+from app.shared.profile_text import validate_profile_text_lengths
 
 
 def _word_count(value: str) -> int:
@@ -34,6 +35,7 @@ def _is_valid_email(value: str) -> bool:
 
 def validate_registration(data: RegisterRequest) -> dict[str, str]:
     errors_by_field: dict[str, str] = {}
+    text_length_errors = validate_profile_text_lengths(data.bio, data.lookingFor)
 
     if not data.nickname.strip():
         errors_by_field["nickname"] = "Vyplň nickname."
@@ -57,10 +59,14 @@ def validate_registration(data: RegisterRequest) -> dict[str, str]:
         errors_by_field["location"] = "Vyplň svoju lokalitu."
     elif not coordinates_are_valid(data.locationLatitude, data.locationLongitude):
         errors_by_field["location"] = "Poloha nemá platné súradnice."
-    if _word_count(data.bio) == 0:
+    if "bio" in text_length_errors:
+        errors_by_field["bio"] = text_length_errors["bio"]
+    elif _word_count(data.bio) == 0:
         errors_by_field["bio"] = "Vyplň krátke bio."
     elif _word_count(data.bio) < 3:
         errors_by_field["bio"] = "Bio musí obsahovať aspoň 3 slová."
+    if "lookingFor" in text_length_errors:
+        errors_by_field["lookingFor"] = text_length_errors["lookingFor"]
     if not data.interests:
         errors_by_field["interests"] = "Pridaj aspoň jeden záujem."
     photo_error = validate_profile_photos(data.photos)
