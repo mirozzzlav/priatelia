@@ -14,6 +14,19 @@ import type { RegistrationFormData } from "src/features/registration";
 
 export type DataSource = "mock" | "rest";
 
+export type ClientConfig = {
+  validation: {
+    photos: {
+      maxProfilePhotoCount: number;
+    };
+    profile: {
+      bioMaxLength: number;
+      lookingForMaxLength: number;
+      nicknameMaxLength: number;
+    };
+  };
+};
+
 export type UserSession = {
   nickname: string;
   token: string;
@@ -194,6 +207,7 @@ export type DiscoverySettingsResponse = ApiResponse<
 
 export type ApiClient = {
   activateAccount: (token: string | null) => Promise<UserSession>;
+  getClientConfig: () => Promise<ClientConfig>;
   getChatMatches: () => Promise<ChatMatch[]>;
   getChatMatchProfile: (matchId: string) => Promise<PersonPreview>;
   getChatThread: (matchId: string) => Promise<ChatThread>;

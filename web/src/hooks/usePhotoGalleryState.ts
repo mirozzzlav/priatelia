@@ -5,10 +5,6 @@ import type {
 } from "react";
 
 import type { RegistrationPhoto } from "src/features/registration";
-import {
-  maxProfilePhotoCount,
-  maxProfilePhotoError,
-} from "src/constants/profilePhotos";
 import { createId } from "src/utils/createId";
 
 type PhotoGalleryFormData = {
@@ -16,6 +12,7 @@ type PhotoGalleryFormData = {
 };
 
 type UsePhotoGalleryStateOptions<TFormData extends PhotoGalleryFormData> = {
+  maxProfilePhotoCount: number;
   onValidationError?: (message: string) => void;
   photoCount: number;
   resetFeedback: () => void;
@@ -32,7 +29,12 @@ function createPhoto(file: File, shouldBePrimary: boolean): RegistrationPhoto {
   };
 }
 
+function getMaxProfilePhotoError(maxProfilePhotoCount: number) {
+  return `Pridaj najviac ${maxProfilePhotoCount} fotiek.`;
+}
+
 export function usePhotoGalleryState<TFormData extends PhotoGalleryFormData>({
+  maxProfilePhotoCount,
   onValidationError,
   photoCount,
   resetFeedback,
@@ -47,6 +49,7 @@ export function usePhotoGalleryState<TFormData extends PhotoGalleryFormData>({
 
     resetFeedback();
     const availableSlots = maxProfilePhotoCount - photoCount;
+    const maxProfilePhotoError = getMaxProfilePhotoError(maxProfilePhotoCount);
 
     if (availableSlots <= 0) {
       onValidationError?.(maxProfilePhotoError);

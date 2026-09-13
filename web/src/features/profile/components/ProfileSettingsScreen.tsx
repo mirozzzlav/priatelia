@@ -16,6 +16,7 @@ import {
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { useClientConfig } from "src/context/clientConfig";
 import { LocationSearchField } from "src/components/LocationSearchField";
 import type { Gender } from "src/constants/gender";
 import type { InterestTag } from "src/features/interests/types";
@@ -46,6 +47,8 @@ export function ProfileSettingsScreen({
   onPasswordChangeClick,
   onSave,
 }: ProfileSettingsScreenProps) {
+  const { config } = useClientConfig();
+  const profileValidation = config.validation.profile;
   const [formData, setFormData] = useState<EditableProfileData>(initialProfile);
   const [fieldErrors, setFieldErrors] = useState<ProfileFieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,6 +65,7 @@ export function ProfileSettingsScreen({
 
   const { handlePhotoUpload, removePhoto, setPrimaryPhoto } =
     usePhotoGalleryState({
+      maxProfilePhotoCount: config.validation.photos.maxProfilePhotoCount,
       onValidationError: (message) => {
         setFieldErrors({ photos: message });
         setWasSubmitted(true);
@@ -151,7 +155,7 @@ export function ProfileSettingsScreen({
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.nickname)}>
           <RequiredFieldLabel>Nickname</RequiredFieldLabel>
           <FormInput
-            maxLength={15}
+            maxLength={profileValidation.nicknameMaxLength}
             value={formData.nickname}
             onChange={updateField("nickname")}
             placeholder="napr. nina27"
@@ -210,7 +214,7 @@ export function ProfileSettingsScreen({
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.bio)}>
           <RequiredFieldLabel>Krátke bio</RequiredFieldLabel>
           <FormTextarea
-            characterLimit={500}
+            characterLimit={profileValidation.bioMaxLength}
             value={formData.bio}
             onChange={updateField("bio")}
             placeholder="Čo rád/rada robíš a akých priateľov hľadáš?"
@@ -225,7 +229,7 @@ export function ProfileSettingsScreen({
         >
           <OptionalFieldLabel>Čo hľadám</OptionalFieldLabel>
           <FormTextarea
-            characterLimit={300}
+            characterLimit={profileValidation.lookingForMaxLength}
             value={formData.lookingFor}
             onChange={updateField("lookingFor")}
             placeholder="Aký typ priateľstva, aktivít alebo ľudí by ti sadol?"

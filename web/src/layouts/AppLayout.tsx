@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 import { TopBar } from "src/components/TopBar";
 import { useAuth } from "src/context/auth";
+import { ClientConfigProvider } from "src/context/ClientConfigProvider";
 
 type AppLayoutProps = {
   onLogout: () => void;
@@ -37,7 +38,9 @@ export function AppLayout({ onLogout }: AppLayoutProps) {
         onMessagesClick={() => navigate("/messages")}
         onProfileClick={() => navigate("/profile")}
       />
-      <Outlet />
+      <ClientConfigProvider>
+        <Outlet />
+      </ClientConfigProvider>
     </Box>
   );
 }

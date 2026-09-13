@@ -5,6 +5,7 @@ export type {
   ChatMatch,
   ChatMessage,
   ChatThread,
+  ClientConfig,
   DataSource,
   DiscoverySettingsErrorData,
   DiscoverySettingsFieldErrors,

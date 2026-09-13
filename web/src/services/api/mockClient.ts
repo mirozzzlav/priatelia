@@ -2,6 +2,7 @@ import type {
   ApiClient,
   ChatMatch,
   ChatMessage,
+  ClientConfig,
   DiscoverySettingsFieldErrors,
   LoginFieldErrors,
   PasswordFieldErrors,
@@ -14,10 +15,7 @@ import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import type { EditableProfileData } from "src/features/profile";
 import type { Gender } from "src/constants/gender";
 import { minLocationSearchLength } from "src/constants/locations";
-import {
-  maxProfilePhotoCount,
-  maxProfilePhotoError,
-} from "src/constants/profilePhotos";
+import { mockClientConfig } from "src/services/api/mockClientConfig";
 import {
   mockChatMessagesByMatchId,
   mockIncomingLikePersonPreviewIds,
@@ -47,10 +45,7 @@ const seenChatMatchIds = new Set<string>();
 const chatMessagesByMatchId: Record<string, ChatMessage[]> = {
   ...mockChatMessagesByMatchId,
 };
-const maxNicknameLength = 15;
-const invalidNicknameMessage =
-  `Nickname môže mať najviac ${maxNicknameLength} znakov a obsahovať iba ` +
-  "písmená a číslice bez medzier.";
+const currentClientConfig: ClientConfig | null = mockClientConfig;
 const mockGenderByPersonPreviewId: Record<string, Gender> = {
   "mock-profile-nina": "female",
   "mock-profile-tomas": "male",
@@ -242,6 +237,25 @@ function getWordCount(value: string) {
   return value.trim().split(/\s+/).filter(Boolean).length;
 }
 
+function getLoadedClientConfig() {
+  if (!currentClientConfig) {
+    throw new Error("Client config is not loaded.");
+  }
+
+  return currentClientConfig;
+}
+
+function getInvalidNicknameMessage(maxNicknameLength: number) {
+  return (
+    `Nickname môže mať najviac ${maxNicknameLength} znakov a obsahovať iba ` +
+    "písmená a číslice bez medzier."
+  );
+}
+
+function getMaxProfilePhotoError(maxProfilePhotoCount: number) {
+  return `Pridaj najviac ${maxProfilePhotoCount} fotiek.`;
+}
+
 function getLoginErrors(
   loginIdentifier: string,
   password: string,
@@ -259,14 +273,19 @@ function getLoginErrors(
 function getRegistrationErrors(data: Parameters<ApiClient["register"]>[0]) {
   const errors: RegistrationFieldErrors = {};
   const bioWordCount = getWordCount(data.bio);
+  const clientConfig = getLoadedClientConfig();
+  const profileValidation = clientConfig.validation.profile;
+  const photoValidation = clientConfig.validation.photos;
 
   if (data.nickname.trim().length === 0) {
     errors.nickname = "Vyplň nickname.";
   } else if (
-    data.nickname.trim().length > maxNicknameLength ||
+    data.nickname.trim().length > profileValidation.nicknameMaxLength ||
     !/^[\p{L}\p{N}]+$/u.test(data.nickname.trim())
   ) {
-    errors.nickname = invalidNicknameMessage;
+    errors.nickname = getInvalidNicknameMessage(
+      profileValidation.nicknameMaxLength,
+    );
   }
 
   if (data.email.trim().length === 0) {
@@ -301,8 +320,14 @@ function getRegistrationErrors(data: Parameters<ApiClient["register"]>[0]) {
 
   if (bioWordCount === 0) {
     errors.bio = "Vyplň krátke bio.";
+  } else if (data.bio.length > profileValidation.bioMaxLength) {
+    errors.bio = `Bio môže mať najviac ${profileValidation.bioMaxLength} znakov.`;
   } else if (bioWordCount < 3) {
     errors.bio = "Bio musí obsahovať aspoň 3 slová.";
+  }
+
+  if (data.lookingFor.length > profileValidation.lookingForMaxLength) {
+    errors.lookingFor = `Čo hľadám môže mať najviac ${profileValidation.lookingForMaxLength} znakov.`;
   }
 
   if (data.interests.length === 0) {
@@ -311,8 +336,10 @@ function getRegistrationErrors(data: Parameters<ApiClient["register"]>[0]) {
 
   if (data.photos.length === 0) {
     errors.photos = "Pridaj aspoň jednu fotku.";
-  } else if (data.photos.length > maxProfilePhotoCount) {
-    errors.photos = maxProfilePhotoError;
+  } else if (data.photos.length > photoValidation.maxProfilePhotoCount) {
+    errors.photos = getMaxProfilePhotoError(
+      photoValidation.maxProfilePhotoCount,
+    );
   } else if (data.photos.filter((photo) => photo.isPrimary).length > 1) {
     errors.photos = "Profilová fotka môže byť najviac jedna.";
   }
@@ -323,14 +350,19 @@ function getRegistrationErrors(data: Parameters<ApiClient["register"]>[0]) {
 function getProfileErrors(data: Parameters<ApiClient["updateProfile"]>[0]) {
   const errors: ProfileFieldErrors = {};
   const bioWordCount = getWordCount(data.bio);
+  const clientConfig = getLoadedClientConfig();
+  const profileValidation = clientConfig.validation.profile;
+  const photoValidation = clientConfig.validation.photos;
 
   if (data.nickname.trim().length === 0) {
     errors.nickname = "Vyplň nickname.";
   } else if (
-    data.nickname.trim().length > maxNicknameLength ||
+    data.nickname.trim().length > profileValidation.nicknameMaxLength ||
     !/^[\p{L}\p{N}]+$/u.test(data.nickname.trim())
   ) {
-    errors.nickname = invalidNicknameMessage;
+    errors.nickname = getInvalidNicknameMessage(
+      profileValidation.nicknameMaxLength,
+    );
   }
 
   if (data.birthDate.length === 0) {
@@ -347,8 +379,14 @@ function getProfileErrors(data: Parameters<ApiClient["updateProfile"]>[0]) {
 
   if (bioWordCount === 0) {
     errors.bio = "Vyplň krátke bio.";
+  } else if (data.bio.length > profileValidation.bioMaxLength) {
+    errors.bio = `Bio môže mať najviac ${profileValidation.bioMaxLength} znakov.`;
   } else if (bioWordCount < 3) {
     errors.bio = "Bio musí obsahovať aspoň 3 slová.";
+  }
+
+  if (data.lookingFor.length > profileValidation.lookingForMaxLength) {
+    errors.lookingFor = `Čo hľadám môže mať najviac ${profileValidation.lookingForMaxLength} znakov.`;
   }
 
   if (data.interests.length === 0) {
@@ -357,8 +395,10 @@ function getProfileErrors(data: Parameters<ApiClient["updateProfile"]>[0]) {
 
   if (data.photos.length === 0) {
     errors.photos = "Pridaj aspoň jednu fotku.";
-  } else if (data.photos.length > maxProfilePhotoCount) {
-    errors.photos = maxProfilePhotoError;
+  } else if (data.photos.length > photoValidation.maxProfilePhotoCount) {
+    errors.photos = getMaxProfilePhotoError(
+      photoValidation.maxProfilePhotoCount,
+    );
   } else if (data.photos.filter((photo) => photo.isPrimary).length > 1) {
     errors.photos = "Profilová fotka môže byť najviac jedna.";
   }
@@ -494,6 +534,12 @@ export const mockClient: ApiClient = {
       nickname: "aktivovany-pouzivatel",
       token: "mock-activation-session-token",
     };
+  },
+
+  async getClientConfig() {
+    await delay();
+
+    return mockClientConfig;
   },
 
   async getPersonPreview() {

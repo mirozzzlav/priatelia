@@ -2,6 +2,7 @@ import type {
   ApiClient,
   ChatMatch,
   ChatThread,
+  ClientConfig,
   LoginResponse,
   ProfileActionResult,
   UploadedProfilePhoto,
@@ -208,6 +209,10 @@ export const restClient: ApiClient = {
     }
 
     return response.data;
+  },
+
+  getClientConfig() {
+    return request<ClientConfig>("/client-config");
   },
 
   getPersonPreview() {
