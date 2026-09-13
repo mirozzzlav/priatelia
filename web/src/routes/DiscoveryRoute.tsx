@@ -46,7 +46,7 @@ const styles = {
   stickyHeader: {
     position: "sticky",
     top: "64px",
-    zIndex: 20,
+    zIndex: 35,
   },
 } as const;
 

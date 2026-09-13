@@ -30,14 +30,14 @@ def validate_settings(
     try:
         radius_km = int(data.radiusKm)
     except ValueError:
-        errors_by_field["radiusKm"] = "Radius musí byť celé číslo."
+        errors_by_field["radiusKm"] = "Vzdialenosť musí byť celé číslo."
 
     if "ageFrom" not in errors_by_field and age_from < 18:
         errors_by_field["ageFrom"] = "Vek od musí byť aspoň 18."
     if "ageTo" not in errors_by_field and age_to < age_from:
         errors_by_field["ageTo"] = "Vek do nemôže byť menší ako vek od."
     if "radiusKm" not in errors_by_field and not 1 <= radius_km <= 500:
-        errors_by_field["radiusKm"] = "Radius musí byť od 1 do 500 km."
+        errors_by_field["radiusKm"] = "Vzdialenosť musí byť od 1 do 500 km."
     if not data.genderPreferences:
         errors_by_field["genderPreferences"] = "Vyber aspoň jednu možnosť."
 

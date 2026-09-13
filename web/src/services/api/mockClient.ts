@@ -496,11 +496,11 @@ function getDiscoverySettingsErrors(
   }
 
   if (data.radiusKm.length === 0) {
-    errors.radiusKm = "Vyplň radius.";
+    errors.radiusKm = "Vyplň vzdialenosť.";
   } else if (!Number.isInteger(radiusKm)) {
-    errors.radiusKm = "Radius musí byť celé číslo.";
+    errors.radiusKm = "Vzdialenosť musí byť celé číslo.";
   } else if (radiusKm < 1 || radiusKm > 500) {
-    errors.radiusKm = "Radius musí byť od 1 do 500 km.";
+    errors.radiusKm = "Vzdialenosť musí byť od 1 do 500 km.";
   }
 
   if (data.genderPreferences.length === 0) {

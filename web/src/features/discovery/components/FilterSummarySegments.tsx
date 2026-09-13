@@ -34,6 +34,21 @@ export function FilterSummarySegments({
       <Box
         as="button"
         type="button"
+        aria-label="Upraviť okolie mesta"
+        onClick={() => onEdit("radius")}
+        {...styles.filterSegment}
+      >
+        <Text as="span" {...styles.filterSegmentLabel}>
+          Okolie
+        </Text>
+        <Text as="span" {...styles.filterSegmentValue}>
+          {settings.radiusKm} km
+        </Text>
+      </Box>
+      <Box aria-hidden="true" {...styles.filterDivider} />
+      <Box
+        as="button"
+        type="button"
         aria-label="Upraviť vek"
         onClick={() => onEdit("age")}
         {...styles.filterSegment}
@@ -58,21 +73,6 @@ export function FilterSummarySegments({
         </Text>
         <Text as="span" {...styles.filterSegmentValue}>
           {getGenderFilterSummary(settings.genderPreferences)}
-        </Text>
-      </Box>
-      <Box aria-hidden="true" {...styles.filterDivider} />
-      <Box
-        as="button"
-        type="button"
-        aria-label="Upraviť radius"
-        onClick={() => onEdit("radius")}
-        {...styles.filterSegment}
-      >
-        <Text as="span" {...styles.filterSegmentLabel}>
-          Radius
-        </Text>
-        <Text as="span" {...styles.filterSegmentValue}>
-          {settings.radiusKm}
         </Text>
       </Box>
     </Box>

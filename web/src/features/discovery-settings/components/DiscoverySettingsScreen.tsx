@@ -3,6 +3,7 @@ import {
   Box,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   SimpleGrid,
 } from "@chakra-ui/react";
 
@@ -46,6 +47,12 @@ const styles = {
   ageGrid: {
     columns: 2,
     gap: "10px",
+  },
+  fieldHelper: {
+    color: "rgba(53, 87, 45, 0.68)",
+    fontSize: "xs",
+    fontWeight: "semibold",
+    mt: "7px",
   },
 } as const;
 
@@ -190,7 +197,7 @@ export function DiscoverySettingsScreen({
         />
 
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.radiusKm)}>
-          <RequiredFieldLabel>Radius</RequiredFieldLabel>
+          <RequiredFieldLabel>Hľadať v okolí mesta</RequiredFieldLabel>
           <FormInput
             type="number"
             min={1}
@@ -198,6 +205,9 @@ export function DiscoverySettingsScreen({
             value={formData.radiusKm}
             onChange={updateField("radiusKm")}
           />
+          <FormHelperText {...styles.fieldHelper}>
+            Apka bude ponúkať ľudí do tejto vzdialenosti od zvoleného mesta.
+          </FormHelperText>
           <FormErrorMessage color="app.error">
             {fieldErrors.radiusKm}
           </FormErrorMessage>

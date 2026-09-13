@@ -1,4 +1,10 @@
-import { Box, IconButton, Text } from "@chakra-ui/react";
+import {
+  Box,
+  IconButton,
+  InputGroup,
+  InputRightElement,
+  Text,
+} from "@chakra-ui/react";
 
 import { FormInput } from "src/components/formElements";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
@@ -73,23 +79,31 @@ export function InlineNumericFilterEditor({
     <Box {...styles.filterEditorWrap}>
       <Box {...styles.filterEditorGrid}>
         <Text as="span" {...styles.filterEditorLabel}>
-          Radius
+          Okolie
         </Text>
-        <FormInput
-          autoFocus
-          aria-label="Radius"
-          inputMode="numeric"
-          isDisabled={isSaving}
-          onChange={(event) =>
-            onChange("radiusKm", getDigitsOnly(event.target.value))
-          }
-          pattern="[0-9]*"
-          type="text"
-          value={draftSettings.radiusKm}
-          {...styles.inlineInput}
-        />
+        <InputGroup>
+          <FormInput
+            autoFocus
+            aria-label="Okolie mesta v kilometroch"
+            inputMode="numeric"
+            isDisabled={isSaving}
+            onChange={(event) =>
+              onChange("radiusKm", getDigitsOnly(event.target.value))
+            }
+            pattern="[0-9]*"
+            type="text"
+            value={draftSettings.radiusKm}
+            {...styles.inlineInput}
+            {...styles.inlineInputWithUnit}
+          />
+          <InputRightElement {...styles.inlineUnitWrap}>
+            <Text as="span" {...styles.inlineUnitText}>
+              km
+            </Text>
+          </InputRightElement>
+        </InputGroup>
         <IconButton
-          aria-label="Potvrdiť radius"
+          aria-label="Potvrdiť okolie mesta"
           icon={<CheckMarkIcon />}
           isDisabled={isSaving}
           onClick={onConfirm}

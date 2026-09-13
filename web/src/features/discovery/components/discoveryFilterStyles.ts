@@ -4,7 +4,7 @@ export const discoveryFilterStyles = {
     display: "grid",
     flex: 1,
     gridTemplateColumns:
-      "minmax(0, 1.1fr) 13px minmax(42px, 0.48fr) 13px minmax(58px, 0.72fr) 13px minmax(45px, 0.45fr)",
+      "minmax(min-content, 1.35fr) 13px minmax(min-content, 0.5fr) 13px minmax(50px, 0.42fr) 13px minmax(min-content, 0.64fr)",
     minW: 0,
   },
   filterSegment: {
@@ -84,6 +84,20 @@ export const discoveryFilterStyles = {
     px: "12px",
     borderRadius: "999px",
     fontSize: "sm",
+  },
+  inlineInputWithUnit: {
+    pr: "42px",
+  },
+  inlineUnitWrap: {
+    h: "42px",
+    w: "38px",
+    pointerEvents: "none",
+  },
+  inlineUnitText: {
+    color: "rgba(53, 87, 45, 0.62)",
+    fontSize: "sm",
+    fontWeight: "black",
+    lineHeight: 1,
   },
   confirmButton: {
     display: "grid",
