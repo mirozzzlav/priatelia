@@ -47,6 +47,10 @@ const seenChatMatchIds = new Set<string>();
 const chatMessagesByMatchId: Record<string, ChatMessage[]> = {
   ...mockChatMessagesByMatchId,
 };
+const maxNicknameLength = 15;
+const invalidNicknameMessage =
+  `Nickname môže mať najviac ${maxNicknameLength} znakov a obsahovať iba ` +
+  "písmená a číslice bez medzier.";
 const mockGenderByPersonPreviewId: Record<string, Gender> = {
   "mock-profile-nina": "female",
   "mock-profile-tomas": "male",
@@ -258,6 +262,11 @@ function getRegistrationErrors(data: Parameters<ApiClient["register"]>[0]) {
 
   if (data.nickname.trim().length === 0) {
     errors.nickname = "Vyplň nickname.";
+  } else if (
+    data.nickname.trim().length > maxNicknameLength ||
+    !/^[\p{L}\p{N}]+$/u.test(data.nickname.trim())
+  ) {
+    errors.nickname = invalidNicknameMessage;
   }
 
   if (data.email.trim().length === 0) {
@@ -317,6 +326,11 @@ function getProfileErrors(data: Parameters<ApiClient["updateProfile"]>[0]) {
 
   if (data.nickname.trim().length === 0) {
     errors.nickname = "Vyplň nickname.";
+  } else if (
+    data.nickname.trim().length > maxNicknameLength ||
+    !/^[\p{L}\p{N}]+$/u.test(data.nickname.trim())
+  ) {
+    errors.nickname = invalidNicknameMessage;
   }
 
   if (data.birthDate.length === 0) {

@@ -176,6 +176,7 @@ export function RegistrationScreen({
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.nickname)}>
           <RequiredFieldLabel>Nickname</RequiredFieldLabel>
           <FormInput
+            maxLength={15}
             value={formData.nickname}
             onChange={updateField("nickname")}
             placeholder="napr. nina27"
