@@ -5,7 +5,9 @@ import { useDiscoveryTopPanelState } from "src/features/discovery/hooks/useDisco
 
 type DiscoveryTopPanelProps = {
   initialDiscoverySettings: DiscoverySettingsData;
+  isFilterPanelOpen: boolean;
   onDiscoveryReload: () => Promise<void>;
+  onFilterPanelOpenChange: (isOpen: boolean) => void;
   onDiscoverySettingsSave: (data: DiscoverySettingsData) => void;
 };
 
@@ -22,7 +24,9 @@ const styles = {
 
 export function DiscoveryTopPanel({
   initialDiscoverySettings,
+  isFilterPanelOpen,
   onDiscoveryReload,
+  onFilterPanelOpenChange,
   onDiscoverySettingsSave,
 }: DiscoveryTopPanelProps) {
   const {
@@ -37,11 +41,12 @@ export function DiscoveryTopPanel({
     updateDraftGenderPreferences,
     updateLocationQuery,
     editInlineFilter,
-    isFilterPanelOpen,
     toggleFilterPanel,
   } = useDiscoveryTopPanelState({
     initialDiscoverySettings,
+    isFilterPanelOpen,
     onDiscoveryReload,
+    onFilterPanelOpenChange,
     onDiscoverySettingsSave,
   });
 

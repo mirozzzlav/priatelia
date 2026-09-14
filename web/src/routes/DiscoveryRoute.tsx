@@ -83,6 +83,8 @@ export function DiscoveryRoute({
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null,
   );
+  const [isDiscoveryFilterPanelOpen, setIsDiscoveryFilterPanelOpen] =
+    useState(false);
   const [isContinuingDiscovery, setIsContinuingDiscovery] = useState(false);
   const previousPersonPreviewIdRef = useRef<string | null>(null);
   const { addChatMatch } = useChatMatches();
@@ -176,7 +178,9 @@ export function DiscoveryRoute({
       <DiscoveryIntroBanner />
       <DiscoveryTopPanel
         initialDiscoverySettings={initialDiscoverySettings}
+        isFilterPanelOpen={isDiscoveryFilterPanelOpen}
         onDiscoveryReload={onDiscoveryReload}
+        onFilterPanelOpenChange={setIsDiscoveryFilterPanelOpen}
         onDiscoverySettingsSave={onDiscoverySettingsSave}
       />
     </Box>

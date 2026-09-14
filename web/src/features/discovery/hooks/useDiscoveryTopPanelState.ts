@@ -7,13 +7,17 @@ import { apiClient, type LocationOption } from "src/services/api";
 
 type UseDiscoveryTopPanelStateParams = {
   initialDiscoverySettings: DiscoverySettingsData;
+  isFilterPanelOpen: boolean;
   onDiscoveryReload: () => Promise<void>;
+  onFilterPanelOpenChange: (isOpen: boolean) => void;
   onDiscoverySettingsSave: (data: DiscoverySettingsData) => void;
 };
 
 export function useDiscoveryTopPanelState({
   initialDiscoverySettings,
+  isFilterPanelOpen,
   onDiscoveryReload,
+  onFilterPanelOpenChange,
   onDiscoverySettingsSave,
 }: UseDiscoveryTopPanelStateParams) {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -23,7 +27,6 @@ export function useDiscoveryTopPanelState({
   const [draftSettings, setDraftSettings] = useState<DiscoverySettingsData>(
     initialDiscoverySettings,
   );
-  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const [isSavingInlineFilter, setIsSavingInlineFilter] = useState(false);
 
   useEffect(() => {
@@ -48,18 +51,16 @@ export function useDiscoveryTopPanelState({
 
   const editInlineFilter = (field: InlineFilterField) => {
     setDraftSettings(initialDiscoverySettings);
-    setIsFilterPanelOpen(true);
+    onFilterPanelOpenChange(true);
     setActiveInlineFilter(field);
   };
 
   const toggleFilterPanel = () => {
-    setIsFilterPanelOpen((isOpen) => {
-      if (isOpen) {
-        setActiveInlineFilter(null);
-      }
+    if (isFilterPanelOpen) {
+      setActiveInlineFilter(null);
+    }
 
-      return !isOpen;
-    });
+    onFilterPanelOpenChange(!isFilterPanelOpen);
   };
 
   const updateDraftField = (
@@ -138,7 +139,6 @@ export function useDiscoveryTopPanelState({
     updateDraftGenderPreferences,
     updateLocationQuery,
     editInlineFilter,
-    isFilterPanelOpen,
     toggleFilterPanel,
   };
 }
