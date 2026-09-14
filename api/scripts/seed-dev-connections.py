@@ -643,6 +643,10 @@ def seed_chat_messages(
 
 def main() -> None:
     settings = get_settings()
+    if settings.app_env == "production":
+        print("Skipping development seed in production.")
+        return
+
     seed_match_ids: list[str] = []
 
     with psycopg.connect(settings.database_url, row_factory=dict_row) as connection:
