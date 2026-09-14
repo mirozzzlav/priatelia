@@ -30,7 +30,7 @@ const styles = {
       bg: "linear-gradient(180deg, #ffffff 0%, #fbfcff 100%)",
       borderTop: "1px solid",
       borderBottom: "1px solid",
-      borderColor: "rgba(53, 87, 45, 0.14)",
+      borderColor: "app.borderColor",
       boxShadow: shadows[shadow],
       color: "app.text",
     }) as const,

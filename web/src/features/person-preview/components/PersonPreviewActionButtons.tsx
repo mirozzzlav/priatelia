@@ -23,7 +23,7 @@ const styles = {
     px: { base: "14px", sm: "18px" },
     py: 0,
     border: "1px solid",
-    borderColor: "rgba(53, 87, 45, 0.18)",
+    borderColor: "app.borderColor",
     borderRadius: "999px",
     bg: "app.white",
     color: "app.text",
@@ -31,12 +31,12 @@ const styles = {
     transition: "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
     _hover: {
       bg: "rgba(79, 131, 68, 0.1)",
-      borderColor: "rgba(53, 87, 45, 0.26)",
+      borderColor: "app.borderColorStrong",
       boxShadow: "0 9px 22px rgba(53, 87, 45, 0.11)",
     },
     _active: {
       bg: "rgba(79, 131, 68, 0.14)",
-      borderColor: "rgba(53, 87, 45, 0.28)",
+      borderColor: "app.borderColorStrong",
       boxShadow: "0 2px 8px rgba(53, 87, 45, 0.08)",
     },
     sx: {
@@ -86,12 +86,12 @@ const styles = {
   likeButton: {
     _hover: {
       bg: "rgba(79, 131, 68, 0.1)",
-      borderColor: "rgba(53, 87, 45, 0.26)",
+      borderColor: "app.borderColorStrong",
       boxShadow: "0 9px 22px rgba(53, 87, 45, 0.11)",
     },
     _active: {
       bg: "rgba(79, 131, 68, 0.14)",
-      borderColor: "rgba(53, 87, 45, 0.28)",
+      borderColor: "app.borderColorStrong",
       boxShadow: "0 2px 8px rgba(53, 87, 45, 0.08)",
     },
   },

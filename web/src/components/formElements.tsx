@@ -17,6 +17,7 @@ import {
 import { useState, type ChangeEvent, type ReactNode } from "react";
 
 import { CountBadge } from "src/components/CountBadge";
+import { compactPrimaryButtonStyles } from "src/components/formElementStyles";
 
 const fieldLabelStyles = {
   color: "app.text",
@@ -28,18 +29,18 @@ const fieldInputStyles = {
   h: "48px",
   px: "14px",
   border: "1px solid",
-  borderColor: "rgba(53, 87, 45, 0.18)",
+  borderColor: "app.borderColor",
   borderRadius: "999px",
   bg: "rgba(53, 87, 45, 0.06)",
   boxShadow: "none",
   color: "app.text",
   transition: "background 140ms ease, border-color 140ms ease",
   _hover: {
-    borderColor: "rgba(53, 87, 45, 0.18)",
+    borderColor: "app.borderColor",
     bg: "rgba(53, 87, 45, 0.06)",
   },
   _focusVisible: {
-    borderColor: "rgba(53, 87, 45, 0.18)",
+    borderColor: "app.borderColor",
     bg: "rgba(53, 87, 45, 0.06)",
     boxShadow: "none",
   },
@@ -204,7 +205,7 @@ const toggleButtonStyles = (
     border: "1px solid",
     borderColor: isSelected
       ? colors.activeBorder
-      : "rgba(53, 87, 45, 0.18)",
+      : "app.borderColor",
     borderRadius: "999px",
     bg: isSelected ? colors.activeBg : "rgba(53, 87, 45, 0.06)",
     color: isSelected ? "app.white" : "app.text",
@@ -214,7 +215,7 @@ const toggleButtonStyles = (
       bg: isSelected ? colors.activeHoverBg : colors.inactiveHoverBg,
       borderColor: isSelected
         ? colors.activeHoverBorder
-        : "rgba(53, 87, 45, 0.24)",
+        : "app.borderColorStrong",
     },
     _active: {
       bg: isSelected ? colors.activeHoverBg : colors.inactiveHoverBg,
@@ -444,6 +445,10 @@ export function FormTextarea({
 
 export function PrimaryButton(props: ButtonProps) {
   return <Button type="button" {...primaryButtonStyles} {...props} />;
+}
+
+export function CompactPrimaryButton(props: ButtonProps) {
+  return <Button type="button" {...compactPrimaryButtonStyles} {...props} />;
 }
 
 export function SecondaryButton(props: ButtonProps) {

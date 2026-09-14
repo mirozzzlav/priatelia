@@ -59,7 +59,7 @@ export function PersonPreviewDetail({
         </DetailSection>
       )}
 
-      <DetailSection title="Čo ma zaujíma">
+      <DetailSection title="Čo ma zaujíma" headingSpacing="loose">
         <InterestTagList tags={person.tags} />
       </DetailSection>
 

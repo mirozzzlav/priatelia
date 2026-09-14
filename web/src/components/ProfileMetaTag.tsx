@@ -17,7 +17,7 @@ const styles = {
       px: size === "compact" ? "6px" : size === "sm" ? "7px" : "8px",
       py: size === "compact" ? "3px" : size === "sm" ? "4px" : "5px",
       border: "1px solid",
-      borderColor: "rgba(53, 87, 45, 0.08)",
+      borderColor: "app.borderColor",
       borderRadius: "999px",
       bg: "rgba(53, 87, 45, 0.035)",
     }) as const,

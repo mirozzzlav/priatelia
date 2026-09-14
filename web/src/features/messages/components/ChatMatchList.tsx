@@ -28,7 +28,7 @@ const styles = {
     overflow: "hidden",
     p: "10px",
     border: "1px solid",
-    borderColor: "rgba(53, 87, 45, 0.16)",
+    borderColor: "app.borderColor",
     borderRadius: "22px",
     bg: "app.white",
     boxShadow: "0 7px 18px rgba(53, 87, 45, 0.08)",

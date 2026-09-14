@@ -38,7 +38,7 @@ type PhotoGalleryFieldProps = {
 const styles = {
   section: {
     border: "1px solid",
-    borderColor: "rgba(53, 87, 45, 0.18)",
+    borderColor: "app.borderColor",
     borderRadius: "18px",
     bg: "rgba(53, 87, 45, 0.035)",
     boxShadow:
@@ -60,7 +60,7 @@ const styles = {
     position: "relative",
     overflow: "hidden",
     border: "2px solid",
-    borderColor: "rgba(53, 87, 45, 0.12)",
+    borderColor: "app.borderColor",
     borderRadius: "14px",
     bg: "rgba(53, 87, 45, 0.04)",
   },

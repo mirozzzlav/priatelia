@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { BackButton } from "src/components/formElements";
+import { compactPrimaryButtonStyles } from "src/components/formElementStyles";
 import { LoadingPill } from "src/components/LoadingPill";
 import { PageHeader } from "src/components/PageHeader";
 import { useChatMatches } from "src/context/chatMatches";
@@ -31,19 +32,19 @@ const styles = {
     transition:
       "border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease",
     border: "1px solid",
-    borderColor: "rgba(53, 87, 45, 0.16)",
+    borderColor: "app.borderColor",
     borderRadius: "8px",
     bg: "app.white",
     boxShadow: "0 9px 22px rgba(53, 87, 45, 0.1)",
     p: "6px",
     sx: {
       "&:has(.connection-thread-button:hover)": {
-        borderColor: "rgba(197, 106, 24, 0.42)",
+        borderColor: "app.infoBorder",
         boxShadow:
           "0 0 0 2px rgba(197, 106, 24, 0.24), 0 11px 26px rgba(53, 87, 45, 0.14)",
       },
       "&:has(.connection-thread-button:active)": {
-        borderColor: "rgba(197, 106, 24, 0.5)",
+        borderColor: "app.infoBorderStrong",
         boxShadow:
           "0 0 0 2px rgba(197, 106, 24, 0.3), 0 8px 20px rgba(53, 87, 45, 0.12)",
         transform: "scale(0.997)",
@@ -141,15 +142,7 @@ const styles = {
     zIndex: 0,
     alignItems: "center",
     justifyContent: "center",
-    h: "38px",
     px: "10px",
-    borderRadius: "999px",
-    bg: "app.base",
-    color: "app.white",
-    fontSize: "xs",
-    fontWeight: "black",
-    _hover: { bg: "app.baseDark" },
-    _active: { bg: "app.baseDark" },
   },
   status: {
     gridColumn: "1 / -1",
@@ -299,7 +292,11 @@ export function ConnectionsRoute() {
                     {match.age} · {match.location}
                   </Text>
                 </Box>
-                <Flex {...styles.messageButton}>
+                <Flex
+                  aria-hidden="true"
+                  {...compactPrimaryButtonStyles}
+                  {...styles.messageButton}
+                >
                   Napísať správu
                 </Flex>
               </Box>

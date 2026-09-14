@@ -32,7 +32,7 @@ const styles = {
     maxH: "196px",
     overflowY: "auto",
     border: "1px solid",
-    borderColor: "rgba(53, 87, 45, 0.18)",
+    borderColor: "app.borderColor",
     borderRadius: "18px",
     bg: "app.white",
     boxShadow: "0 14px 32px rgba(53, 87, 45, 0.14)",

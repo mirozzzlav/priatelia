@@ -3,11 +3,15 @@ import type { ReactNode } from "react";
 
 type PanelHeadingProps = HeadingProps & {
   children: ReactNode;
+  spacing?: "normal" | "loose";
   variant?: "main" | "normal";
 };
 
 const styles = {
-  root: (variant: NonNullable<PanelHeadingProps["variant"]>) =>
+  root: (
+    variant: NonNullable<PanelHeadingProps["variant"]>,
+    spacing: NonNullable<PanelHeadingProps["spacing"]>,
+  ) =>
     ({
       display: "flex",
       alignItems: "center",
@@ -18,7 +22,7 @@ const styles = {
             fontSize: "3xl",
             mb: "16px",
           }
-        : { fontSize: "xl", mb: "12px" }),
+        : { fontSize: "xl", mb: spacing === "loose" ? "20px" : "14px" }),
       fontWeight: "semibold",
       lineHeight: variant === "main" ? 1.05 : 1.2,
       letterSpacing: "0.02em",
@@ -32,11 +36,12 @@ const styles = {
 
 export function PanelHeading({
   children,
+  spacing = "normal",
   variant = "normal",
   ...props
 }: PanelHeadingProps) {
   return (
-    <Heading as="h2" {...styles.root(variant)} {...props}>
+    <Heading as="h2" {...styles.root(variant, spacing)} {...props}>
       {children}
     </Heading>
   );

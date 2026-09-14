@@ -8,7 +8,6 @@ const styles = {
   list: {
     flexWrap: "wrap",
     gap: "8px",
-    p: "8px 0",
   },
 } as const;
 

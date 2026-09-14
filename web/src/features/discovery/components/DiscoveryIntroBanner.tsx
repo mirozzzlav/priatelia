@@ -12,7 +12,7 @@ const styles = {
     pb: "17px",
     bg: "rgba(255, 255, 255, 0.9)",
     borderBottom: "1px solid",
-    borderColor: "rgba(53, 87, 45, 0.14)",
+    borderColor: "app.borderColor",
   },
   inner: {
     align: "center",

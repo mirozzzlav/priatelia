@@ -5,11 +5,14 @@ import { PanelHeading } from "src/components/PanelHeading";
 
 const styles = {
   root: {
-    mx: { base: "-12px", sm: "-16px" },
+    mx: {
+      base: "var(--pill-section-bleed-base, -12px)",
+      sm: "var(--pill-section-bleed-sm, -16px)",
+    },
     px: { base: "26px", sm: "30px" },
     py: "17px",
     borderBottom: "1px solid",
-    borderColor: "rgba(53, 87, 45, 0.14)",
+    borderColor: "app.borderColor",
     bgGradient:
       "linear(to-b, rgba(241, 243, 246, 0.55), rgba(255, 255, 255, 0) 58%)",
     _last: {
@@ -20,13 +23,18 @@ const styles = {
 
 type DetailSectionProps = {
   children: ReactNode;
+  headingSpacing?: "normal" | "loose";
   title: string;
 };
 
-export function DetailSection({ title, children }: DetailSectionProps) {
+export function DetailSection({
+  title,
+  headingSpacing = "normal",
+  children,
+}: DetailSectionProps) {
   return (
     <Box {...styles.root}>
-      {title && <PanelHeading>{title}</PanelHeading>}
+      {title && <PanelHeading spacing={headingSpacing}>{title}</PanelHeading>}
       {children}
     </Box>
   );
