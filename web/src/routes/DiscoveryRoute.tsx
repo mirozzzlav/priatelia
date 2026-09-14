@@ -29,6 +29,7 @@ type DiscoveryRouteProps = {
   isLoadingPersonPreview: boolean;
   isSubmittingPersonPreviewAction: boolean;
   initialDiscoverySettings: DiscoverySettingsData;
+  matchedProfileMatch: ChatMatch | null;
   onActionEnd: () => void;
   onActionStart: (
     action: ActivePersonPreviewAction,
@@ -38,6 +39,7 @@ type DiscoveryRouteProps = {
   ) => void;
   onDiscoveryReload: () => Promise<void>;
   onDiscoverySettingsSave: (data: DiscoverySettingsData) => void;
+  onMatchedProfileMatchClear: () => void;
   onPersonPreviewLoad: () => Promise<void>;
   personPreview: PersonPreview | null;
 };
@@ -53,7 +55,8 @@ const styles = {
   stickyHeader: {
     position: "sticky",
     top: "64px",
-    zIndex: 35,
+    zIndex: 45,
+    bg: "app.white",
   },
 } as const;
 
@@ -63,10 +66,12 @@ export function DiscoveryRoute({
   isLoadingPersonPreview,
   isSubmittingPersonPreviewAction,
   initialDiscoverySettings,
+  matchedProfileMatch,
   onActionEnd,
   onActionStart,
   onDiscoveryReload,
   onDiscoverySettingsSave,
+  onMatchedProfileMatchClear,
   onPersonPreviewLoad,
   personPreview,
 }: DiscoveryRouteProps) {
@@ -74,8 +79,8 @@ export function DiscoveryRoute({
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null,
   );
-  const [matchedProfileMatch, setMatchedProfileMatch] =
-    useState<ChatMatch | null>(null);
+  const [isDiscoveryHeaderCompact, setIsDiscoveryHeaderCompact] =
+    useState(false);
   const [isContinuingDiscovery, setIsContinuingDiscovery] = useState(false);
   const previousPersonPreviewIdRef = useRef<string | null>(null);
   const { addChatMatch } = useChatMatches();
@@ -106,21 +111,19 @@ export function DiscoveryRoute({
     (action: ActivePersonPreviewAction) => {
       onActionStart(action, (result) => {
         if (result.match) {
-          const newMatch = { ...result.match, isNew: true };
-          setMatchedProfileMatch(newMatch);
-          addChatMatch(newMatch);
+          addChatMatch(result.match);
         }
       });
     },
     [addChatMatch, onActionStart],
   );
   const handleContinueDiscovery = useCallback(() => {
-    setMatchedProfileMatch(null);
+    onMatchedProfileMatchClear();
     setIsContinuingDiscovery(true);
     void onPersonPreviewLoad().finally(() => {
       setIsContinuingDiscovery(false);
     });
-  }, [onPersonPreviewLoad]);
+  }, [onMatchedProfileMatchClear, onPersonPreviewLoad]);
   const handleMessageClick = useCallback(() => {
     if (matchedProfileMatch) {
       navigate(`/messages/${matchedProfileMatch.id}`);
@@ -128,6 +131,21 @@ export function DiscoveryRoute({
   }, [matchedProfileMatch, navigate]);
   const closePhotoViewer = useCallback(() => {
     setSelectedPhotoIndex(null);
+  }, []);
+
+  useEffect(() => {
+    const updateDiscoveryHeaderCompact = () => {
+      setIsDiscoveryHeaderCompact(window.scrollY > 12);
+    };
+
+    updateDiscoveryHeaderCompact();
+    window.addEventListener("scroll", updateDiscoveryHeaderCompact, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", updateDiscoveryHeaderCompact);
+    };
   }, []);
 
   useEffect(() => {
@@ -165,8 +183,9 @@ export function DiscoveryRoute({
     });
   }, [personPreview]);
 
-  const discoveryTopPanel = (
+  const discoveryHeader = (
     <Box {...styles.stickyHeader}>
+      <DiscoveryIntroBanner isCompact={isDiscoveryHeaderCompact} />
       <DiscoveryTopPanel
         initialDiscoverySettings={initialDiscoverySettings}
         onDiscoveryReload={onDiscoveryReload}
@@ -178,7 +197,9 @@ export function DiscoveryRoute({
   if (isLoadingPersonPreview && !personPreview) {
     return (
       <Box {...styles.deck}>
-        <DiscoveryIntroBanner />
+        <Box {...styles.stickyHeader}>
+          <DiscoveryIntroBanner isCompact={isDiscoveryHeaderCompact} />
+        </Box>
         <CenteredStatusLayout minH="calc(100vh - 108px)" px="16px" py={0}>
           <LoadingPill text="Hľadám ti ďalšieho priateľa." />
         </CenteredStatusLayout>
@@ -191,8 +212,13 @@ export function DiscoveryRoute({
 
     return (
       <Box {...styles.deck}>
-        <DiscoveryIntroBanner />
-        {isEmptyDiscovery && discoveryTopPanel}
+        {isEmptyDiscovery ? (
+          discoveryHeader
+        ) : (
+          <Box {...styles.stickyHeader}>
+            <DiscoveryIntroBanner isCompact={isDiscoveryHeaderCompact} />
+          </Box>
+        )}
         <InfoScreen
           flex="1"
           message={error}
@@ -209,8 +235,7 @@ export function DiscoveryRoute({
     <Box {...styles.deck}>
       {personPreview && (
         <>
-          <DiscoveryIntroBanner />
-          {discoveryTopPanel}
+          {discoveryHeader}
           <PillGroup>
             <PersonPreviewHeader
               activeAction={activeAction}

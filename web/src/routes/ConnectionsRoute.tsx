@@ -2,9 +2,8 @@ import { Badge, Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { BackButton } from "src/components/formElements";
-import { compactPrimaryButtonStyles } from "src/components/formElementStyles";
 import { LoadingPill } from "src/components/LoadingPill";
+import { MessageButton } from "src/components/MessageButton";
 import { PageHeader } from "src/components/PageHeader";
 import { useChatMatches } from "src/context/chatMatches";
 import type { ChatMatch } from "src/services/api";
@@ -18,7 +17,7 @@ const styles = {
   header: {
     position: "sticky",
     top: "64px",
-    zIndex: 20,
+    zIndex: 40,
   },
   content: {
     display: "grid",
@@ -139,9 +138,7 @@ const styles = {
   },
   messageButton: {
     position: "relative",
-    zIndex: 0,
-    alignItems: "center",
-    justifyContent: "center",
+    zIndex: 2,
     px: "10px",
   },
   status: {
@@ -156,15 +153,6 @@ const styles = {
     gridColumn: "1 / -1",
     justify: "center",
     py: "34px",
-  },
-  backButton: {
-    alignSelf: "start",
-    justifySelf: "end",
-    h: "34px",
-    minW: "0",
-    px: "10px",
-    fontSize: "xs",
-    iconSpacing: "5px",
   },
 } as const;
 
@@ -224,12 +212,7 @@ export function ConnectionsRoute() {
     <Box {...styles.root}>
       <PageHeader
         intro="Ľudia, s ktorými ste si dali vzájomné áno a ešte ste nezačali konverzáciu."
-        rightAction={
-          <BackButton
-            onClick={() => navigate("/discover")}
-            {...styles.backButton}
-          />
-        }
+        onBack={() => navigate("/discover")}
         title="Tvoje prepojenia"
         {...styles.header}
       />
@@ -292,13 +275,12 @@ export function ConnectionsRoute() {
                     {match.age} · {match.location}
                   </Text>
                 </Box>
-                <Flex
-                  aria-hidden="true"
-                  {...compactPrimaryButtonStyles}
+                <MessageButton
+                  aria-label={`Otvoriť konverzáciu s: ${match.name}`}
+                  onClick={() => navigate(`/messages/${match.id}`)}
+                  sizeVariant="compact"
                   {...styles.messageButton}
-                >
-                  Napísať správu
-                </Flex>
+                />
               </Box>
             </Box>
           ))}

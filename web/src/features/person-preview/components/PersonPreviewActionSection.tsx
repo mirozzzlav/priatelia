@@ -1,9 +1,8 @@
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box, Flex, Icon, Text } from "@chakra-ui/react";
 
 import logoIcon from "assets/logo.svg";
-import matchIcon from "assets/match.svg";
-import { PrimaryButton, SecondaryButton } from "src/components/formElements";
-import { PanelHeading } from "src/components/PanelHeading";
+import { MessageButton } from "src/components/MessageButton";
+import { PrimaryButton } from "src/components/formElements";
 import { SvgImage } from "src/components/SvgImage";
 import { PersonPreviewActionButtons } from "src/features/person-preview/components/PersonPreviewActionButtons";
 import type {
@@ -27,41 +26,70 @@ const styles = {
     backdropFilter: "blur(14px)",
   },
   panel: {
-    mx: { base: "2px", sm: "8px" },
-    px: { base: "26px", sm: "30px" },
+    mx: 0,
+    px: 0,
   },
-  matchGrid: {
-    display: "grid",
-    gridTemplateColumns: { base: "1fr", sm: "1fr 1fr" },
-    gap: "10px",
+  actionHeading: {
+    w: "100%",
+    minW: 0,
+    mb: "10px",
+    px: { base: "18px", sm: "22px" },
+    py: "13px",
+    border: "1px solid",
+    borderColor: "app.infoBorder",
+    borderRadius: "18px",
+    bg: "rgba(197, 106, 24, 0.1)",
+    boxShadow: "0 6px 14px rgba(197, 106, 24, 0.08)",
+    color: "app.info",
   },
-  matchStatus: {
-    display: "flex",
+  actionHeadingHeader: {
     alignItems: "center",
     justifyContent: "center",
     gap: "8px",
+  },
+  actionHeadingIcon: {
+    boxSize: "22px",
+  },
+  actionHeadingText: {
+    fontSize: "sm",
+    fontWeight: "black",
+    lineHeight: 1,
+    textTransform: "uppercase",
+  },
+  actionHeadingDescription: {
+    mt: "8px",
+    color: "app.text",
+    fontSize: "sm",
+    fontWeight: "bold",
+    lineHeight: 1.35,
+    textAlign: "center",
+    opacity: 0.72,
+  },
+  matchGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gap: "10px",
+  },
+  matchStatus: {
+    gridColumn: "1 / -1",
     w: "100%",
-    h: "52px",
     minW: 0,
-    px: "18px",
+    px: { base: "18px", sm: "22px" },
+    py: "14px",
     border: "1px solid",
     borderColor: "app.errorBorder",
-    borderRadius: "999px",
+    borderRadius: "18px",
     bg: "rgba(159, 63, 74, 0.1)",
     boxShadow: "0 6px 14px rgba(159, 63, 74, 0.08)",
     color: "app.error",
-    cursor: "default",
-    _hover: {
-      bg: "rgba(159, 63, 74, 0.1)",
-    },
-    _active: {
-      bg: "rgba(159, 63, 74, 0.1)",
-    },
+  },
+  matchStatusHeader: {
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
   },
   matchStatusIcon: {
     boxSize: "24px",
-    filter:
-      "brightness(0) saturate(100%) invert(30%) sepia(25%) saturate(1265%) hue-rotate(303deg) brightness(93%) contrast(90%)",
     animation: "matchHeartPulse 1.35s ease-in-out infinite",
   },
   matchStatusText: {
@@ -70,13 +98,22 @@ const styles = {
     lineHeight: 1,
     textTransform: "uppercase",
   },
+  matchStatusDescription: {
+    mt: "8px",
+    color: "app.text",
+    fontSize: "sm",
+    fontWeight: "bold",
+    lineHeight: 1.35,
+    textAlign: "center",
+    opacity: 0.72,
+  },
   matchButton: {
     w: "100%",
   },
   continueButton: {
     w: "100%",
-    gridColumn: { base: undefined, sm: "1 / -1" },
     gap: "8px",
+    fontSize: "sm",
   },
   continueIcon: {
     boxSize: "31px",
@@ -124,17 +161,21 @@ export function PersonPreviewActionSection({
       <Box {...styles.panel}>
         {isMatched ? (
           <Box {...styles.matchGrid}>
-            <Button type="button" tabIndex={-1} {...styles.matchStatus}>
-              <SvgImage src={matchIcon} {...styles.matchStatusIcon} />
-              <Text {...styles.matchStatusText}>Nastal match</Text>
-            </Button>
-            <SecondaryButton
+            <Box {...styles.matchStatus}>
+              <Flex {...styles.matchStatusHeader}>
+                <MatchStatusIcon />
+                <Text {...styles.matchStatusText}>Ste prepojení</Text>
+              </Flex>
+              <Text {...styles.matchStatusDescription}>
+                Vzájomne ste si dali áno, preto si teraz môžete napísať.
+              </Text>
+            </Box>
+            <MessageButton
               isDisabled={isSubmitting || !onMessageClick}
               onClick={onMessageClick}
+              gridColumn={onContinueDiscovery ? undefined : "1 / -1"}
               {...styles.matchButton}
-            >
-              Napísať správu
-            </SecondaryButton>
+            />
             {onContinueDiscovery && (
               <PrimaryButton
                 type="button"
@@ -149,7 +190,16 @@ export function PersonPreviewActionSection({
           </Box>
         ) : (
           <>
-            <PanelHeading spacing="loose">Chceš ma spoznať?</PanelHeading>
+            <Box {...styles.actionHeading}>
+              <Flex {...styles.actionHeadingHeader}>
+                <ActionHeadingIcon />
+                <Text {...styles.actionHeadingText}>Chceš ma spoznať?</Text>
+              </Flex>
+              <Text {...styles.actionHeadingDescription}>
+                Daj áno, ak chceš nadviazať kontakt. Prepojenie vznikne, keď si
+                dáte áno navzájom.
+              </Text>
+            </Box>
             <PersonPreviewActionButtons
               activeAction={activeAction}
               isSubmitting={isSubmitting}
@@ -160,5 +210,39 @@ export function PersonPreviewActionSection({
         )}
       </Box>
     </Box>
+  );
+}
+
+function ActionHeadingIcon() {
+  return (
+    <Icon
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2.5"
+      aria-hidden="true"
+      {...styles.actionHeadingIcon}
+    >
+      <path d="M12 20.1 5.72 14.4C2.2 11.2 2.96 6.25 6.95 5.06c1.9-.57 3.64.1 5.05 1.72 1.41-1.62 3.15-2.29 5.05-1.72 3.99 1.19 4.75 6.14 1.23 9.34L12 20.1Z" />
+    </Icon>
+  );
+}
+
+function MatchStatusIcon() {
+  return (
+    <Icon
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2.5"
+      aria-hidden="true"
+      {...styles.matchStatusIcon}
+    >
+      <path d="M12 20.1 5.72 14.4C2.2 11.2 2.96 6.25 6.95 5.06c1.9-.57 3.64.1 5.05 1.72 1.41-1.62 3.15-2.29 5.05-1.72 3.99 1.19 4.75 6.14 1.23 9.34L12 20.1Z" />
+    </Icon>
   );
 }

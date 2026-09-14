@@ -1,7 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 
 import { PageHeader } from "src/components/PageHeader";
-import { BackButton } from "src/components/formElements";
 import { LoadingPill } from "src/components/LoadingPill";
 import { ChatMatchList } from "src/features/messages/components/ChatMatchList";
 import type { ChatMatch } from "src/services/api";
@@ -24,7 +23,7 @@ const styles = {
   header: {
     position: "sticky",
     top: "64px",
-    zIndex: 20,
+    zIndex: 40,
   },
   content: {
     pt: { base: "22px", sm: "28px" },
@@ -39,15 +38,6 @@ const styles = {
   loadingStatus: {
     justify: "center",
     py: "34px",
-  },
-  backButton: {
-    alignSelf: "start",
-    justifySelf: "end",
-    h: "34px",
-    minW: "0",
-    px: "10px",
-    fontSize: "xs",
-    iconSpacing: "5px",
   },
 } as const;
 
@@ -64,7 +54,7 @@ export function MessageMatchesScreen({
       <PageHeader
         title="Správy"
         intro="Vyber si človeka, s ktorým ste si dali vzájomné áno."
-        rightAction={<BackButton onClick={onBack} {...styles.backButton} />}
+        onBack={onBack}
         {...styles.header}
       />
 

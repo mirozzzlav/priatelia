@@ -12,7 +12,7 @@ type AppHeaderSurface = "plain" | "surface";
 type AppHeaderActionIcon = "close" | ReactElement;
 
 type AppHeaderAction = {
-  ariaLabel: string;
+  ariaLabel?: string;
   icon?: AppHeaderActionIcon;
   node?: ReactNode;
   onClick?: () => void;
@@ -111,7 +111,7 @@ function AppHeaderAction({ action }: { action: AppHeaderAction }) {
 
   return (
     <IconButton
-      aria-label={action.ariaLabel}
+      aria-label={action.ariaLabel ?? "Zavrieť"}
       icon={getActionIcon(action.icon)}
       onClick={action.onClick}
       {...styles.iconButton}

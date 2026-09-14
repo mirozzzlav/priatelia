@@ -4,7 +4,11 @@ import type {
   ActivePersonPreviewAction,
   PersonPreview,
 } from "src/features/person-preview";
-import { apiClient, type ProfileActionResult } from "src/services/api";
+import {
+  apiClient,
+  type ChatMatch,
+  type ProfileActionResult,
+} from "src/services/api";
 
 const noDiscoveryProfilesMessage =
   "V tejto chvíli sa nám nepodarilo nájsť žiadneho nového priateľa, skús upraviť podmienky hľadania.";
@@ -26,6 +30,8 @@ export function usePersonPreview() {
   const [personPreview, setPersonPreview] = useState<PersonPreview | null>(
     null,
   );
+  const [matchedProfileMatch, setMatchedProfileMatch] =
+    useState<ChatMatch | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoadingPersonPreview, setIsLoadingPersonPreview] = useState(false);
   const [isSubmittingPersonPreviewAction, setIsSubmittingPersonPreviewAction] =
@@ -37,8 +43,10 @@ export function usePersonPreview() {
 
     try {
       const preview = await apiClient.getPersonPreview();
+      setMatchedProfileMatch(null);
       setPersonPreview(preview);
     } catch (error) {
+      setMatchedProfileMatch(null);
       setPersonPreview(null);
       setError(getPersonPreviewErrorMessage(error));
     } finally {
@@ -56,8 +64,13 @@ export function usePersonPreview() {
 
   const resetDiscovery = () => {
     setActiveAction(null);
+    setMatchedProfileMatch(null);
     setPersonPreview(null);
     setError(null);
+  };
+
+  const clearMatchedProfileMatch = () => {
+    setMatchedProfileMatch(null);
   };
 
   const startPersonPreviewAction = (
@@ -79,8 +92,19 @@ export function usePersonPreview() {
           personPreview.id,
           action,
         );
-        await onAfterSuccessfulAction?.(result);
-        if (!result.match) {
+        const actionResult = result.match
+          ? {
+              ...result,
+              match: {
+                ...result.match,
+                isNew: true,
+              },
+            }
+          : result;
+
+        setMatchedProfileMatch(actionResult.match);
+        await onAfterSuccessfulAction?.(actionResult);
+        if (!actionResult.match) {
           await loadPersonPreview();
         }
       } catch {
@@ -95,10 +119,12 @@ export function usePersonPreview() {
   return {
     activeAction,
     clearActiveAction,
+    clearMatchedProfileMatch,
     error,
     isLoadingPersonPreview,
     isSubmittingPersonPreviewAction,
     loadPersonPreview,
+    matchedProfileMatch,
     personPreview,
     resetDiscovery,
     startPersonPreviewAction,

@@ -34,10 +34,12 @@ export function AppRoutes() {
   const {
     activeAction,
     clearActiveAction,
+    clearMatchedProfileMatch,
     error,
     isLoadingPersonPreview,
     isSubmittingPersonPreviewAction,
     loadPersonPreview,
+    matchedProfileMatch,
     personPreview,
     resetDiscovery,
     startPersonPreviewAction,
@@ -109,6 +111,7 @@ export function AppRoutes() {
                   isSubmittingPersonPreviewAction
                 }
                 initialDiscoverySettings={discoverySettings}
+                matchedProfileMatch={matchedProfileMatch}
                 onActionEnd={clearActiveAction}
                 onActionStart={startPersonPreviewAction}
                 onDiscoveryReload={async () => {
@@ -116,6 +119,7 @@ export function AppRoutes() {
                   await loadPersonPreview();
                 }}
                 onDiscoverySettingsSave={saveDiscoverySettings}
+                onMatchedProfileMatchClear={clearMatchedProfileMatch}
                 onPersonPreviewLoad={loadPersonPreview}
                 personPreview={personPreview}
               />

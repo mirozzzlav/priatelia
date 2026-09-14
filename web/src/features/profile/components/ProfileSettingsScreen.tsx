@@ -5,7 +5,6 @@ import { GenderField } from "src/components/GenderField";
 import { InterestSelectField } from "src/components/InterestSelectField";
 import { PhotoGalleryField } from "src/components/PhotoGalleryField";
 import {
-  BackButton,
   FormActions,
   FormInput,
   FormLinkButton,
@@ -14,8 +13,8 @@ import {
   OptionalFieldLabel,
   RequiredFieldLabel,
 } from "src/components/formElements";
-import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { PageHeader } from "src/components/PageHeader";
 import { useClientConfig } from "src/context/clientConfig";
 import { LocationSearchField } from "src/components/LocationSearchField";
 import type { Gender } from "src/constants/gender";
@@ -32,12 +31,23 @@ type ProfileSettingsScreenProps = {
 };
 
 const styles = {
+  root: {
+    minH: "calc(100vh - 64px)",
+    px: { base: "12px", sm: "16px" },
+    pb: "34px",
+  },
+  header: {
+    position: "sticky",
+    top: "64px",
+    zIndex: 40,
+  },
   form: {
     display: "grid",
     gap: "22px",
+    pt: { base: "22px", sm: "28px" },
   },
   passwordLink: {
-    justifySelf: "start",
+    justifySelf: "end",
   },
 } as const;
 
@@ -76,7 +86,9 @@ export function ProfileSettingsScreen({
     });
 
   const updateField =
-    (field: keyof Omit<EditableProfileData, "email" | "interests" | "photos">) =>
+    (
+      field: keyof Omit<EditableProfileData, "email" | "interests" | "photos">,
+    ) =>
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       resetFeedback();
       setFormData((current) => ({
@@ -147,10 +159,14 @@ export function ProfileSettingsScreen({
   };
 
   return (
-    <ScreenLayout
-      title="Profil"
-      intro="Uprav fotky, základné údaje a krátke bio, ktoré uvidia ostatní."
-    >
+    <Box {...styles.root}>
+      <PageHeader
+        intro="Uprav fotky, základné údaje a krátke bio, ktoré uvidia ostatní."
+        onBack={onBack}
+        title="Profil"
+        {...styles.header}
+      />
+
       <Box as="form" noValidate onSubmit={handleSubmit} {...styles.form}>
         <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.nickname)}>
           <RequiredFieldLabel>Nickname</RequiredFieldLabel>
@@ -280,9 +296,8 @@ export function ProfileSettingsScreen({
           >
             Uložiť profil
           </FormSubmitButton>
-          <BackButton onClick={onBack} />
         </FormActions>
       </Box>
-    </ScreenLayout>
+    </Box>
   );
 }

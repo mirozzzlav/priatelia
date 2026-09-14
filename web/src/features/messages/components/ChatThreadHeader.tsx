@@ -1,6 +1,5 @@
 import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
 
-import { BackButton } from "src/components/formElements";
 import { PageHeader } from "src/components/PageHeader";
 import type { ChatMatch } from "src/services/api";
 
@@ -14,16 +13,6 @@ const styles = {
   root: {
     alignItems: "center",
     flexShrink: 0,
-  },
-  backButton: {
-    alignSelf: "start",
-    flexShrink: 0,
-    justifySelf: "end",
-    h: "34px",
-    minW: "0",
-    px: "10px",
-    fontSize: "xs",
-    iconSpacing: "5px",
   },
   profileHeader: {
     alignItems: "center",
@@ -118,7 +107,7 @@ export function ChatThreadHeader({
           </Flex>
         )
       }
-      rightAction={<BackButton onClick={onBack} {...styles.backButton} />}
+      onBack={onBack}
       {...styles.root}
     />
   );

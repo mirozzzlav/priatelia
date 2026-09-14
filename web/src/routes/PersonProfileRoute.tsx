@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import {
   Navigate,
   useLocation,
@@ -7,11 +7,11 @@ import {
   useParams,
 } from "react-router-dom";
 
-import { BackButton } from "src/components/formElements";
-import { HeaderSurface } from "src/components/HeaderSurface";
 import { CenteredStatusLayout } from "src/components/layouts";
 import { LoadingPill } from "src/components/LoadingPill";
+import { PageHeader } from "src/components/PageHeader";
 import { PhotoViewer } from "src/components/PhotoViewer";
+import { PillGroup } from "src/components/PillGroup";
 import { InfoScreen } from "src/features/info";
 import {
   PersonPreviewActionSection,
@@ -36,19 +36,7 @@ const styles = {
   header: {
     position: "sticky",
     top: "64px",
-    zIndex: 20,
-  },
-  headerContent: {
-    justify: "flex-end",
-  },
-  backButton: {
-    alignSelf: "start",
-    justifySelf: "end",
-    h: "34px",
-    minW: "0",
-    px: "10px",
-    fontSize: "xs",
-    iconSpacing: "5px",
+    zIndex: 40,
   },
 } as const;
 
@@ -137,23 +125,21 @@ export function PersonProfileRoute() {
 
   return (
     <Box {...styles.root}>
-      <HeaderSurface {...styles.header}>
-        <Flex {...styles.headerContent}>
-          <BackButton
-            onClick={() => navigate(returnPath)}
-            {...styles.backButton}
-          />
-        </Flex>
-      </HeaderSurface>
+      <PageHeader
+        intro="Detail človeka, s ktorým ste si dali vzájomné áno."
+        onBack={() => navigate(returnPath)}
+        title="Profil priateľa"
+        {...styles.header}
+      />
 
       {person && (
         <>
-          <Flex direction="column">
+          <PillGroup>
             <PersonPreviewHeader
               activeAction={null}
+              isSticky={false}
               isLoadingNextPerson={false}
               person={person}
-              stickyTop="128px"
             />
             <PersonPreviewDetail
               onPhotoClick={(photoSrc) => {
@@ -164,7 +150,7 @@ export function PersonProfileRoute() {
               }}
               person={person}
             />
-          </Flex>
+          </PillGroup>
           <PersonPreviewActionSection
             activeAction={null}
             isSubmitting={false}

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 const styles = {
   root: {
-    mx: { base: "2px", sm: "8px" },
+    mx: 0,
     mt: "12px",
     mb: "34px",
     px: { base: "8px", sm: "10px" },
