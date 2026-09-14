@@ -26,7 +26,7 @@ const styles = {
     ({
       position: "relative",
       flexShrink: 0,
-      w: isCompact ? "62px" : "92px",
+      w: isCompact ? "40px" : "58px",
       h: isCompact ? "36px" : "46px",
       display: "grid",
       placeItems: "center",

@@ -6,6 +6,7 @@ services:
       args:
         VITE_DATA_SOURCE: rest
         VITE_API_BASE_URL: /api
+        VITE_DISCOVERY_FEEDBACK_ENABLED: ${VITE_DISCOVERY_FEEDBACK_ENABLED:-true}
     restart: unless-stopped
     ports:
       - "${WEB_BIND:-127.0.0.1}:${WEB_PORT:-4445}:80"

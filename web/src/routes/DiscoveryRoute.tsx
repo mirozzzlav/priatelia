@@ -9,6 +9,7 @@ import { PhotoViewer } from "src/components/PhotoViewer";
 import { PillGroup } from "src/components/PillGroup";
 import { useChatMatches } from "src/context/chatMatches";
 import {
+  DiscoveryFeedbackBanner,
   DiscoveryIntroBanner,
   DiscoveryTopPanel,
 } from "src/features/discovery";
@@ -59,6 +60,9 @@ const styles = {
     bg: "app.white",
   },
 } as const;
+
+const isDiscoveryFeedbackEnabled =
+  import.meta.env.VITE_DISCOVERY_FEEDBACK_ENABLED !== "false";
 
 export function DiscoveryRoute({
   activeAction,
@@ -185,6 +189,7 @@ export function DiscoveryRoute({
 
   const discoveryHeader = (
     <Box {...styles.stickyHeader}>
+      {isDiscoveryFeedbackEnabled && <DiscoveryFeedbackBanner />}
       <DiscoveryIntroBanner isCompact={isDiscoveryHeaderCompact} />
       <DiscoveryTopPanel
         initialDiscoverySettings={initialDiscoverySettings}
@@ -198,6 +203,7 @@ export function DiscoveryRoute({
     return (
       <Box {...styles.deck}>
         <Box {...styles.stickyHeader}>
+          {isDiscoveryFeedbackEnabled && <DiscoveryFeedbackBanner />}
           <DiscoveryIntroBanner isCompact={isDiscoveryHeaderCompact} />
         </Box>
         <CenteredStatusLayout minH="calc(100vh - 108px)" px="16px" py={0}>
@@ -216,6 +222,7 @@ export function DiscoveryRoute({
           discoveryHeader
         ) : (
           <Box {...styles.stickyHeader}>
+            {isDiscoveryFeedbackEnabled && <DiscoveryFeedbackBanner />}
             <DiscoveryIntroBanner isCompact={isDiscoveryHeaderCompact} />
           </Box>
         )}
