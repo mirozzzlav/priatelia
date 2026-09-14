@@ -14,8 +14,9 @@ import { LoadingPill } from "src/components/LoadingPill";
 import { PhotoViewer } from "src/components/PhotoViewer";
 import { InfoScreen } from "src/features/info";
 import {
+  PersonPreviewActionSection,
   PersonPreviewDetail,
-  PersonPreviewPhoto,
+  PersonPreviewHeader,
   type PersonPreview,
 } from "src/features/person-preview";
 import { apiClient } from "src/services/api";
@@ -148,10 +149,9 @@ export function PersonProfileRoute() {
       {person && (
         <>
           <Flex direction="column">
-            <PersonPreviewPhoto
+            <PersonPreviewHeader
               activeAction={null}
               isLoadingNextPerson={false}
-              onMessageClick={() => navigate(`/messages/${matchId}`)}
               person={person}
               stickyTop="128px"
             />
@@ -165,6 +165,14 @@ export function PersonProfileRoute() {
               person={person}
             />
           </Flex>
+          <PersonPreviewActionSection
+            activeAction={null}
+            isSubmitting={false}
+            matchId={matchId}
+            onMessageClick={() => navigate(`/messages/${matchId}`)}
+            onActionEnd={() => undefined}
+            onActionStart={() => undefined}
+          />
           <PhotoViewer
             initialIndex={selectedPhotoIndex}
             isOpen={selectedPhotoIndex !== null}

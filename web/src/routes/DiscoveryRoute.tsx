@@ -2,18 +2,23 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
+import happySmileIcon from "assets/happy-smile.svg";
 import { CenteredStatusLayout } from "src/components/layouts";
 import { LoadingPill } from "src/components/LoadingPill";
 import { PhotoViewer } from "src/components/PhotoViewer";
+import { PillGroup } from "src/components/PillGroup";
 import { useChatMatches } from "src/context/chatMatches";
-import { DiscoveryIntroBanner, DiscoveryTopPanel } from "src/features/discovery";
+import {
+  DiscoveryIntroBanner,
+  DiscoveryTopPanel,
+} from "src/features/discovery";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import { InfoScreen } from "src/features/info";
 import {
   type ActivePersonPreviewAction,
   PersonPreviewActionSection,
   PersonPreviewDetail,
-  PersonPreviewPhoto,
+  PersonPreviewHeader,
   type PersonPreview,
 } from "src/features/person-preview";
 import type { ChatMatch, ProfileActionResult } from "src/services/api";
@@ -27,7 +32,9 @@ type DiscoveryRouteProps = {
   onActionEnd: () => void;
   onActionStart: (
     action: ActivePersonPreviewAction,
-    onAfterSuccessfulAction?: (result: ProfileActionResult) => Promise<void> | void,
+    onAfterSuccessfulAction?: (
+      result: ProfileActionResult,
+    ) => Promise<void> | void,
   ) => void;
   onDiscoveryReload: () => Promise<void>;
   onDiscoverySettingsSave: (data: DiscoverySettingsData) => void;
@@ -204,21 +211,23 @@ export function DiscoveryRoute({
         <>
           <DiscoveryIntroBanner />
           {discoveryTopPanel}
-          <PersonPreviewPhoto
-            activeAction={activeAction}
-            isMatched={Boolean(matchedProfileMatch)}
-            isLoadingNextPerson={
-              isSubmittingPersonPreviewAction || isContinuingDiscovery
-            }
-            onMessageClick={
-              matchedProfileMatch ? handleMessageClick : undefined
-            }
-            person={personPreview}
-          />
-          <PersonPreviewDetail
-            onPhotoClick={openPreviewPhoto}
-            person={personPreview}
-          />
+          <PillGroup>
+            <PersonPreviewHeader
+              activeAction={activeAction}
+              headerDescription="Profil vybraný podľa tvojich kritérií"
+              headerIcon={happySmileIcon}
+              headerTitle="Človek nablízku"
+              isSticky={false}
+              isLoadingNextPerson={
+                isSubmittingPersonPreviewAction || isContinuingDiscovery
+              }
+              person={personPreview}
+            />
+            <PersonPreviewDetail
+              onPhotoClick={openPreviewPhoto}
+              person={personPreview}
+            />
+          </PillGroup>
           <PersonPreviewActionSection
             activeAction={activeAction}
             isSubmitting={
@@ -226,6 +235,9 @@ export function DiscoveryRoute({
             }
             matchId={matchedProfileMatch?.id}
             onContinueDiscovery={handleContinueDiscovery}
+            onMessageClick={
+              matchedProfileMatch ? handleMessageClick : undefined
+            }
             onActionEnd={onActionEnd}
             onActionStart={handleActionStart}
           />
