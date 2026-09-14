@@ -1,4 +1,4 @@
-import { HeaderSurface } from "src/components/HeaderSurface";
+import { SurfaceBand } from "src/components/SurfaceBand";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import { DiscoveryFilterBar } from "src/features/discovery/components/DiscoveryFilterBar";
 import { useDiscoveryTopPanelState } from "src/features/discovery/hooks/useDiscoveryTopPanelState";
@@ -10,13 +10,14 @@ type DiscoveryTopPanelProps = {
 };
 
 const styles = {
-  headerRoot: {
+  headerRoot: (isExpanded: boolean) =>
+    ({
     position: "relative",
     zIndex: 1,
-    h: "112px",
+      h: isExpanded ? "112px" : "51px",
     overflow: "visible",
     borderTop: 0,
-  },
+    }) as const,
 } as const;
 
 export function DiscoveryTopPanel({
@@ -36,6 +37,8 @@ export function DiscoveryTopPanel({
     updateDraftGenderPreferences,
     updateLocationQuery,
     editInlineFilter,
+    isFilterPanelOpen,
+    toggleFilterPanel,
   } = useDiscoveryTopPanelState({
     initialDiscoverySettings,
     onDiscoveryReload,
@@ -43,9 +46,9 @@ export function DiscoveryTopPanel({
   });
 
   return (
-    <HeaderSurface
+    <SurfaceBand
       ref={rootRef}
-      {...styles.headerRoot}
+      {...styles.headerRoot(isFilterPanelOpen)}
       aria-live="polite"
     >
       <DiscoveryFilterBar
@@ -58,9 +61,11 @@ export function DiscoveryTopPanel({
         onDraftGenderPreferencesChange={updateDraftGenderPreferences}
         onEditInlineFilter={editInlineFilter}
         onInlineFilterSave={saveCurrentInlineFilter}
+        isFilterPanelOpen={isFilterPanelOpen}
         onLocationQueryChange={updateLocationQuery}
         onLocationSelect={selectInlineLocation}
+        onToggleFilterPanel={toggleFilterPanel}
       />
-    </HeaderSurface>
+    </SurfaceBand>
   );
 }

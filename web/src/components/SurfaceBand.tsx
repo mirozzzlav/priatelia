@@ -1,16 +1,17 @@
 import { Box, type BoxProps } from "@chakra-ui/react";
 import { forwardRef, type ReactNode } from "react";
 
-type HeaderSurfaceShadow = "default" | "expanded";
+type SurfaceBandShadow = "default" | "expanded" | "above";
 
-type HeaderSurfaceProps = BoxProps & {
+type SurfaceBandProps = BoxProps & {
   children: ReactNode;
   isExpanded?: boolean;
   noValidate?: boolean;
-  surfaceShadow?: HeaderSurfaceShadow;
+  surfaceShadow?: SurfaceBandShadow;
 };
 
-const shadows: Record<HeaderSurfaceShadow, string> = {
+const shadows: Record<SurfaceBandShadow, string> = {
+  above: "0 -12px 28px rgba(53, 87, 45, 0.12)",
   default: "0 18px 42px rgba(53, 87, 45, 0.12)",
   expanded: "0 18px 42px rgba(53, 87, 45, 0.18)",
 };
@@ -18,7 +19,7 @@ const shadows: Record<HeaderSurfaceShadow, string> = {
 const styles = {
   root: (
     isExpanded: boolean,
-    shadow: HeaderSurfaceShadow,
+    shadow: SurfaceBandShadow,
   ) =>
     ({
       w: isExpanded
@@ -36,8 +37,8 @@ const styles = {
     }) as const,
 } as const;
 
-export const HeaderSurface = forwardRef<HTMLDivElement, HeaderSurfaceProps>(
-  function HeaderSurface(
+export const SurfaceBand = forwardRef<HTMLDivElement, SurfaceBandProps>(
+  function SurfaceBand(
     {
       children,
       isExpanded = false,

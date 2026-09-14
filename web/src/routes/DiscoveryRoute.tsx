@@ -51,7 +51,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     px: { base: "12px", sm: "16px" },
-    pb: "22px",
+    pb: 0,
   },
   stickyHeader: {
     position: "sticky",
@@ -83,8 +83,6 @@ export function DiscoveryRoute({
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null,
   );
-  const [isDiscoveryHeaderCompact, setIsDiscoveryHeaderCompact] =
-    useState(false);
   const [isContinuingDiscovery, setIsContinuingDiscovery] = useState(false);
   const previousPersonPreviewIdRef = useRef<string | null>(null);
   const { addChatMatch } = useChatMatches();
@@ -138,21 +136,6 @@ export function DiscoveryRoute({
   }, []);
 
   useEffect(() => {
-    const updateDiscoveryHeaderCompact = () => {
-      setIsDiscoveryHeaderCompact(window.scrollY > 12);
-    };
-
-    updateDiscoveryHeaderCompact();
-    window.addEventListener("scroll", updateDiscoveryHeaderCompact, {
-      passive: true,
-    });
-
-    return () => {
-      window.removeEventListener("scroll", updateDiscoveryHeaderCompact);
-    };
-  }, []);
-
-  useEffect(() => {
     if (personPreview || isLoadingPersonPreview || error) {
       return;
     }
@@ -190,7 +173,7 @@ export function DiscoveryRoute({
   const discoveryHeader = (
     <Box {...styles.stickyHeader}>
       {isDiscoveryFeedbackEnabled && <DiscoveryFeedbackBanner />}
-      <DiscoveryIntroBanner isCompact={isDiscoveryHeaderCompact} />
+      <DiscoveryIntroBanner />
       <DiscoveryTopPanel
         initialDiscoverySettings={initialDiscoverySettings}
         onDiscoveryReload={onDiscoveryReload}
@@ -204,7 +187,7 @@ export function DiscoveryRoute({
       <Box {...styles.deck}>
         <Box {...styles.stickyHeader}>
           {isDiscoveryFeedbackEnabled && <DiscoveryFeedbackBanner />}
-          <DiscoveryIntroBanner isCompact={isDiscoveryHeaderCompact} />
+          <DiscoveryIntroBanner />
         </Box>
         <CenteredStatusLayout minH="calc(100vh - 108px)" px="16px" py={0}>
           <LoadingPill text="Hľadám ti ďalšieho priateľa." />
@@ -223,7 +206,7 @@ export function DiscoveryRoute({
         ) : (
           <Box {...styles.stickyHeader}>
             {isDiscoveryFeedbackEnabled && <DiscoveryFeedbackBanner />}
-            <DiscoveryIntroBanner isCompact={isDiscoveryHeaderCompact} />
+            <DiscoveryIntroBanner />
           </Box>
         )}
         <InfoScreen

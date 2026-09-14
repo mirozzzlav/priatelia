@@ -1,6 +1,8 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 
+import { StatusIcon } from "src/components/StatusIcon";
+
 const styles = {
   root: {
     mx: { base: "-12px", sm: "-16px" },
@@ -27,37 +29,22 @@ const styles = {
   inner: {
     align: "center",
     minH: "32px",
-    gap: "10px",
+    gap: "7px",
     textAlign: "left",
   },
   icon: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-    minW: "18px",
-    h: "24px",
-    gap: "3px",
+    boxSize: "18px",
+    display: "grid",
     flexShrink: 0,
+    placeItems: "center",
     color: "app.info",
-  },
-  iconDot: {
-    boxSize: "6px",
-    borderRadius: "999px",
-    bg: "currentColor",
-  },
-  iconStem: {
-    w: "5px",
-    h: "14px",
-    borderRadius: "999px",
-    bg: "currentColor",
   },
   text: {
     fontSize: "sm",
     fontWeight: "normal",
     lineHeight: 1.25,
-  },
-  cta: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
     whiteSpace: "nowrap",
   },
 } as const;
@@ -66,20 +53,15 @@ export function DiscoveryFeedbackBanner() {
   return (
     <Box {...styles.root}>
       <Flex {...styles.inner}>
-        <Box aria-hidden="true" as="span" {...styles.icon}>
-          <Box as="span" {...styles.iconDot} />
-          <Box as="span" {...styles.iconStem} />
+        <Box aria-hidden="true" {...styles.icon}>
+          <StatusIcon variant="info" boxSize="18px" />
         </Box>
         <Text {...styles.text}>
-          Aplikácia je v beta verzii. Budeme radi, ak nám necháš spätnú väzbu.{" "}
-          <Text
-            as={RouterLink}
-            to="/feedback"
-            {...styles.link}
-            {...styles.cta}
-          >
-            Zanechaj spätnú väzbu.
+          Toto je testovacia verzia, budeme radi, ak nám{" "}
+          <Text as={RouterLink} to="/feedback" {...styles.link}>
+            necháš feedback
           </Text>
+          .
         </Text>
       </Flex>
     </Box>

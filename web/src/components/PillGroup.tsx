@@ -5,7 +5,7 @@ const styles = {
   root: {
     mx: 0,
     mt: "12px",
-    mb: "34px",
+    mb: "12px",
     px: { base: "8px", sm: "10px" },
     bg: "app.white",
     border: "1px solid",

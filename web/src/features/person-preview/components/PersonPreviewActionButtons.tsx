@@ -12,32 +12,47 @@ import type {
 } from "src/features/person-preview/types";
 
 const styles = {
-  grid: {
+  group: {
+    align: "stretch",
     w: "100%",
-    gap: "12px",
-  },
-  button: {
-    flex: "1 1 50%",
     h: { base: "52px", sm: "54px" },
-    minW: 0,
-    px: { base: "14px", sm: "18px" },
-    py: 0,
+    overflow: "hidden",
     border: "1px solid",
     borderColor: "app.borderColor",
     borderRadius: "999px",
     bg: "app.white",
-    color: "app.text",
     boxShadow: "0 7px 18px rgba(53, 87, 45, 0.08)",
-    transition: "background 140ms ease, border-color 140ms ease, box-shadow 140ms ease",
+    transition: "border-color 140ms ease, box-shadow 140ms ease",
+    _focusWithin: {
+      borderColor: "app.borderColorStrong",
+      boxShadow: "0 0 0 3px rgba(79, 131, 68, 0.12)",
+    },
+  },
+  divider: {
+    alignSelf: "stretch",
+    w: "1px",
+    bg: "app.borderColor",
+  },
+  button: {
+    flex: "1 1 0",
+    h: "100%",
+    minW: 0,
+    px: { base: "14px", sm: "18px" },
+    py: 0,
+    border: 0,
+    borderRadius: 0,
+    bg: "transparent",
+    color: "app.text",
+    boxShadow: "none",
+    transition: "background 140ms ease",
     _hover: {
       bg: "rgba(79, 131, 68, 0.1)",
-      borderColor: "app.borderColorStrong",
-      boxShadow: "0 9px 22px rgba(53, 87, 45, 0.11)",
     },
     _active: {
       bg: "rgba(79, 131, 68, 0.14)",
-      borderColor: "app.borderColorStrong",
-      boxShadow: "0 2px 8px rgba(53, 87, 45, 0.08)",
+    },
+    _focusVisible: {
+      boxShadow: "inset 0 0 0 2px rgba(79, 131, 68, 0.24)",
     },
     sx: {
       "&:hover [data-outline-icon], &:active [data-outline-icon], &[data-active='true'] [data-outline-icon]":
@@ -53,6 +68,10 @@ const styles = {
       opacity: 0.54,
       cursor: "not-allowed",
     },
+  },
+  segmentButton: {
+    flex: "1 1 0",
+    minW: 0,
   },
   iconWrap: {
     position: "relative",
@@ -83,18 +102,7 @@ const styles = {
     lineHeight: 1,
     textTransform: "uppercase",
   },
-  likeButton: {
-    _hover: {
-      bg: "rgba(79, 131, 68, 0.1)",
-      borderColor: "app.borderColorStrong",
-      boxShadow: "0 9px 22px rgba(53, 87, 45, 0.11)",
-    },
-    _active: {
-      bg: "rgba(79, 131, 68, 0.14)",
-      borderColor: "app.borderColorStrong",
-      boxShadow: "0 2px 8px rgba(53, 87, 45, 0.08)",
-    },
-  },
+  likeButton: {},
   nopeButton: {},
 } as const;
 
@@ -139,6 +147,7 @@ function PersonPreviewActionButton({
       opacity={isCurrentActionSubmitting ? 1 : undefined}
       data-active={isCurrentActionSubmitting ? "true" : undefined}
       {...styles.button}
+      {...styles.segmentButton}
       {...buttonStyles}
     >
       <Flex {...styles.buttonContent}>
@@ -218,13 +227,14 @@ export function PersonPreviewActionButtons({
 }: PersonPreviewActionHandlers &
   Pick<PersonPreviewActionButtonProps, "activeAction" | "isSubmitting">) {
   return (
-    <Flex {...styles.grid}>
+    <Flex {...styles.group}>
       <LikeButton
         activeAction={activeAction}
         isSubmitting={isSubmitting}
         onActionEnd={onActionEnd}
         onActionStart={onActionStart}
       />
+      <Box aria-hidden="true" {...styles.divider} />
       <NopeButton
         activeAction={activeAction}
         isSubmitting={isSubmitting}

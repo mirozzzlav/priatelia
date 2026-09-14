@@ -9,7 +9,7 @@ import {
   FormTextarea,
   SendIcon,
 } from "src/components/formElements";
-import { HeaderSurface } from "src/components/HeaderSurface";
+import { SurfaceBand } from "src/components/SurfaceBand";
 
 type MessageComposerProps = {
   isSending: boolean;
@@ -74,7 +74,7 @@ export function MessageComposer({
   };
 
   return (
-    <HeaderSurface
+    <SurfaceBand
       as="form"
       noValidate
       onSubmit={handleSubmit}
@@ -97,6 +97,6 @@ export function MessageComposer({
       >
         Poslať
       </FormSubmitButton>
-    </HeaderSurface>
+    </SurfaceBand>
   );
 }

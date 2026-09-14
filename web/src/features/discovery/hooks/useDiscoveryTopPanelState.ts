@@ -23,6 +23,7 @@ export function useDiscoveryTopPanelState({
   const [draftSettings, setDraftSettings] = useState<DiscoverySettingsData>(
     initialDiscoverySettings,
   );
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const [isSavingInlineFilter, setIsSavingInlineFilter] = useState(false);
 
   useEffect(() => {
@@ -47,7 +48,18 @@ export function useDiscoveryTopPanelState({
 
   const editInlineFilter = (field: InlineFilterField) => {
     setDraftSettings(initialDiscoverySettings);
+    setIsFilterPanelOpen(true);
     setActiveInlineFilter(field);
+  };
+
+  const toggleFilterPanel = () => {
+    setIsFilterPanelOpen((isOpen) => {
+      if (isOpen) {
+        setActiveInlineFilter(null);
+      }
+
+      return !isOpen;
+    });
   };
 
   const updateDraftField = (
@@ -126,5 +138,7 @@ export function useDiscoveryTopPanelState({
     updateDraftGenderPreferences,
     updateLocationQuery,
     editInlineFilter,
+    isFilterPanelOpen,
+    toggleFilterPanel,
   };
 }

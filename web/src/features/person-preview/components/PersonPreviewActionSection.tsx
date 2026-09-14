@@ -2,6 +2,8 @@ import { Box, Flex, Icon, Text } from "@chakra-ui/react";
 
 import logoIcon from "assets/logo.svg";
 import { MessageButton } from "src/components/MessageButton";
+import { SurfaceBand } from "src/components/SurfaceBand";
+import { SurfaceLabel } from "src/components/SurfaceLabel";
 import { PrimaryButton } from "src/components/formElements";
 import { SvgImage } from "src/components/SvgImage";
 import { PersonPreviewActionButtons } from "src/features/person-preview/components/PersonPreviewActionButtons";
@@ -15,55 +17,18 @@ const styles = {
     position: "sticky",
     bottom: 0,
     zIndex: 40,
-    mx: { base: "-12px", sm: "-16px" },
-    px: { base: "12px", sm: "16px" },
-    pt: "16px",
-    pb: "calc(12px + env(safe-area-inset-bottom))",
-    bg: "rgba(255, 255, 255, 0.94)",
-    borderTop: "1px solid",
-    borderColor: "app.borderColor",
-    boxShadow: "0 -12px 28px rgba(53, 87, 45, 0.12)",
+    borderBottom: 0,
     backdropFilter: "blur(14px)",
   },
   panel: {
     mx: 0,
     px: 0,
   },
-  actionHeading: {
-    w: "100%",
-    minW: 0,
+  actionPrompt: {
     mb: "10px",
-    px: { base: "18px", sm: "22px" },
-    py: "13px",
-    border: "1px solid",
-    borderColor: "app.infoBorder",
-    borderRadius: "18px",
-    bg: "rgba(197, 106, 24, 0.1)",
-    boxShadow: "0 6px 14px rgba(197, 106, 24, 0.08)",
-    color: "app.info",
   },
-  actionHeadingHeader: {
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-  },
-  actionHeadingIcon: {
-    boxSize: "22px",
-  },
-  actionHeadingText: {
-    fontSize: "sm",
-    fontWeight: "black",
-    lineHeight: 1,
-    textTransform: "uppercase",
-  },
-  actionHeadingDescription: {
-    mt: "8px",
-    color: "app.text",
-    fontSize: "sm",
-    fontWeight: "bold",
-    lineHeight: 1.35,
-    textAlign: "center",
-    opacity: 0.72,
+  actionPromptIcon: {
+    boxSize: { base: "17px", sm: "18px" },
   },
   matchGrid: {
     display: "grid",
@@ -157,7 +122,7 @@ export function PersonPreviewActionSection({
   const isMatched = Boolean(matchId);
 
   return (
-    <Box {...styles.root} sx={styles.keyframes}>
+    <SurfaceBand {...styles.root} surfaceShadow="above" sx={styles.keyframes}>
       <Box {...styles.panel}>
         {isMatched ? (
           <Box {...styles.matchGrid}>
@@ -190,15 +155,11 @@ export function PersonPreviewActionSection({
           </Box>
         ) : (
           <>
-            <Box {...styles.actionHeading}>
-              <Flex {...styles.actionHeadingHeader}>
-                <ActionHeadingIcon />
-                <Text {...styles.actionHeadingText}>Chceš ma spoznať?</Text>
-              </Flex>
-              <Text {...styles.actionHeadingDescription}>
-                Daj áno, ak chceš nadviazať kontakt. Prepojenie vznikne, keď si
-                dáte áno navzájom.
-              </Text>
+            <Box {...styles.actionPrompt}>
+              <SurfaceLabel
+                icon={<ActionPromptIcon />}
+                title="Chceš ma spoznať?"
+              />
             </Box>
             <PersonPreviewActionButtons
               activeAction={activeAction}
@@ -209,11 +170,11 @@ export function PersonPreviewActionSection({
           </>
         )}
       </Box>
-    </Box>
+    </SurfaceBand>
   );
 }
 
-function ActionHeadingIcon() {
+function ActionPromptIcon() {
   return (
     <Icon
       viewBox="0 0 24 24"
@@ -223,7 +184,7 @@ function ActionHeadingIcon() {
       strokeLinejoin="round"
       strokeWidth="2.5"
       aria-hidden="true"
-      {...styles.actionHeadingIcon}
+      {...styles.actionPromptIcon}
     >
       <path d="M12 20.1 5.72 14.4C2.2 11.2 2.96 6.25 6.95 5.06c1.9-.57 3.64.1 5.05 1.72 1.41-1.62 3.15-2.29 5.05-1.72 3.99 1.19 4.75 6.14 1.23 9.34L12 20.1Z" />
     </Icon>

@@ -1,8 +1,9 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Icon } from "@chakra-ui/react";
 import type { RefObject } from "react";
 
 import slidersIcon from "assets/sliders.svg";
 import { SvgImage } from "src/components/SvgImage";
+import { SurfaceLabel } from "src/components/SurfaceLabel";
 import type { Gender } from "src/constants/gender";
 import type { DiscoverySettingsData } from "src/features/discovery-settings";
 import { FilterSummarySegments } from "src/features/discovery/components/FilterSummarySegments";
@@ -17,6 +18,7 @@ type DiscoveryFilterBarProps = {
   draftSettings: DiscoverySettingsData;
   filterRef: RefObject<HTMLDivElement | null>;
   initialDiscoverySettings: DiscoverySettingsData;
+  isFilterPanelOpen: boolean;
   isSavingInlineFilter: boolean;
   onDraftFieldChange: (field: keyof DiscoverySettingsData, value: string) => void;
   onDraftGenderPreferencesChange: (genderPreferences: Gender[]) => void;
@@ -24,6 +26,7 @@ type DiscoveryFilterBarProps = {
   onInlineFilterSave: () => void;
   onLocationQueryChange: (location: string) => void;
   onLocationSelect: (option: LocationOption) => void;
+  onToggleFilterPanel: () => void;
 };
 
 const styles = {
@@ -35,19 +38,15 @@ const styles = {
     h: "100%",
     gap: "10px",
   },
-  filterLabel: {
-    align: "center",
-    gap: "7px",
-    color: "app.baseDark",
-    fontSize: { base: "xs", sm: "sm" },
-    fontWeight: "black",
-    lineHeight: 1,
-    px: "4px",
-    textTransform: "uppercase",
-  },
   filterLabelIcon: {
     boxSize: { base: "17px", sm: "18px" },
   },
+  chevronIcon: (isOpen: boolean) =>
+    ({
+      boxSize: "16px",
+      transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+      transition: "transform 140ms ease",
+    }) as const,
   filterToggle: {
     align: "center",
     display: "flex",
@@ -83,6 +82,7 @@ export function DiscoveryFilterBar({
   draftSettings,
   filterRef,
   initialDiscoverySettings,
+  isFilterPanelOpen,
   isSavingInlineFilter,
   onDraftFieldChange,
   onDraftGenderPreferencesChange,
@@ -90,43 +90,71 @@ export function DiscoveryFilterBar({
   onInlineFilterSave,
   onLocationQueryChange,
   onLocationSelect,
+  onToggleFilterPanel,
 }: DiscoveryFilterBarProps) {
   return (
     <Flex {...styles.headerRow}>
-      <Flex {...styles.filterLabel}>
-        <SvgImage src={slidersIcon} {...styles.filterLabelIcon} />
-        <Text as="span">Kritériá hľadania</Text>
-      </Flex>
-      <Flex ref={filterRef} {...styles.filterToggle}>
-        {activeInlineFilter === null ? (
-          <FilterSummarySegments
-            onEdit={onEditInlineFilter}
-            settings={initialDiscoverySettings}
-          />
-        ) : activeInlineFilter === "location" ? (
-          <InlineLocationFilterEditor
-            isSaving={isSavingInlineFilter}
-            onQueryChange={onLocationQueryChange}
-            onSelect={onLocationSelect}
-            query={draftSettings.location}
-          />
-        ) : activeInlineFilter === "gender" ? (
-          <InlineGenderFilterEditor
-            genderPreferences={draftSettings.genderPreferences}
-            isSaving={isSavingInlineFilter}
-            onChange={onDraftGenderPreferencesChange}
-            onConfirm={onInlineFilterSave}
-          />
-        ) : (
-          <InlineNumericFilterEditor
-            draftSettings={draftSettings}
-            field={activeInlineFilter}
-            isSaving={isSavingInlineFilter}
-            onChange={onDraftFieldChange}
-            onConfirm={onInlineFilterSave}
-          />
-        )}
-      </Flex>
+      <SurfaceLabel
+        aria-expanded={isFilterPanelOpen}
+        aria-label={
+          isFilterPanelOpen
+            ? "Skryť kritériá hľadania"
+            : "Zobraziť kritériá hľadania"
+        }
+        icon={<SvgImage src={slidersIcon} {...styles.filterLabelIcon} />}
+        onClick={onToggleFilterPanel}
+        rightIcon={<ChevronIcon {...styles.chevronIcon(isFilterPanelOpen)} />}
+        title="Kritériá hľadania"
+      />
+      {isFilterPanelOpen && (
+        <Flex ref={filterRef} {...styles.filterToggle}>
+          {activeInlineFilter === null ? (
+            <FilterSummarySegments
+              onEdit={onEditInlineFilter}
+              settings={initialDiscoverySettings}
+            />
+          ) : activeInlineFilter === "location" ? (
+            <InlineLocationFilterEditor
+              isSaving={isSavingInlineFilter}
+              onQueryChange={onLocationQueryChange}
+              onSelect={onLocationSelect}
+              query={draftSettings.location}
+            />
+          ) : activeInlineFilter === "gender" ? (
+            <InlineGenderFilterEditor
+              genderPreferences={draftSettings.genderPreferences}
+              isSaving={isSavingInlineFilter}
+              onChange={onDraftGenderPreferencesChange}
+              onConfirm={onInlineFilterSave}
+            />
+          ) : (
+            <InlineNumericFilterEditor
+              draftSettings={draftSettings}
+              field={activeInlineFilter}
+              isSaving={isSavingInlineFilter}
+              onChange={onDraftFieldChange}
+              onConfirm={onInlineFilterSave}
+            />
+          )}
+        </Flex>
+      )}
     </Flex>
+  );
+}
+
+function ChevronIcon(props: React.ComponentProps<typeof Icon>) {
+  return (
+    <Icon
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2.4"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="m6 9 6 6 6-6" />
+    </Icon>
   );
 }

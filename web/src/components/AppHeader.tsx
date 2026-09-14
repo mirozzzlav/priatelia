@@ -5,8 +5,8 @@ import {
   type ReactNode,
 } from "react";
 
-import { HeaderSurface } from "src/components/HeaderSurface";
 import { PanelHeading } from "src/components/PanelHeading";
+import { SurfaceBand } from "src/components/SurfaceBand";
 
 type AppHeaderSurface = "plain" | "surface";
 type AppHeaderActionIcon = "close" | ReactElement;
@@ -97,10 +97,10 @@ export function AppHeader({
   }
 
   return (
-    <HeaderSurface {...styles.surfaceRoot} {...props}>
+    <SurfaceBand {...styles.surfaceRoot} {...props}>
       {content}
       {actionNode && <Box {...styles.action}>{actionNode}</Box>}
-    </HeaderSurface>
+    </SurfaceBand>
   );
 }
 
