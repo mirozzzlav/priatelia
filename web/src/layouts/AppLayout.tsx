@@ -35,6 +35,7 @@ export function AppLayout({ onLogout }: AppLayoutProps) {
         onConnectionsClick={() => navigate("/connections")}
         onLogout={handleLogout}
         onDiscoverClick={() => navigate("/discover")}
+        onFeedbackClick={() => navigate("/feedback")}
         onMessagesClick={() => navigate("/messages")}
         onProfileClick={() => navigate("/profile")}
       />

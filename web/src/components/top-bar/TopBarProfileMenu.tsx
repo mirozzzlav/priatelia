@@ -13,17 +13,20 @@ import {
 import logo from "assets/logo.svg";
 import { SvgImage } from "src/components/SvgImage";
 import { LogoutMenuIcon } from "src/components/top-bar/LogoutMenuIcon";
+import messageIcon from "assets/message.svg";
 import { ProfileMenuIcon } from "src/components/top-bar/ProfileMenuIcon";
 import { topBarStyles as styles } from "src/components/top-bar/topBarStyles";
 
 type TopBarProfileMenuProps = {
   onDiscoverClick: () => void;
+  onFeedbackClick: () => void;
   onLogout: () => void;
   onProfileClick: () => void;
 };
 
 export function TopBarProfileMenu({
   onDiscoverClick,
+  onFeedbackClick,
   onLogout,
   onProfileClick,
 }: TopBarProfileMenuProps) {
@@ -52,6 +55,10 @@ export function TopBarProfileMenu({
           <MenuItem onClick={onProfileClick} {...styles.menuItem}>
             <ProfileMenuIcon boxSize="21px" color="app.base" />
             <Text as="span">Profil</Text>
+          </MenuItem>
+          <MenuItem onClick={onFeedbackClick} {...styles.menuItem}>
+            <SvgImage src={messageIcon} boxSize="21px" />
+            <Text as="span">Feedback</Text>
           </MenuItem>
           <MenuItem onClick={onLogout} {...styles.menuItem}>
             <LogoutMenuIcon />

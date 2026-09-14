@@ -331,6 +331,13 @@ export const restClient: ApiClient = {
     });
   },
 
+  submitFeedback(data) {
+    return request("/feedback", {
+      body: JSON.stringify(data),
+      method: "POST",
+    });
+  },
+
   sendChatMessage(matchId, data) {
     return request(`/chats/matches/${matchId}/messages`, {
       body: JSON.stringify(data),

@@ -7,6 +7,7 @@ from app.modules.auth.router import router as auth_router
 from app.modules.chats.router import router as chats_router
 from app.modules.client_config.router import router as client_config_router
 from app.modules.discovery.router import router as discovery_router
+from app.modules.feedback.router import router as feedback_router
 from app.modules.locations.router import router as locations_router
 from app.modules.matching.router import router as matching_router
 from app.modules.media.router import router as media_router
@@ -43,6 +44,7 @@ app.include_router(client_config_router)
 app.include_router(profiles_router)
 app.include_router(locations_router)
 app.include_router(discovery_router)
+app.include_router(feedback_router)
 app.include_router(matching_router)
 app.include_router(media_router)
 app.include_router(chats_router)

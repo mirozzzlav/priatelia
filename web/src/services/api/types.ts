@@ -10,6 +10,7 @@ import type {
   PasswordResetConfirmFormData,
   PasswordResetRequestFormData,
 } from "src/features/password-reset/types";
+import type { FeedbackFormData } from "src/features/feedback";
 import type { RegistrationFormData } from "src/features/registration";
 
 export type DataSource = "mock" | "rest";
@@ -205,6 +206,17 @@ export type DiscoverySettingsResponse = ApiResponse<
   DiscoverySettingsErrorData
 >;
 
+export type FeedbackFieldErrors = FormFieldErrors<FeedbackFormData>;
+
+export type FeedbackErrorData = {
+  errors: FeedbackFieldErrors;
+};
+
+export type FeedbackResponse = ApiResponse<
+  MutationSuccessData,
+  FeedbackErrorData
+>;
+
 export type ApiClient = {
   activateAccount: (token: string | null) => Promise<UserSession>;
   getClientConfig: () => Promise<ClientConfig>;
@@ -231,6 +243,7 @@ export type ApiClient = {
     data: PasswordResetConfirmFormData,
   ) => Promise<PasswordResetConfirmResponse>;
   register: (data: RegistrationFormData) => Promise<RegistrationResponse>;
+  submitFeedback: (data: FeedbackFormData) => Promise<FeedbackResponse>;
   sendChatMessage: (
     matchId: string,
     data: SendChatMessageData,

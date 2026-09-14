@@ -43,6 +43,7 @@ type TopBarProps = {
   isAuthenticated: boolean;
   onConnectionsClick: () => void;
   onDiscoverClick: () => void;
+  onFeedbackClick: () => void;
   onLogout: () => void;
   onMessagesClick: () => void;
   onProfileClick: () => void;
@@ -52,6 +53,7 @@ export function TopBar({
   isAuthenticated,
   onConnectionsClick,
   onDiscoverClick,
+  onFeedbackClick,
   onLogout,
   onMessagesClick,
   onProfileClick,
@@ -68,6 +70,7 @@ export function TopBar({
         {isAuthenticated ? (
           <TopBarProfileMenu
             onDiscoverClick={onDiscoverClick}
+            onFeedbackClick={onFeedbackClick}
             onLogout={onLogout}
             onProfileClick={onProfileClick}
           />

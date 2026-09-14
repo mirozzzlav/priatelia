@@ -12,6 +12,7 @@ import { ConnectionsRoute } from "src/routes/ConnectionsRoute";
 import { CriteriaRoute } from "src/routes/CriteriaRoute";
 import { DiscoveryRoute } from "src/routes/DiscoveryRoute";
 import { ForgotPasswordRoute } from "src/routes/ForgotPasswordRoute";
+import { FeedbackRoute } from "src/routes/FeedbackRoute";
 import { LoginRoute } from "src/routes/LoginRoute";
 import { MessagesRoute } from "src/routes/MessagesRoute";
 import { PasswordRoute } from "src/routes/PasswordRoute";
@@ -123,6 +124,14 @@ export function AppRoutes() {
                 onPersonPreviewLoad={loadPersonPreview}
                 personPreview={personPreview}
               />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/feedback"
+          element={
+            <ProtectedRoute>
+              <FeedbackRoute />
             </ProtectedRoute>
           }
         />

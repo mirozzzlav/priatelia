@@ -4,6 +4,7 @@ import type {
   ChatMessage,
   ClientConfig,
   DiscoverySettingsFieldErrors,
+  FeedbackFieldErrors,
   LoginFieldErrors,
   PasswordFieldErrors,
   PasswordResetConfirmFieldErrors,
@@ -510,6 +511,26 @@ function getDiscoverySettingsErrors(
   return errors;
 }
 
+function getFeedbackErrors(data: Parameters<ApiClient["submitFeedback"]>[0]) {
+  const errors: FeedbackFieldErrors = {};
+
+  if (data.overallRating === null) {
+    errors.overallRating = "Vyber hodnotenie aplikácie.";
+  } else if (data.overallRating < 1 || data.overallRating > 5) {
+    errors.overallRating = "Hodnotenie musí byť od 1 do 5.";
+  }
+
+  if (!data.principleClear) {
+    errors.principleClear = "Vyber áno alebo nie.";
+  }
+
+  if (data.principleClear === "no" && data.unclearReason.trim().length === 0) {
+    errors.unclearReason = "Napíš, čo nebolo jasné.";
+  }
+
+  return errors;
+}
+
 function createMutationResponse<TFieldErrors extends object>(
   errors: TFieldErrors,
 ) {
@@ -686,6 +707,12 @@ export const mockClient: ApiClient = {
       },
       status: "success",
     };
+  },
+
+  async submitFeedback(data) {
+    await delay();
+
+    return createMutationResponse(getFeedbackErrors(data));
   },
 
   async requestPasswordReset(data) {

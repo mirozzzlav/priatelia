@@ -168,6 +168,44 @@ const secondaryButtonStyles = {
   _hover: { bg: "rgba(79, 131, 68, 0.1)" },
 } as const;
 
+const compactSecondaryToggleButtonStyles = (isSelected: boolean) =>
+  ({
+    h: "38px",
+    px: "16px",
+    border: "1px solid",
+    borderColor: "app.base",
+    borderRadius: "999px",
+    bg: isSelected ? "rgba(79, 131, 68, 0.14)" : "transparent",
+    color: "app.base",
+    fontSize: "xs",
+    fontWeight: "black",
+    _hover: {
+      bg: "rgba(79, 131, 68, 0.1)",
+    },
+    _active: {
+      bg: "rgba(79, 131, 68, 0.14)",
+    },
+    _focusVisible: {
+      boxShadow: "0 0 0 3px rgba(79, 131, 68, 0.22)",
+    },
+  }) as const;
+
+const compactPrimaryToggleButtonStyles = (isSelected: boolean) =>
+  ({
+    ...compactPrimaryButtonStyles,
+    bg: isSelected ? "app.base" : "transparent",
+    border: "1px solid",
+    borderColor: "app.base",
+    color: isSelected ? "app.white" : "app.base",
+    _hover: {
+      bg: isSelected ? "app.baseDark" : "rgba(79, 131, 68, 0.1)",
+      borderColor: "app.base",
+    },
+    _active: {
+      bg: isSelected ? "app.baseDark" : "rgba(79, 131, 68, 0.14)",
+    },
+  }) as const;
+
 type FormToggleButtonSize = "sm" | "md";
 type FormToggleButtonColorVariant = "green" | "orange";
 
@@ -203,9 +241,7 @@ const toggleButtonStyles = (
     h: size === "sm" ? "32px" : "38px",
     px: size === "sm" ? "10px" : "13px",
     border: "1px solid",
-    borderColor: isSelected
-      ? colors.activeBorder
-      : "app.borderColor",
+    borderColor: isSelected ? colors.activeBorder : "app.borderColor",
     borderRadius: "999px",
     bg: isSelected ? colors.activeBg : "rgba(53, 87, 45, 0.06)",
     color: isSelected ? "app.white" : "app.text",
@@ -407,7 +443,10 @@ export function FormTextarea({
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     if (characterLimit && event.target.value.length > characterLimit) {
-      event.target.value = limitTextareaValue(event.target.value, characterLimit);
+      event.target.value = limitTextareaValue(
+        event.target.value,
+        characterLimit,
+      );
     }
 
     if (value === undefined) {
@@ -457,6 +496,41 @@ export function SecondaryButton(props: ButtonProps) {
       type="button"
       variant="outline"
       {...secondaryButtonStyles}
+      {...props}
+    />
+  );
+}
+
+type CompactSecondaryToggleButtonProps = ButtonProps & {
+  isSelected: boolean;
+};
+
+export function CompactSecondaryToggleButton({
+  isSelected,
+  ...props
+}: CompactSecondaryToggleButtonProps) {
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      {...compactSecondaryToggleButtonStyles(isSelected)}
+      {...props}
+    />
+  );
+}
+
+type CompactPrimaryToggleButtonProps = ButtonProps & {
+  isSelected: boolean;
+};
+
+export function CompactPrimaryToggleButton({
+  isSelected,
+  ...props
+}: CompactPrimaryToggleButtonProps) {
+  return (
+    <Button
+      type="button"
+      {...compactPrimaryToggleButtonStyles(isSelected)}
       {...props}
     />
   );
