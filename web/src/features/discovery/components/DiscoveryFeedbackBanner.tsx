@@ -1,8 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 
-import { StatusIcon } from "src/components/StatusIcon";
-
 const styles = {
   root: {
     mx: { base: "-12px", sm: "-16px" },
@@ -15,7 +13,7 @@ const styles = {
   },
   link: {
     color: "app.info",
-    fontWeight: "black",
+    fontWeight: "900",
     textDecoration: "none",
     _hover: {
       textDecoration: "underline",
@@ -33,13 +31,30 @@ const styles = {
     textAlign: "left",
   },
   icon: {
-    boxSize: "22px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+    minW: "18px",
+    h: "24px",
+    gap: "3px",
     flexShrink: 0,
     color: "app.info",
   },
+  iconDot: {
+    boxSize: "6px",
+    borderRadius: "999px",
+    bg: "currentColor",
+  },
+  iconStem: {
+    w: "5px",
+    h: "14px",
+    borderRadius: "999px",
+    bg: "currentColor",
+  },
   text: {
     fontSize: "sm",
-    fontWeight: "extrabold",
+    fontWeight: "normal",
     lineHeight: 1.25,
   },
   cta: {
@@ -51,8 +66,9 @@ export function DiscoveryFeedbackBanner() {
   return (
     <Box {...styles.root}>
       <Flex {...styles.inner}>
-        <Box aria-hidden="true" {...styles.icon}>
-          <StatusIcon variant="info" boxSize={styles.icon.boxSize} />
+        <Box aria-hidden="true" as="span" {...styles.icon}>
+          <Box as="span" {...styles.iconDot} />
+          <Box as="span" {...styles.iconStem} />
         </Box>
         <Text {...styles.text}>
           Aplikácia je v beta verzii. Budeme radi, ak nám necháš spätnú väzbu.{" "}
