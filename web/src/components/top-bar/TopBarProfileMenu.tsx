@@ -6,6 +6,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Portal,
   Text,
 } from "@chakra-ui/react";
 
@@ -34,28 +35,30 @@ export function TopBarProfileMenu({
         icon={<BurgerMenuIcon />}
         {...styles.iconButton}
       />
-      <MenuList {...styles.menuList}>
-        <MenuItem onClick={onDiscoverClick} {...styles.menuItem}>
-          <Box
-            alignItems="center"
-            boxSize="21px"
-            display="flex"
-            flexShrink={0}
-            justifyContent="center"
-          >
-            <SvgImage src={logo} boxSize="34px" maxW="none" />
-          </Box>
-          <Text as="span">Objavuj</Text>
-        </MenuItem>
-        <MenuItem onClick={onProfileClick} {...styles.menuItem}>
-          <ProfileMenuIcon boxSize="21px" color="app.base" />
-          <Text as="span">Profil</Text>
-        </MenuItem>
-        <MenuItem onClick={onLogout} {...styles.menuItem}>
-          <LogoutMenuIcon />
-          <Text as="span">Odhlásiť</Text>
-        </MenuItem>
-      </MenuList>
+      <Portal>
+        <MenuList {...styles.menuList}>
+          <MenuItem onClick={onDiscoverClick} {...styles.menuItem}>
+            <Box
+              alignItems="center"
+              boxSize="21px"
+              display="flex"
+              flexShrink={0}
+              justifyContent="center"
+            >
+              <SvgImage src={logo} boxSize="34px" maxW="none" />
+            </Box>
+            <Text as="span">Objavuj</Text>
+          </MenuItem>
+          <MenuItem onClick={onProfileClick} {...styles.menuItem}>
+            <ProfileMenuIcon boxSize="21px" color="app.base" />
+            <Text as="span">Profil</Text>
+          </MenuItem>
+          <MenuItem onClick={onLogout} {...styles.menuItem}>
+            <LogoutMenuIcon />
+            <Text as="span">Odhlásiť</Text>
+          </MenuItem>
+        </MenuList>
+      </Portal>
     </Menu>
   );
 }

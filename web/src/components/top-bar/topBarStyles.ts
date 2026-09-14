@@ -25,9 +25,11 @@ export const topBarStyles = {
     border: "1px solid",
     borderColor: "app.text",
     borderRadius: "8px",
+    bg: "app.white",
     boxShadow: "0 16px 34px rgba(53, 87, 45, 0.18)",
     overflow: "hidden",
     p: 0,
+    zIndex: 1400,
   },
   menuItem: {
     alignItems: "center",
