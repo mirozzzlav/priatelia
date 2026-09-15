@@ -3,14 +3,13 @@ import { Box, FormControl, FormErrorMessage } from "@chakra-ui/react";
 
 import { PasswordConfirmationFields } from "src/components/PasswordConfirmationFields";
 import {
-  BackButton,
   FormActions,
   FormPasswordInput,
   FormSubmitButton,
   RequiredFieldLabel,
 } from "src/components/formElements";
-import { ScreenLayout } from "src/components/layouts";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { PageHeader } from "src/components/PageHeader";
 import type { PasswordFieldErrors, PasswordFormData } from "src/services/api";
 import { getPasswordConfirmationError } from "src/utils/passwordValidation";
 
@@ -20,9 +19,20 @@ type PasswordSettingsScreenProps = {
 };
 
 const styles = {
+  root: {
+    minH: "calc(100vh - 64px)",
+    px: { base: "12px", sm: "16px" },
+    pb: "34px",
+  },
+  header: {
+    position: "sticky",
+    top: "64px",
+    zIndex: 40,
+  },
   form: {
     display: "grid",
     gap: "22px",
+    pt: { base: "22px", sm: "28px" },
   },
 } as const;
 
@@ -97,10 +107,14 @@ export function PasswordSettingsScreen({
   };
 
   return (
-    <ScreenLayout
-      title="Zmena hesla"
-      intro="Zadaj aktuálne heslo a nové heslo, ktorým sa budeš prihlasovať."
-    >
+    <Box {...styles.root}>
+      <PageHeader
+        intro="Zadaj aktuálne heslo a nové heslo, ktorým sa budeš prihlasovať."
+        onBack={onBack}
+        title="Zmena hesla"
+        {...styles.header}
+      />
+
       <Box as="form" noValidate onSubmit={handleSubmit} {...styles.form}>
         <FormControl
           isInvalid={wasSubmitted && Boolean(fieldErrors.currentPassword)}
@@ -157,11 +171,8 @@ export function PasswordSettingsScreen({
           >
             Uložiť heslo
           </FormSubmitButton>
-          <BackButton onClick={onBack}>
-            Späť na profil
-          </BackButton>
         </FormActions>
       </Box>
-    </ScreenLayout>
+    </Box>
   );
 }
