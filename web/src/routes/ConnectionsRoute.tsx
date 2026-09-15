@@ -37,12 +37,12 @@ const styles = {
     boxShadow: "0 9px 22px rgba(53, 87, 45, 0.1)",
     p: "6px",
     sx: {
-      "&:has(.connection-thread-button:hover)": {
+      "&:hover": {
         borderColor: "app.infoBorder",
         boxShadow:
           "0 0 0 2px rgba(197, 106, 24, 0.24), 0 11px 26px rgba(53, 87, 45, 0.14)",
       },
-      "&:has(.connection-thread-button:active)": {
+      "&:active": {
         borderColor: "app.infoBorderStrong",
         boxShadow:
           "0 0 0 2px rgba(197, 106, 24, 0.3), 0 8px 20px rgba(53, 87, 45, 0.12)",
@@ -237,7 +237,6 @@ export function ConnectionsRoute() {
             <Box key={match.id} {...styles.card}>
               <Button
                 aria-label={`Otvoriť konverzáciu s: ${match.name}`}
-                className="connection-thread-button"
                 onClick={() => navigate(`/messages/${match.id}`)}
                 type="button"
                 variant="unstyled"

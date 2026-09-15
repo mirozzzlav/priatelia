@@ -32,6 +32,19 @@ const styles = {
     borderRadius: "22px",
     bg: "app.white",
     boxShadow: "0 7px 18px rgba(53, 87, 45, 0.08)",
+    transition:
+      "border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease",
+    _hover: {
+      borderColor: "app.infoBorder",
+      boxShadow:
+        "0 0 0 2px rgba(197, 106, 24, 0.24), 0 9px 22px rgba(53, 87, 45, 0.11)",
+    },
+    _active: {
+      borderColor: "app.infoBorderStrong",
+      boxShadow:
+        "0 0 0 2px rgba(197, 106, 24, 0.3), 0 7px 18px rgba(53, 87, 45, 0.1)",
+      transform: "scale(0.997)",
+    },
   },
   threadButton: {
     position: "absolute",
@@ -43,17 +56,6 @@ const styles = {
     p: 0,
     borderRadius: "22px",
     cursor: "pointer",
-    transition:
-      "background-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease",
-    _hover: {
-      bg: "rgba(197, 106, 24, 0.055)",
-      boxShadow:
-        "inset 0 0 0 2px rgba(197, 106, 24, 0.28), 0 9px 22px rgba(53, 87, 45, 0.11)",
-    },
-    _active: {
-      bg: "rgba(197, 106, 24, 0.09)",
-      transform: "scale(0.997)",
-    },
     _focusVisible: {
       boxShadow: "0 0 0 3px rgba(197, 106, 24, 0.28)",
     },
