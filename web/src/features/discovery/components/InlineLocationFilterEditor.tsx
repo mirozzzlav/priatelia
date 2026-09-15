@@ -1,8 +1,6 @@
 import {
   Box,
   Button,
-  InputGroup,
-  InputRightElement,
   Spinner,
   Text,
 } from "@chakra-ui/react";
@@ -27,14 +25,16 @@ export function InlineLocationFilterEditor({
 }: InlineLocationFilterEditorProps) {
   const [options, setOptions] = useState<LocationOption[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const hasEditedQueryRef = useRef(false);
   const latestQueryRef = useRef(query);
   const canSearch = query.trim().length >= 3;
+  const isInputLoading = (canSearch && isSearching) || isSaving;
   const visibleOptions = canSearch ? options : [];
 
   useEffect(() => {
     latestQueryRef.current = query;
 
-    if (!canSearch) {
+    if (!canSearch || !hasEditedQueryRef.current) {
       return;
     }
 
@@ -68,30 +68,37 @@ export function InlineLocationFilterEditor({
     };
   }, [canSearch, query]);
 
+  const handleQueryChange = (location: string) => {
+    hasEditedQueryRef.current = true;
+    onQueryChange(location);
+  };
+
   return (
     <Box {...styles.filterEditorWrap}>
       <Box {...styles.filterEditorGrid}>
         <Text as="span" {...styles.filterEditorLabel}>
           Mesto
         </Text>
-        <InputGroup>
-          <FormInput
-            autoFocus
-            aria-autocomplete="list"
-            autoComplete="off"
-            isDisabled={isSaving}
-            onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="Mesto"
-            role="combobox"
-            value={query}
-            {...styles.inlineInput}
-          />
-          {((canSearch && isSearching) || isSaving) && (
-            <InputRightElement {...styles.inlineLoaderWrap}>
+        <FormInput
+          autoFocus
+          aria-autocomplete="list"
+          autoComplete="off"
+          clearAriaLabel="Vymazať mesto"
+          isClearable={!isInputLoading}
+          isDisabled={isSaving}
+          onChange={(event) => handleQueryChange(event.target.value)}
+          onClear={() => handleQueryChange("")}
+          placeholder="Mesto"
+          rightElement={
+            isInputLoading ? (
               <Spinner {...styles.inlineLoader} />
-            </InputRightElement>
-          )}
-        </InputGroup>
+            ) : null
+          }
+          rightElementProps={styles.inlineLoaderWrap}
+          role="combobox"
+          value={query}
+          {...styles.inlineInput}
+        />
       </Box>
 
       {visibleOptions.length > 0 && !isSaving && (

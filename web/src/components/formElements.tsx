@@ -14,7 +14,12 @@ import {
   type InputProps,
   type TextareaProps,
 } from "@chakra-ui/react";
-import { useState, type ChangeEvent, type ReactNode } from "react";
+import {
+  useState,
+  type ChangeEvent,
+  type ComponentProps,
+  type ReactNode,
+} from "react";
 
 import { CountBadge } from "src/components/CountBadge";
 import { compactPrimaryButtonStyles } from "src/components/formElementStyles";
@@ -108,6 +113,44 @@ const passwordInputStyles = {
       content: '""',
       transform: "translateY(-50%) rotate(-38deg)",
     },
+  },
+} as const;
+
+const clearableInputStyles = {
+  input: {
+    pr: "44px",
+  },
+  actionWrap: {
+    h: "48px",
+    w: "42px",
+  },
+  clearButton: {
+    display: "grid",
+    placeItems: "center",
+    boxSize: "30px",
+    minW: "30px",
+    borderRadius: "999px",
+    color: "rgba(53, 87, 45, 0.72)",
+    _hover: {
+      bg: "app.bgAux",
+      color: "app.text",
+    },
+    _active: {
+      bg: "app.bgAux",
+    },
+    _focusVisible: {
+      boxShadow: "0 0 0 2px rgba(79, 131, 68, 0.28)",
+    },
+  },
+  clearIcon: {
+    as: "svg",
+    boxSize: "14px",
+    fill: "none",
+    stroke: "currentColor",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    strokeWidth: "2.6",
+    viewBox: "0 0 24 24",
   },
 } as const;
 
@@ -342,9 +385,77 @@ export function OptionalFieldLabel({ children }: RequiredFieldLabelProps) {
   return <FormLabel {...fieldLabelStyles}>{children}</FormLabel>;
 }
 
-export function FormInput(props: InputProps) {
+type FormInputProps = InputProps & {
+  clearAriaLabel?: string;
+  isClearable?: boolean;
+  onClear?: () => void;
+  rightElement?: ReactNode;
+  rightElementProps?: ComponentProps<typeof InputRightElement>;
+};
+
+export function FormInput({
+  clearAriaLabel = "Vymazať text",
+  isClearable = false,
+  onClear,
+  rightElement,
+  rightElementProps,
+  ...props
+}: FormInputProps) {
+  const hasValue =
+    props.value !== undefined &&
+    props.value !== null &&
+    String(props.value).length > 0;
+  const canClear =
+    isClearable &&
+    hasValue &&
+    !props.isDisabled &&
+    !props.isReadOnly;
+  const shouldRenderInputGroup = canClear || Boolean(rightElement);
+  const actionElement = canClear ? (
+    <IconButton
+      aria-label={clearAriaLabel}
+      icon={<ClearInputIcon />}
+      onClick={onClear}
+      onMouseDown={(event) => event.preventDefault()}
+      tabIndex={-1}
+      type="button"
+      variant="unstyled"
+      {...clearableInputStyles.clearButton}
+    />
+  ) : (
+    rightElement
+  );
+
+  if (!shouldRenderInputGroup) {
+    return (
+      <Input errorBorderColor="app.error" {...fieldInputStyles} {...props} />
+    );
+  }
+
   return (
-    <Input errorBorderColor="app.error" {...fieldInputStyles} {...props} />
+    <InputGroup>
+      <Input
+        errorBorderColor="app.error"
+        {...fieldInputStyles}
+        {...clearableInputStyles.input}
+        {...props}
+      />
+      <InputRightElement
+        {...clearableInputStyles.actionWrap}
+        {...rightElementProps}
+      >
+        {actionElement}
+      </InputRightElement>
+    </InputGroup>
+  );
+}
+
+function ClearInputIcon() {
+  return (
+    <Box aria-hidden="true" {...clearableInputStyles.clearIcon}>
+      <path d="M6 6l12 12" />
+      <path d="M18 6L6 18" />
+    </Box>
   );
 }
 
