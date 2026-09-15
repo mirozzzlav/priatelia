@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 
-import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { FormSubmitStatus } from "src/components/FormSubmitStatus";
 import {
   FormInput,
   FormLinkButton,
@@ -104,12 +104,13 @@ export function ForgotPasswordScreen({
           </FormErrorMessage>
         </FormControl>
 
-        {isSubmitted && (
-          <FormStatusMessage variant="success">
-            Ak email patrí k aktívnemu účtu, poslali sme naň odkaz na obnovu
-            hesla.
-          </FormStatusMessage>
-        )}
+        <FormSubmitStatus
+          success={
+            isSubmitted
+              ? "Ak email patrí k aktívnemu účtu, poslali sme naň odkaz na obnovu hesla."
+              : null
+          }
+        />
 
         <FormSubmitButton
           isDisabled={isSubmitting}
@@ -123,9 +124,7 @@ export function ForgotPasswordScreen({
 
       <Text {...styles.footerText}>
         Spomenul/a si si na heslo?{" "}
-        <FormLinkButton onClick={onBackToLoginClick}>
-          Prihlás sa
-        </FormLinkButton>
+        <FormLinkButton onClick={onBackToLoginClick}>Prihlás sa</FormLinkButton>
       </Text>
     </ScreenLayout>
   );

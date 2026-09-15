@@ -9,13 +9,12 @@ import {
 
 import {
   BackButton,
-  FormActions,
   FormInput,
-  FormSubmitButton,
   RequiredFieldLabel,
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
-import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { FormSubmitActions } from "src/components/FormSubmitActions";
+import { FormSubmitStatus } from "src/components/FormSubmitStatus";
 import { GenderPreferenceField } from "src/components/GenderField";
 import { LocationSearchField } from "src/components/LocationSearchField";
 import type { Gender } from "src/constants/gender";
@@ -213,26 +212,18 @@ export function DiscoverySettingsScreen({
           </FormErrorMessage>
         </FormControl>
 
-        {submitError && (
-          <FormStatusMessage variant="error">{submitError}</FormStatusMessage>
-        )}
+        <FormSubmitStatus
+          error={submitError}
+          success={isSuccess ? "Kritériá sú uložené." : null}
+        />
 
-        {isSuccess && (
-          <FormStatusMessage variant="success">
-            Kritériá sú uložené.
-          </FormStatusMessage>
-        )}
-
-        <FormActions>
-          <FormSubmitButton
-            isDisabled={isSubmitting}
-            isLoading={isSubmitting}
-            loadingText="Ukladám kritériá"
-          >
-            Uložiť kritériá
-          </FormSubmitButton>
-          <BackButton onClick={onBack} />
-        </FormActions>
+        <FormSubmitActions
+          isSubmitting={isSubmitting}
+          loadingText="Ukladám kritériá"
+          secondaryAction={<BackButton onClick={onBack} />}
+        >
+          Uložiť kritériá
+        </FormSubmitActions>
       </Box>
     </ScreenLayout>
   );

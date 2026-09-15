@@ -3,13 +3,12 @@ import { Box, FormControl } from "@chakra-ui/react";
 
 import { ProfileFormFields } from "src/components/ProfileFormFields";
 import {
-  FormActions,
   FormInput,
   FormLinkButton,
-  FormSubmitButton,
   OptionalFieldLabel,
 } from "src/components/formElements";
-import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { FormSubmitActions } from "src/components/FormSubmitActions";
+import { FormSubmitStatus } from "src/components/FormSubmitStatus";
 import { PageHeader } from "src/components/PageHeader";
 import { useClientConfig } from "src/context/clientConfig";
 import type { Gender } from "src/constants/gender";
@@ -199,25 +198,17 @@ export function ProfileSettingsScreen({
           Zmeniť heslo
         </FormLinkButton>
 
-        {submitError && (
-          <FormStatusMessage variant="error">{submitError}</FormStatusMessage>
-        )}
+        <FormSubmitStatus
+          error={submitError}
+          success={isSuccess ? "Profil je uložený." : null}
+        />
 
-        {isSuccess && (
-          <FormStatusMessage variant="success">
-            Profil je uložený.
-          </FormStatusMessage>
-        )}
-
-        <FormActions>
-          <FormSubmitButton
-            isDisabled={isSubmitting}
-            isLoading={isSubmitting}
-            loadingText="Ukladám profil"
-          >
-            Uložiť profil
-          </FormSubmitButton>
-        </FormActions>
+        <FormSubmitActions
+          isSubmitting={isSubmitting}
+          loadingText="Ukladám profil"
+        >
+          Uložiť profil
+        </FormSubmitActions>
       </Box>
     </Box>
   );

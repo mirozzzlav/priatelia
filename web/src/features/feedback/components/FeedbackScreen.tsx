@@ -10,13 +10,12 @@ import {
 import { CountBadge } from "src/components/CountBadge";
 import {
   CompactPrimaryToggleButton,
-  FormActions,
-  FormSubmitButton,
   FormTextarea,
   OptionalFieldLabel,
   RequiredFieldLabel,
 } from "src/components/formElements";
-import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { FormSubmitActions } from "src/components/FormSubmitActions";
+import { FormSubmitStatus } from "src/components/FormSubmitStatus";
 import { PageHeader } from "src/components/PageHeader";
 import { SurfacePill } from "src/components/SurfacePill";
 import type { FeedbackFormData } from "src/features/feedback/types";
@@ -296,25 +295,17 @@ export function FeedbackScreen({ onBack, onSave }: FeedbackScreenProps) {
           </FormErrorMessage>
         </FormControl>
 
-        {submitError && (
-          <FormStatusMessage variant="error">{submitError}</FormStatusMessage>
-        )}
+        <FormSubmitStatus
+          error={submitError}
+          success={isSuccess ? "Ďakujeme, feedback je odoslaný." : null}
+        />
 
-        {isSuccess && (
-          <FormStatusMessage variant="success">
-            Ďakujeme, feedback je odoslaný.
-          </FormStatusMessage>
-        )}
-
-        <FormActions>
-          <FormSubmitButton
-            isDisabled={isSubmitting}
-            isLoading={isSubmitting}
-            loadingText="Odosielam feedback"
-          >
-            Odoslať feedback
-          </FormSubmitButton>
-        </FormActions>
+        <FormSubmitActions
+          isSubmitting={isSubmitting}
+          loadingText="Odosielam feedback"
+        >
+          Odoslať feedback
+        </FormSubmitActions>
       </Box>
     </Box>
   );

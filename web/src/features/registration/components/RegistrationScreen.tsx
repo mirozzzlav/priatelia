@@ -10,7 +10,7 @@ import {
   RequiredFieldLabel,
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
-import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { FormSubmitStatus } from "src/components/FormSubmitStatus";
 import { useClientConfig } from "src/context/clientConfig";
 import type { InterestTag } from "src/features/interests/types";
 import type { Gender } from "src/constants/gender";
@@ -223,9 +223,7 @@ export function RegistrationScreen({
           wasSubmitted={wasSubmitted}
         />
 
-        {submitError && (
-          <FormStatusMessage variant="error">{submitError}</FormStatusMessage>
-        )}
+        <FormSubmitStatus error={submitError} />
 
         <FormSubmitButton
           isDisabled={isSubmitting}

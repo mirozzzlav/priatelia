@@ -3,12 +3,11 @@ import { Box, FormControl, FormErrorMessage } from "@chakra-ui/react";
 
 import { PasswordConfirmationFields } from "src/components/PasswordConfirmationFields";
 import {
-  FormActions,
   FormPasswordInput,
-  FormSubmitButton,
   RequiredFieldLabel,
 } from "src/components/formElements";
-import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { FormSubmitActions } from "src/components/FormSubmitActions";
+import { FormSubmitStatus } from "src/components/FormSubmitStatus";
 import { PageHeader } from "src/components/PageHeader";
 import type { PasswordFieldErrors, PasswordFormData } from "src/services/api";
 import { getPasswordConfirmationError } from "src/utils/passwordValidation";
@@ -153,25 +152,17 @@ export function PasswordSettingsScreen({
           wasSubmitted={wasSubmitted}
         />
 
-        {submitError && (
-          <FormStatusMessage variant="error">{submitError}</FormStatusMessage>
-        )}
+        <FormSubmitStatus
+          error={submitError}
+          success={isSuccess ? "Heslo je zmenené." : null}
+        />
 
-        {isSuccess && (
-          <FormStatusMessage variant="success">
-            Heslo je zmenené.
-          </FormStatusMessage>
-        )}
-
-        <FormActions>
-          <FormSubmitButton
-            isDisabled={isSubmitting}
-            isLoading={isSubmitting}
-            loadingText="Ukladám heslo"
-          >
-            Uložiť heslo
-          </FormSubmitButton>
-        </FormActions>
+        <FormSubmitActions
+          isSubmitting={isSubmitting}
+          loadingText="Ukladám heslo"
+        >
+          Uložiť heslo
+        </FormSubmitActions>
       </Box>
     </Box>
   );

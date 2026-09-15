@@ -1,11 +1,8 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 
-import { FormStatusMessage } from "src/components/FormStatusMessage";
-import {
-  FormLinkButton,
-  FormSubmitButton,
-} from "src/components/formElements";
+import { FormSubmitStatus } from "src/components/FormSubmitStatus";
+import { FormLinkButton, FormSubmitButton } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
 import { PasswordConfirmationFields } from "src/components/PasswordConfirmationFields";
 import type { PasswordResetConfirmFormData } from "src/features/password-reset/types";
@@ -107,11 +104,7 @@ export function ResetPasswordScreen({
       pt="12px"
     >
       <Box as="form" noValidate onSubmit={handleSubmit} {...styles.form}>
-        {fieldErrors.token && (
-          <FormStatusMessage variant="error">
-            {fieldErrors.token}
-          </FormStatusMessage>
-        )}
+        <FormSubmitStatus error={fieldErrors.token} />
 
         <PasswordConfirmationFields
           isPasswordInvalid={wasSubmitted && Boolean(fieldErrors.password)}

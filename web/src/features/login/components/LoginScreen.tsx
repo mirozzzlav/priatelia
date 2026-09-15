@@ -9,7 +9,7 @@ import {
   RequiredFieldLabel,
 } from "src/components/formElements";
 import { ScreenLayout } from "src/components/layouts";
-import { FormStatusMessage } from "src/components/FormStatusMessage";
+import { FormSubmitStatus } from "src/components/FormSubmitStatus";
 import type { LoginFormData } from "src/features/login/types";
 
 type LoginScreenProps = {
@@ -111,9 +111,7 @@ export function LoginScreen({
           </FormLinkButton>
         </Text>
 
-        {submitError && (
-          <FormStatusMessage variant="error">{submitError}</FormStatusMessage>
-        )}
+        <FormSubmitStatus error={submitError} />
 
         <FormSubmitButton
           isDisabled={isSubmitting}
