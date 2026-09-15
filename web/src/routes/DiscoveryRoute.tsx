@@ -64,6 +64,14 @@ const styles = {
 const isDiscoveryFeedbackEnabled =
   import.meta.env.VITE_DISCOVERY_FEEDBACK_ENABLED !== "false";
 
+function scrollDiscoveryToTop() {
+  window.requestAnimationFrame(() => {
+    window.scrollTo({ left: 0, top: 0, behavior: "auto" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  });
+}
+
 export function DiscoveryRoute({
   activeAction,
   error,
@@ -125,6 +133,7 @@ export function DiscoveryRoute({
     onMatchedProfileMatchClear();
     setIsContinuingDiscovery(true);
     void onPersonPreviewLoad().finally(() => {
+      scrollDiscoveryToTop();
       setIsContinuingDiscovery(false);
     });
   }, [onMatchedProfileMatchClear, onPersonPreviewLoad]);
@@ -165,11 +174,7 @@ export function DiscoveryRoute({
       return;
     }
 
-    window.requestAnimationFrame(() => {
-      window.scrollTo({ left: 0, top: 0, behavior: "auto" });
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    });
+    scrollDiscoveryToTop();
   }, [personPreview]);
 
   const discoveryHeader = (
