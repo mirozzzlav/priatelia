@@ -57,9 +57,9 @@ export function DiscoveryFeedbackBanner() {
           <StatusIcon variant="info" boxSize="18px" />
         </Box>
         <Text {...styles.text}>
-          Toto je testovacia verzia, budeme radi, ak nám{" "}
+          Testujeme, budeme radi ak nám{" "}
           <Text as={RouterLink} to="/feedback" {...styles.link}>
-            necháš feedback
+            napíšeš tvoj názor
           </Text>
           .
         </Text>
