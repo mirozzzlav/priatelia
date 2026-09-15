@@ -1,22 +1,17 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
-import { Box, FormControl, FormErrorMessage } from "@chakra-ui/react";
+import { Box, FormControl } from "@chakra-ui/react";
 
-import { GenderField } from "src/components/GenderField";
-import { InterestSelectField } from "src/components/InterestSelectField";
-import { PhotoGalleryField } from "src/components/PhotoGalleryField";
+import { ProfileFormFields } from "src/components/ProfileFormFields";
 import {
   FormActions,
   FormInput,
   FormLinkButton,
   FormSubmitButton,
-  FormTextarea,
   OptionalFieldLabel,
-  RequiredFieldLabel,
 } from "src/components/formElements";
 import { FormStatusMessage } from "src/components/FormStatusMessage";
 import { PageHeader } from "src/components/PageHeader";
 import { useClientConfig } from "src/context/clientConfig";
-import { LocationSearchField } from "src/components/LocationSearchField";
 import type { Gender } from "src/constants/gender";
 import type { InterestTag } from "src/features/interests/types";
 import type { EditableProfileData } from "src/features/profile/types";
@@ -168,107 +163,33 @@ export function ProfileSettingsScreen({
       />
 
       <Box as="form" noValidate onSubmit={handleSubmit} {...styles.form}>
-        <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.nickname)}>
-          <RequiredFieldLabel>Nickname</RequiredFieldLabel>
-          <FormInput
-            maxLength={profileValidation.nicknameMaxLength}
-            value={formData.nickname}
-            onChange={updateField("nickname")}
-            placeholder="napr. nina27"
-            autoComplete="nickname"
-          />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.nickname}
-          </FormErrorMessage>
-        </FormControl>
-
-        <FormControl>
-          <OptionalFieldLabel>Email</OptionalFieldLabel>
-          <FormInput
-            value={formData.email}
-            isReadOnly
-            placeholder="email pri účte"
-            autoComplete="email"
-            _readOnly={{
-              cursor: "not-allowed",
-              opacity: 0.78,
-            }}
-          />
-        </FormControl>
-
-        <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.birthDate)}>
-          <RequiredFieldLabel>Dátum narodenia</RequiredFieldLabel>
-          <FormInput
-            type="date"
-            value={formData.birthDate}
-            onChange={updateField("birthDate")}
-          />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.birthDate}
-          </FormErrorMessage>
-        </FormControl>
-
-        <GenderField
-          error={fieldErrors.gender}
-          isInvalid={wasSubmitted && Boolean(fieldErrors.gender)}
-          label="Pohlavie"
-          onChange={handleGenderChange}
-          value={formData.gender}
-        />
-
-        <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.location)}>
-          <LocationSearchField
-            error={fieldErrors.location}
-            isInvalid={wasSubmitted && Boolean(fieldErrors.location)}
-            label="Tvoja lokalita"
-            onChange={handleLocationChange}
-            value={formData.location}
-            placeholder="napr. Bratislava"
-          />
-        </FormControl>
-
-        <FormControl isInvalid={wasSubmitted && Boolean(fieldErrors.bio)}>
-          <RequiredFieldLabel>Krátke bio</RequiredFieldLabel>
-          <FormTextarea
-            characterLimit={profileValidation.bioMaxLength}
-            value={formData.bio}
-            onChange={updateField("bio")}
-            placeholder="Čo rád/rada robíš a akých priateľov hľadáš?"
-          />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.bio}
-          </FormErrorMessage>
-        </FormControl>
-
-        <FormControl
-          isInvalid={wasSubmitted && Boolean(fieldErrors.lookingFor)}
-        >
-          <OptionalFieldLabel>Čo hľadám</OptionalFieldLabel>
-          <FormTextarea
-            characterLimit={profileValidation.lookingForMaxLength}
-            value={formData.lookingFor}
-            onChange={updateField("lookingFor")}
-            placeholder="Aký typ priateľstva, aktivít alebo ľudí by ti sadol?"
-          />
-          <FormErrorMessage color="app.error">
-            {fieldErrors.lookingFor}
-          </FormErrorMessage>
-        </FormControl>
-
-        <InterestSelectField
-          error={fieldErrors.interests}
-          interests={formData.interests}
-          isInvalid={wasSubmitted && Boolean(fieldErrors.interests)}
-          onChange={handleInterestsChange}
-        />
-
-        <PhotoGalleryField
-          error={fieldErrors.photos}
-          isInvalid={wasSubmitted && Boolean(fieldErrors.photos)}
-          photos={formData.photos}
+        <ProfileFormFields
+          afterNickname={
+            <FormControl>
+              <OptionalFieldLabel>Email</OptionalFieldLabel>
+              <FormInput
+                value={formData.email}
+                isReadOnly
+                placeholder="email pri účte"
+                autoComplete="email"
+                _readOnly={{
+                  cursor: "not-allowed",
+                  opacity: 0.78,
+                }}
+              />
+            </FormControl>
+          }
+          fieldErrors={fieldErrors}
+          formData={formData}
+          onFieldChange={updateField}
+          onGenderChange={handleGenderChange}
+          onInterestsChange={handleInterestsChange}
+          onLocationChange={handleLocationChange}
           onPhotoUpload={handlePhotoUpload}
           onRemovePhoto={removePhoto}
           onSetPrimaryPhoto={setPrimaryPhoto}
+          profileValidation={profileValidation}
+          wasSubmitted={wasSubmitted}
         />
 
         <FormLinkButton
