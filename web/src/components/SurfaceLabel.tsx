@@ -2,6 +2,7 @@ import { Box, Flex, Text, type BoxProps } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
 type SurfaceLabelProps = {
+  color?: BoxProps["color"];
   icon?: ReactNode;
   onClick?: BoxProps["onClick"];
   rightIcon?: ReactNode;
@@ -46,6 +47,7 @@ const styles = {
 } as const;
 
 export function SurfaceLabel({
+  color,
   icon,
   onClick,
   rightIcon,
@@ -61,11 +63,15 @@ export function SurfaceLabel({
   );
 
   if (!onClick) {
-    return <Flex {...styles.root}>{content}</Flex>;
+    return (
+      <Flex {...styles.root} color={color ?? styles.root.color}>
+        {content}
+      </Flex>
+    );
   }
 
   return (
-    <Flex {...styles.root}>
+    <Flex {...styles.root} color={color ?? styles.root.color}>
       <Box
         as="button"
         type="button"
