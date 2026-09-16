@@ -14,10 +14,22 @@ function escapeHtml(value: string) {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const devPort = Number(env.VITE_DEV_PORT ?? 4444);
+  const publicAppUrl = (env.VITE_PUBLIC_APP_URL ?? appConfig.publicUrl).replace(
+    /\/+$/,
+    "",
+  );
+  const socialImageUrl = new URL(
+    appConfig.social.imagePath,
+    `${publicAppUrl}/`,
+  ).toString();
   const apiProxyTarget =
-    env.VITE_API_PROXY_TARGET ?? env.API_PROXY_TARGET ?? "http://localhost:3000";
+    env.VITE_API_PROXY_TARGET ??
+    env.API_PROXY_TARGET ??
+    "http://localhost:3000";
   const mediaProxyTarget =
-    env.VITE_MEDIA_PROXY_TARGET ?? env.MEDIA_PROXY_TARGET ?? "http://localhost:9000";
+    env.VITE_MEDIA_PROXY_TARGET ??
+    env.MEDIA_PROXY_TARGET ??
+    "http://localhost:9000";
 
   return {
     build: {
@@ -39,7 +51,21 @@ export default defineConfig(({ mode }) => {
       {
         name: "app-config-html",
         transformIndexHtml(html) {
-          return html.replaceAll("%APP_TITLE%", escapeHtml(appConfig.name));
+          const replacements = {
+            "%APP_DESCRIPTION%": appConfig.social.description,
+            "%APP_IMAGE_ALT%": appConfig.social.imageAlt,
+            "%APP_IMAGE_URL%": socialImageUrl,
+            "%APP_LOCALE%": appConfig.social.locale,
+            "%APP_SITE_NAME%": appConfig.name,
+            "%APP_TITLE%": appConfig.social.title,
+            "%APP_URL%": publicAppUrl,
+          };
+
+          return Object.entries(replacements).reduce(
+            (currentHtml, [placeholder, value]) =>
+              currentHtml.replaceAll(placeholder, escapeHtml(value)),
+            html,
+          );
         },
       },
       react(),
