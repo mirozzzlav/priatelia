@@ -3,6 +3,7 @@ from uuid import UUID
 from psycopg import AsyncConnection
 
 from app.modules.discovery.schemas import DiscoverySettingsResponse, PersonPreview
+from app.shared.interest_tags import resolve_interest_tags
 
 
 class DiscoveryRepository:
@@ -119,7 +120,7 @@ class DiscoveryRepository:
                 u.nickname AS name,
                 COALESCE(primary_photo.url, '') AS photo,
                 COALESCE(photo_list.photos, ARRAY[]::text[]) AS photos,
-                COALESCE(interest_list.interests, ARRAY[]::json[]) AS tags
+                COALESCE(interest_list.interest_ids, ARRAY[]::text[]) AS interest_ids
             FROM profiles p
             JOIN users u ON u.id = p.user_id
             CROSS JOIN settings s
@@ -136,12 +137,9 @@ class DiscoveryRepository:
                 WHERE pp.user_id = p.user_id
             ) photo_list ON true
             LEFT JOIN LATERAL (
-                SELECT array_agg(
-                    json_build_object('id', it.id, 'name', it.name)
-                    ORDER BY pi.position, it.name
-                ) AS interests
+                SELECT array_agg(pi.interest_id ORDER BY pi.position, pi.interest_id)
+                    AS interest_ids
                 FROM profile_interests pi
-                JOIN interest_tags it ON it.id = pi.interest_id
                 WHERE pi.user_id = p.user_id
             ) interest_list ON true
             WHERE p.user_id <> %s
@@ -203,4 +201,6 @@ class DiscoveryRepository:
             (user_id, user_id, user_id, user_id, user_id),
         )
         row = await cursor.fetchone()
+        if row is not None:
+            row = {**row, "tags": resolve_interest_tags(row["interest_ids"])}
         return PersonPreview(**row) if row else None

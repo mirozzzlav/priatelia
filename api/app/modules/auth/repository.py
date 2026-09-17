@@ -8,6 +8,7 @@ from app.modules.auth.schemas import (
     RegistrationPhoto,
     UserRecord,
 )
+from app.shared.interest_tags import list_known_interest_ids
 
 
 class AuthRepository:
@@ -298,19 +299,7 @@ class AuthRepository:
         )
 
     async def list_known_interest_ids(self, interest_ids: list[str]) -> set[str]:
-        if not interest_ids:
-            return set()
-
-        cursor = await self.connection.execute(
-            """
-            SELECT id
-            FROM interest_tags
-            WHERE id = ANY(%s)
-            """,
-            (interest_ids,),
-        )
-        rows = await cursor.fetchall()
-        return {row["id"] for row in rows}
+        return list_known_interest_ids(interest_ids)
 
     async def update_password(self, user_id: UUID, password_hash: str) -> None:
         await self.connection.execute(

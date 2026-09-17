@@ -1,6 +1,8 @@
 services:
   web:
-    build: ./web
+    build:
+      context: .
+      dockerfile: web/Dockerfile
     ports:
       - "${WEB_PORT:-4444}:4444"
     environment:
@@ -12,11 +14,14 @@ services:
     depends_on:
       - api
     volumes:
-      - ./web:/app
-      - web_node_modules:/app/node_modules
+      - ./web:/app/web
+      - ./shared:/app/shared:ro
+      - web_node_modules:/app/web/node_modules
 
   api:
-    build: ./api
+    build:
+      context: .
+      dockerfile: api/Dockerfile
     ports:
       - "${API_PORT:-3000}:3000"
     env_file:
@@ -31,10 +36,13 @@ services:
       mailpit:
         condition: service_started
     volumes:
-      - ./api:/app
+      - ./api:/app/api
+      - ./shared:/app/shared:ro
 
   notification-worker:
-    build: ./api
+    build:
+      context: .
+      dockerfile: api/Dockerfile
     command: python -m app.modules.notifications.worker
     env_file:
       - .env
@@ -44,7 +52,8 @@ services:
       mailpit:
         condition: service_started
     volumes:
-      - ./api:/app
+      - ./api:/app/api
+      - ./shared:/app/shared:ro
 
   database:
     image: postgres:16

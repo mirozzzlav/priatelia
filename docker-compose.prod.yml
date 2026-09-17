@@ -1,8 +1,8 @@
 services:
   web:
     build:
-      context: ./web
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: web/Dockerfile.prod
       args:
         VITE_DATA_SOURCE: rest
         VITE_API_BASE_URL: /api
@@ -16,8 +16,8 @@ services:
 
   api:
     build:
-      context: ./api
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: api/Dockerfile.prod
     restart: unless-stopped
     env_file:
       - .env
@@ -31,8 +31,8 @@ services:
 
   notification-worker:
     build:
-      context: ./api
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: api/Dockerfile.prod
     command: python -m app.modules.notifications.worker
     restart: unless-stopped
     env_file:

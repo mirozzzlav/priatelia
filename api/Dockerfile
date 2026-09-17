@@ -3,14 +3,15 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app
+WORKDIR /app/api
 
 RUN pip install --no-cache-dir --upgrade pip
 
-COPY pyproject.toml ./
+COPY api/pyproject.toml ./
 RUN pip install --no-cache-dir ".[dev]"
 
-COPY . .
+COPY api .
+COPY shared /app/shared
 
 EXPOSE 3000
 

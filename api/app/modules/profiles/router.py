@@ -9,6 +9,7 @@ from app.modules.profiles.service import ProfileService
 from app.shared.auth.dependencies import CurrentUser, get_current_user
 from app.shared.database.connection import get_connection
 from app.shared.events.repository import EventRepository
+from app.shared.interest_tags import search_interest_tags
 
 router = APIRouter(tags=["profiles"])
 
@@ -16,9 +17,8 @@ router = APIRouter(tags=["profiles"])
 @router.get("/interests")
 async def list_interest_options(
     query: str = "",
-    connection: AsyncConnection = Depends(get_connection),
 ) -> list[InterestTag]:
-    return await ProfileRepository(connection).list_interest_options(query)
+    return [InterestTag(**tag) for tag in search_interest_tags(query)]
 
 
 @router.get("/profile")

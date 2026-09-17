@@ -3,6 +3,11 @@ from uuid import UUID
 from psycopg import AsyncConnection
 
 from app.modules.profiles.schemas import InterestTag, ProfilePhoto, ProfileRecord
+from app.shared.interest_tags import (
+    list_known_interest_ids,
+    resolve_interest_tags,
+    search_interest_tags,
+)
 
 
 class ProfileRepository:
@@ -190,52 +195,22 @@ class ProfileRepository:
     async def list_interests(self, user_id: UUID) -> list[InterestTag]:
         cursor = await self.connection.execute(
             """
-            SELECT it.id, it.name
+            SELECT pi.interest_id
             FROM profile_interests pi
-            JOIN interest_tags it ON it.id = pi.interest_id
             WHERE pi.user_id = %s
-            ORDER BY pi.position, it.name
+            ORDER BY pi.position, pi.interest_id
             """,
             (user_id,),
         )
         rows = await cursor.fetchall()
-        return [InterestTag(**row) for row in rows]
+        tags = resolve_interest_tags([row["interest_id"] for row in rows])
+        return [InterestTag(**tag) for tag in tags]
 
     async def list_interest_options(self, query: str) -> list[InterestTag]:
-        normalized_query = query.strip().lower()
-        cursor = await self.connection.execute(
-            """
-            SELECT id, name
-            FROM interest_tags
-            WHERE %s = ''
-               OR id LIKE %s
-               OR lower(name) LIKE %s
-            ORDER BY name
-            LIMIT 12
-            """,
-            (
-                normalized_query,
-                f"%{normalized_query}%",
-                f"%{normalized_query}%",
-            ),
-        )
-        rows = await cursor.fetchall()
-        return [InterestTag(**row) for row in rows]
+        return [InterestTag(**tag) for tag in search_interest_tags(query)]
 
     async def list_known_interest_ids(self, interest_ids: list[str]) -> set[str]:
-        if not interest_ids:
-            return set()
-
-        cursor = await self.connection.execute(
-            """
-            SELECT id
-            FROM interest_tags
-            WHERE id = ANY(%s)
-            """,
-            (interest_ids,),
-        )
-        rows = await cursor.fetchall()
-        return {row["id"] for row in rows}
+        return list_known_interest_ids(interest_ids)
 
     async def get_public_profiles_by_ids(self, user_ids: list[UUID]) -> list[dict]:
         if not user_ids:
@@ -256,7 +231,7 @@ class ProfileRepository:
                 p.bio,
                 {looking_for_select},
                 COALESCE(primary_photo.url, '') AS photo,
-                COALESCE(interest_list.interests, ARRAY[]::json[]) AS interests
+                COALESCE(interest_list.interest_ids, ARRAY[]::text[]) AS interest_ids
             FROM profiles p
             JOIN users u ON u.id = p.user_id
             LEFT JOIN LATERAL (
@@ -267,19 +242,23 @@ class ProfileRepository:
                 LIMIT 1
             ) primary_photo ON true
             LEFT JOIN LATERAL (
-                SELECT array_agg(
-                    json_build_object('id', it.id, 'name', it.name)
-                    ORDER BY pi.position, it.name
-                ) AS interests
+                SELECT array_agg(pi.interest_id ORDER BY pi.position, pi.interest_id)
+                    AS interest_ids
                 FROM profile_interests pi
-                JOIN interest_tags it ON it.id = pi.interest_id
                 WHERE pi.user_id = p.user_id
             ) interest_list ON true
             WHERE p.user_id = ANY(%s)
             """,
             (user_ids,),
         )
-        return await cursor.fetchall()
+        rows = await cursor.fetchall()
+        return [
+            {
+                **row,
+                "interests": resolve_interest_tags(row["interest_ids"]),
+            }
+            for row in rows
+        ]
 
     async def get_public_profile_by_id(self, user_id: UUID) -> dict | None:
         looking_for_select = (
@@ -298,7 +277,7 @@ class ProfileRepository:
                 u.nickname AS name,
                 COALESCE(primary_photo.url, '') AS photo,
                 COALESCE(photo_list.photos, ARRAY[]::text[]) AS photos,
-                COALESCE(interest_list.interests, ARRAY[]::json[]) AS tags
+                COALESCE(interest_list.interest_ids, ARRAY[]::text[]) AS interest_ids
             FROM profiles p
             JOIN users u ON u.id = p.user_id
             LEFT JOIN LATERAL (
@@ -314,16 +293,16 @@ class ProfileRepository:
                 WHERE pp.user_id = p.user_id
             ) photo_list ON true
             LEFT JOIN LATERAL (
-                SELECT array_agg(
-                    json_build_object('id', it.id, 'name', it.name)
-                    ORDER BY pi.position, it.name
-                ) AS interests
+                SELECT array_agg(pi.interest_id ORDER BY pi.position, pi.interest_id)
+                    AS interest_ids
                 FROM profile_interests pi
-                JOIN interest_tags it ON it.id = pi.interest_id
                 WHERE pi.user_id = p.user_id
             ) interest_list ON true
             WHERE p.user_id = %s
             """,
             (user_id,),
         )
-        return await cursor.fetchone()
+        row = await cursor.fetchone()
+        if row is None:
+            return None
+        return {**row, "tags": resolve_interest_tags(row["interest_ids"])}
