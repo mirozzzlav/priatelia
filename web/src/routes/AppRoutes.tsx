@@ -98,7 +98,14 @@ export function AppRoutes() {
             </PublicOnlyRoute>
           }
         />
-        <Route path="/activation-sent" element={<ActivationSentRoute />} />
+        <Route
+          path="/activation-sent"
+          element={
+            <PublicOnlyRoute>
+              <ActivationSentRoute />
+            </PublicOnlyRoute>
+          }
+        />
         <Route path="/activate" element={<ActivationCompleteRoute />} />
         <Route
           path="/discover"

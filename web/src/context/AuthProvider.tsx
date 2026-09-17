@@ -11,7 +11,9 @@ import type { UserSession } from "src/services/api";
 import {
   clearStoredSession,
   getStoredSession,
+  parseStoredSession,
   sessionExpiredEvent,
+  sessionStorageKey,
   storeSession,
 } from "src/services/api/sessionStorage";
 
@@ -39,6 +41,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
       window.removeEventListener(sessionExpiredEvent, logout);
     };
   }, [logout]);
+
+  useEffect(() => {
+    function syncSessionFromStorage(event: StorageEvent) {
+      if (event.storageArea !== window.localStorage) {
+        return;
+      }
+
+      if (event.key !== sessionStorageKey) {
+        return;
+      }
+
+      const nextSession = parseStoredSession(event.newValue);
+      setSession((currentSession) => {
+        if (
+          currentSession?.token === nextSession?.token &&
+          currentSession?.nickname === nextSession?.nickname
+        ) {
+          return currentSession;
+        }
+
+        return nextSession;
+      });
+    }
+
+    window.addEventListener("storage", syncSessionFromStorage);
+
+    return () => {
+      window.removeEventListener("storage", syncSessionFromStorage);
+    };
+  }, []);
 
   const value = useMemo(
     () => ({

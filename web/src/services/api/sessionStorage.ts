@@ -1,6 +1,6 @@
 import type { UserSession } from "src/services/api/types";
 
-const sessionStorageKey = "priatelia.session";
+export const sessionStorageKey = "priatelia.session";
 export const sessionExpiredEvent = "priatelia.session-expired";
 
 function isUserSession(value: unknown): value is UserSession {
@@ -17,6 +17,15 @@ function isUserSession(value: unknown): value is UserSession {
 export function getStoredSession(): UserSession | null {
   const rawSession = window.localStorage.getItem(sessionStorageKey);
 
+  const session = parseStoredSession(rawSession);
+  if (rawSession && !session) {
+    window.localStorage.removeItem(sessionStorageKey);
+  }
+
+  return session;
+}
+
+export function parseStoredSession(rawSession: string | null): UserSession | null {
   if (!rawSession) {
     return null;
   }
@@ -31,7 +40,6 @@ export function getStoredSession(): UserSession | null {
 
     return session;
   } catch {
-    window.localStorage.removeItem(sessionStorageKey);
     return null;
   }
 }
